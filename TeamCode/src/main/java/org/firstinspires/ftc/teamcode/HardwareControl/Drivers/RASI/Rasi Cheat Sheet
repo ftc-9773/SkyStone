@@ -1,0 +1,26 @@
+Hello y'all
+
+Rasi syntax is as follows:
+
+TAG:command arg1 arg2 arg3
+
+If there is no tag, it looks like this:
+
+command arg1 arg2 arg3
+
+If there are no arguments or tags it looks like this:
+
+command
+
+Some likely causes of problems:
+
+- Command with tag not executing if the tag is properly set.
+--- Make sure that there is no space between the colon after the tag and the command. "TAG: command" is not valid. Yes this is annoying,
+--- I'm working on fixing it, but for now just do it.
+- Error: User code threw an uncaught exception: ArrayIndexOutOfBoundsException - length=1; index=1
+---You probably forgot to provide the correct number of arguments to a command. Check to make sure they are all correct
+- Rasi is running twice!!
+---Make sure to only call rasiInterpreter.runRasiActually() Otherwise it will break
+
+My Rasi is doing something weird and not on this list! Help!
+Call or email Cadence (cadenceweddle@gmail.com)
