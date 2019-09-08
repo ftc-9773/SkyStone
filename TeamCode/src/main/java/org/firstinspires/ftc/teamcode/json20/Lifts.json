@@ -1,0 +1,6 @@
+{
+  "rClawServoClose" : 0.75,
+  "lClawServoClose" : 0.25,
+  "rClawServoOpen" : 0,
+  "lClawServoOpen" : 1.0
+}

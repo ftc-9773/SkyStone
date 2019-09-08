@@ -1,10 +1,10 @@
-package org.firstinspires.ftc.teamcode.HardwareControl.Drivers.RASI.Rasi;
+package org.firstinspires.ftc.teamcode.RASI.Rasi;
 
 import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.RASI.RasiCommands.RasiCommands;
+import org.firstinspires.ftc.teamcode.RASI.RasiCommands.RasiCommands;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
