@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.SensorREVColorDistance;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.DistSensor;
 
 @TeleOp(name = "voltSensorTesting")
 public class distanceSensorTesting extends LinearOpMode {
@@ -14,13 +15,13 @@ public class distanceSensorTesting extends LinearOpMode {
     @Override
     public void runOpMode(){
 
-        VoltageSensor sensor;
-        sensor = hardwareMap.voltageSensor.get("Motor Controller 1");
+        DistSensor sensor;
+        sensor = new DistSensor(hardwareMap, "distSensor0");
 
 
         waitForStart();
         while (opModeIsActive()){
-            sendTelem("Distance: " + sensor.getVoltage());
+            sendTelem("Distance: " + sensor.getReading());
         }
     }
 

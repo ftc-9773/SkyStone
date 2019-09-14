@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.Utilities.Controllers.PIDController;
 import org.firstinspires.ftc.teamcode.Utilities.json.SafeJsonReader;
 import org.firstinspires.ftc.teamcode.Utilities.misc.Timer;
 
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.Range;
 
 import java.util.Arrays;
@@ -27,7 +26,7 @@ import java.util.Arrays;
  * @author  Zachary Eichenberger , -ftc robocracy 9773
  * @version 1.0
  * */
-
+@Deprecated
 public class DriveUtil {
 
     static final String TAG = "ftc9773_drivePID";

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Logic;
 
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -15,8 +16,6 @@ public class CurveTesting {
     double h;
 
     public CurveTesting(HardwareMap hwmp, Telemetry telemetry){
-        drivebase = new MecanumDrivebase(hwmp, telemetry);
-        gyro = new Gyro(hwmp);
     }
 
     /**

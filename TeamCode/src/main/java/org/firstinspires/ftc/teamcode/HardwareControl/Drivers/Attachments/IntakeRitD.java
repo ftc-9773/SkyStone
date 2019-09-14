@@ -14,10 +14,12 @@ import org.firstinspires.ftc.teamcode.Utilities.json.SafeJsonReader;
 
 
 /**
+ * Attachment for the prototype intake designed during the robot in 3 days challenge.
+ * Configuration information is in IntakeRitD.java
+ *
  * @author  Cadence Weddle,
  * @version 1.0
  */
-
 public class IntakeRitD implements Attachment {
 
     private DcMotor leftIntakeMotor, rightIntakeMotor;
