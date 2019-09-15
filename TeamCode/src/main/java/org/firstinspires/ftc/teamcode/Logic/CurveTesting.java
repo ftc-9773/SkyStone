@@ -12,8 +12,11 @@ public class CurveTesting {
     public MecanumDrivebase drivebase;
     public Gyro gyro;
 
-    double k;
-    double h;
+    public double k;
+    public double h;
+    public double r;
+
+    public double cx, cy;
 
     public CurveTesting(HardwareMap hwmp, Telemetry telemetry){
     }
@@ -27,6 +30,8 @@ public class CurveTesting {
         mx = (x1 + x2) / 2;
         my = (y1 + y2) / 2;
 
+        theta = theta * Math.PI / 180;
+
         double len_to_midpoint = Math.sqrt(mx * mx + my * my);
         double altitude = Math.tan(theta) * len_to_midpoint;
         double other_altitude = len_to_midpoint * len_to_midpoint / altitude;
@@ -35,6 +40,7 @@ public class CurveTesting {
         ry = my - Math.cos(theta) * other_altitude;
 
         double radius = altitude + other_altitude;
+        r = radius;
 
         ///Equation of the circle: radius * radius = (x - rx) ^ 2 + (y - ry) ^ 2
         //So then take the derivitive with respect to both x and y.
@@ -44,10 +50,10 @@ public class CurveTesting {
 
     }
 
-    public double y_prime(double x, double y){
+    public double x_prime(double x, double y){
         return (2 * h - 2 * x) / (2 * y - 2 * k);
     }
-    public double x_prime(double x, double y){
+    public double y_prime(double x, double y){
         return (2 * k - 2 * y) / (2 * x - 2 * h);
     }
 }
