@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Logic;
+package org.firstinspires.ftc.teamcode.Logic.Curves;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -7,7 +7,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumDrivebase;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.Gyro;
 
-public class CurveTesting {
+public class TangentFollower {
 
     public MecanumDrivebase drivebase;
     public Gyro gyro;
@@ -18,7 +18,7 @@ public class CurveTesting {
 
     public double cx, cy;
 
-    public CurveTesting(HardwareMap hwmp, Telemetry telemetry){
+    public TangentFollower(HardwareMap hwmp, Telemetry telemetry){
     }
 
     /**

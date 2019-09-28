@@ -4,21 +4,19 @@ import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumDrivebase;
-import org.firstinspires.ftc.teamcode.Logic.CurveTesting;
+import org.firstinspires.ftc.teamcode.Logic.Curves.TangentFollower;
 
 @TeleOp(name = "CurveThingy")
-public class Ritdteleop extends LinearOpMode {
+public class CurveTesterThingOpMode extends LinearOpMode {
     String TAG = "CURVETESTING";
 
     @Override
     public void runOpMode() {
         double x, y;
         MecanumDrivebase drivebase = new MecanumDrivebase(hardwareMap, telemetry);
-        CurveTesting test = new CurveTesting(hardwareMap, telemetry);
+        TangentFollower test = new TangentFollower(hardwareMap, telemetry);
 
         test.driveinCurve(0,0, 10, 10, 45);
 
