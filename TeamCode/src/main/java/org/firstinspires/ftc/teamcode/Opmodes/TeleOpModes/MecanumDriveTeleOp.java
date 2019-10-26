@@ -1,24 +1,37 @@
-package org.firstinspires.ftc.teamcode.Opmodes;
+package org.firstinspires.ftc.teamcode.Opmodes.TeleOpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumDrivebase;
+import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.Gyro;
+import org.firstinspires.ftc.teamcode.HardwareControl.Robot;
 import org.firstinspires.ftc.teamcode.Utilities.misc.Button;
 
+/**
+ * The purpose is to provide a mecanum drivebase teleop drive system, that tracks the position of the robot in inches. Pressing 'a' will
+ * reset the posiiton.
+ * */
 @TeleOp(name = "RaceCar")
-public class racecar extends LinearOpMode {
+public class MecanumDriveTeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
         MecanumDrivebase drivebase = new MecanumDrivebase(hardwareMap, telemetry);
+        Gyro gyro = new Gyro(hardwareMap);
+        Robot robot = new Robot(drivebase, gyro, hardwareMap);
+
         double lastEncoderPos[];
         double currentEncoderPos[];
 
         double x, y;
         x = 0;
         y = 0;
+
+        double[] readings;
+        double r;
+        double l;
 
         Button a = new Button();
 
@@ -31,8 +44,23 @@ public class racecar extends LinearOpMode {
                 x = 0;
                 y = 0;
             }
-            drivebase.drive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, true);
+
+            double xp = gamepad1.left_stick_x;
+            if (xp < 0.05){
+                xp = 0;
+            }
+            double yp = gamepad1.left_stick_y;
+            if (yp < 0.05){
+                yp = 0;
+            }
+            drivebase.drive(xp, yp, gamepad1.right_stick_x, true);
             drivebase.update();
+
+            readings = robot.getDistSensorReadings();
+            r = readings[0];
+            l = readings[1];
+            telemetry.addLine("R: " + r + " L: " + l);
+
             currentEncoderPos = drivebase.getPos();
             x += getDistX(lastEncoderPos, currentEncoderPos);
             y += getDistY(lastEncoderPos, currentEncoderPos);

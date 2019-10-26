@@ -42,6 +42,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class RasiCommands {
     private LinearOpMode opMode;
     private Telemetry telemetry;
+
+
     public RasiCommands(LinearOpMode o){
         this.opMode = o;
         this.telemetry = o.telemetry;

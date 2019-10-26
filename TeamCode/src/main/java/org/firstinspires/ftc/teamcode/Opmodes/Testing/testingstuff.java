@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Opmodes;
+package org.firstinspires.ftc.teamcode.Opmodes.Testing;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -16,8 +16,11 @@ import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumD
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.Gyro;
 
 
-
-@TeleOp(name = "TestingIMU")
+/**
+ * Test IMU functions.
+ * */
+@Deprecated
+@TeleOp(name = "") // To be removed if necessary
 public class testingstuff extends LinearOpMode {
 
 

@@ -1,0 +1,18 @@
+{
+    "minDistPow": 0.3,
+  "minExitDist": 0.05,
+
+  "rotKp": 0.4,
+  "rotKi": 0.0,
+  "rotKd": 10.,
+  "rotTol": 0.025,
+  "Comment" : "rotTol used to be 0.074533",
+  "rotExitSpeed": 0.01,
+  "rotMinSpeed": 0.1,
+  "maxTurnPow": 0.8,
+
+
+  "headingKp":0.1,
+  "headingKi": 0,
+  "headingKd": 0.0
+}

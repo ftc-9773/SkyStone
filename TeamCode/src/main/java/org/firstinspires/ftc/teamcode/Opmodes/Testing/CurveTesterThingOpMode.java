@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Opmodes;
+package org.firstinspires.ftc.teamcode.Opmodes.Testing;
 
 import android.util.Log;
 
@@ -7,8 +7,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumDrivebase;
 import org.firstinspires.ftc.teamcode.Logic.Curves.TangentFollower;
-
-@TeleOp(name = "CurveThingy")
+/**
+ * Testing a tangent-to-circle follower.
+ * */
+@TeleOp(name = "") // Change if needed
 public class CurveTesterThingOpMode extends LinearOpMode {
     String TAG = "CURVETESTING";
 

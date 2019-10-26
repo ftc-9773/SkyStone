@@ -1,17 +1,21 @@
 package org.firstinspires.ftc.teamcode.Logic.Curves;
 
+import android.util.Log;
+
 public class InnerFollower {
 
     double tol = 1;
     double target = 0.5;
     double finalTheta;
 
-    double r;
-    double h;
-    double k;
+    public double r;
+    public double h;
+    public double k;
 
     double targetX;
     double targetY;
+
+    double finalX, finalY;
 
     double xPow;
     double yPow;
@@ -30,37 +34,53 @@ public class InnerFollower {
         rx = mx + Math.sin(theta) * other_altitude;
         ry = my - Math.cos(theta) * other_altitude;
 
-        double radius = altitude + other_altitude;
+        double radius;
+        radius  = Math.sqrt(rx * rx + ry * ry);
         r = radius;
-
+        Log.d("INNERFOLLOW", "Radius " + r);
         ///Equation of the circle: radius * radius = (x - rx) ^ 2 + (y - ry) ^ 2
         h = rx;
         k = ry;
 
         targetX = targetY = 0;
-        finalTheta = Math.acos((-(x2 * x2 + y2 * y2) + 2 * r * r) / (2 * r * r));
+        finalTheta = Math.acos(-((x2 * x2 + y2 * y2 - 2 * r * r) / (2 * r * r)));
+        finalX = x2;
+        finalY = y2;
     }
 
     //Returns array [xPower, yPower]
-    double[] getXY(double x, double y){
-        if (x - targetX < tol && y - targetY < tol){
+    public double[] getXY(double x, double y){
+        if (Math.abs(x - targetX) < tol && Math.abs(y - targetY) < tol){
             double theta;
-            theta = ((-(x * x + y * y) + 2 * r * r) / (2 * r * r));
+            theta = -(((x * x + y * y - 2 * r * r)) / (2 * r * r));
             theta = Math.acos(theta);
             double targetTheta = (finalTheta - theta) * target + theta;
-
+            Log.d("INNERFOLLOW", "Theta: " + theta);
             targetX = r * Math.cos(targetTheta);
             targetY = r * Math.sin(targetTheta);
+            double[] out = new double[2];
+            out[0] = 0;
+            out[1] = 0;
+            Log.d("INNERFOLLOW", "xp " + out[0] + " yp" + out[1]);
+            return out;
         }
+        if (finalX - x < tol && finalY - y < tol){
+            double[] out = new double[2];
+            out[0] = 0;
+            out[1] = 0;
+            return out;
+        }
+        Log.d("INNERFOLLOW", "" + targetX + " : " + targetY + " : " + x + " : " + y);
         double[] out = normalise(targetX - x, targetY - y);
+        Log.d("INNERFOLLOW", "xp " + out[0] + " yp" + out[1]);
         return out;
     }
 
 
     double[] normalise(double a, double b){
         double []out = new double[2];
-        out[0] = a / (a + b);
-        out[1] = b / (a + b);
+        out[0] = a / Math.sqrt(a * a + b * b);
+        out[1] = b / Math.sqrt(a * a + b * b);
         return out;
     }
 }

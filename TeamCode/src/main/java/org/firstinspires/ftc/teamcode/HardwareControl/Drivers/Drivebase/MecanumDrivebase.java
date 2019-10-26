@@ -36,7 +36,7 @@ public class MecanumDrivebase {
     private double[] motorPowers = new double[4];
 
     Telemetry telemetry;
-    SafeJsonReader reader = new SafeJsonReader("DrivePidVals");
+    SafeJsonReader reader = new SafeJsonReader("DrivePidValues");
 
     public MecanumDrivebase(HardwareMap hwMap, Telemetry telem) {
         // init wheels

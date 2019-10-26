@@ -19,14 +19,18 @@ public class DistSensor {
     }
 
     // Gets distance reading in centimeters
-    public double getReading(){
+    //Mean over the last 5 readings
+    public double getFakeReading(){
         reading[0] = reading[1];
         reading[1] = reading[2];
         reading[2] = reading[3];
         reading[3] = reading[4];
-        reading[4] = sensor.getDistance(DistanceUnit.MM);
+        reading[4] = sensor.getDistance(DistanceUnit.CM);
 
         return (reading[0] + reading[1] + reading[2] + reading[3] + reading[4]) / 5;
+    }
+    public double getReading(){
+        return sensor.getDistance(DistanceUnit.CM);
     }
 
 

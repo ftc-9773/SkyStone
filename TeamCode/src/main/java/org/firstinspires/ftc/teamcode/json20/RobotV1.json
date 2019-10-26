@@ -2,5 +2,8 @@
   "rClawServoClose" : 0.75,
   "lClawServoClose" : 0.25,
   "rClawServoOpen" : 0,
-  "lClawServoOpen" : 1.0
+  "lClawServoOpen" : 1.0,
+
+  "minIntakePow" : 0.05,
+  "onIntakePow"   : 1
 }

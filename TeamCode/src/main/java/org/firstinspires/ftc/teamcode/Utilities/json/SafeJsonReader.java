@@ -34,7 +34,7 @@ import java.io.FileWriter;
         adb pull  /sdcard/FIRST/team9773/json19/myfile.json
 */
 public class SafeJsonReader {
-    private static final String baseDir = "/sdcard/FIRST/team9773/json19"; // must end with a name
+    private static final String baseDir = "/sdcard/FIRST/team9773/json20"; // must end with a name
     private static final String TAG = "ftc9773 SafeJasonReader";
     private static final boolean DEBUG = true;
 

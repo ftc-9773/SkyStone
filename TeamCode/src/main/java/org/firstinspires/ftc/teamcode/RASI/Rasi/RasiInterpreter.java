@@ -65,7 +65,7 @@ public class RasiInterpreter {
             rcHashMap = new HashMap<>();
         }
 
-        for(int x = 0; x < r.getClass().getMethods().length; x++){ //runs for every method in the TeamRasiCommands Class
+        for(int x = 0; x < r.getClass().getMethods().length; x++){ //runs for every method in the RasiCommands Class
             if(r.getClass().getMethods()[x].toString().contains("RasiCommands.")){ //filters out the stuff that java puts there and hides.
                 method = r.getClass().getMethods()[x];
                 methodString = method.toString();
