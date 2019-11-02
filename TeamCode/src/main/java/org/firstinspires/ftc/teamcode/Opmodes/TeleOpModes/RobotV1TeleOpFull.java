@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Opmodes.TeleOpModes;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.Intake;
+import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.Lifts;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumDrivebase;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.Gyro;
 import org.firstinspires.ftc.teamcode.HardwareControl.RobotV1;
@@ -21,7 +22,10 @@ public class RobotV1TeleOpFull extends LinearOpMode {
         Gyro gyro = new Gyro(hardwareMap);
         sendTelemetry("Gyro created");
 
-        RobotV1 robot = new RobotV1(drivebase, gyro, intake);
+        Lifts lifts = new Lifts(hardwareMap);
+        sendTelemetry("Lifts created");
+
+        RobotV1 robot = new RobotV1(drivebase, gyro, intake, lifts);
         sendTelemetry("Robot created");
 
 

@@ -13,7 +13,13 @@
   "rightClawServoReleasePos" : -1,
   "vLiftMaxPos" : 10000000000,
   "hLiftMaxPos" : 10000000000,
-  "minHightForHLift" : 10,
+  "vLiftIdlePos" : 100,
+  "minHeightForHLift" : 10,
+  "minHorizontalToLowerVLIFT" : 10,
+
+  "rotateServoZeroPos" : 0,
+  "rotateServo90Pos" : 0.5,
+  "rotateServoneg90Pos" : -0.5,
 
   "vkp" : 0,
   "vki" : 0,

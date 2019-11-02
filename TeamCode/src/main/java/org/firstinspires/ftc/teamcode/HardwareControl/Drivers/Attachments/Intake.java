@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.teamcode.Utilities.json.SafeJsonReader;
 
@@ -10,11 +11,13 @@ import java.sql.Driver;
 public class Intake implements Attachment{
     public DcMotor leftMotor;
     public DcMotor rightMotor;
+    public TouchSensor touchSensor;
 
     //Private values, keeping track of the current state
     private double pow;
     private double minPow;
     public boolean isOn;
+    public boolean loaded = false;
 
     //config values
     private SafeJsonReader reader;
@@ -29,6 +32,7 @@ public class Intake implements Attachment{
 
         leftMotor = hardwareMap.get(DcMotor.class, "lintakeMotor");
         rightMotor = hardwareMap.get(DcMotor.class, "rintakeMotor");
+        touchSensor = hardwareMap.get(TouchSensor.class, "intakeTouchSensor");
 
         isOn = false;
         off();
@@ -53,6 +57,11 @@ public class Intake implements Attachment{
             this.pow = inPow;
             this.isOn = true;
         }
+    }
+
+    public boolean isLoaded(){
+        loaded = touchSensor.isPressed();
+        return loaded;
     }
 
     public void update(){
