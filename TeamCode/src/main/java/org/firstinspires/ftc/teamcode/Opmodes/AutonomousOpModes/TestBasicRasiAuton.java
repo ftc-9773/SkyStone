@@ -45,8 +45,6 @@ public abstract class TestBasicRasiAuton extends LinearOpMode {
         // DO EVERYTHING
         rasiInterpreter.runRasiActually();
         //rasiInterpreter.run();
-
-        robot.stop();
     }
 
 
