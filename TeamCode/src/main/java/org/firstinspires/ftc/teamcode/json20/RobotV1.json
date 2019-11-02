@@ -5,5 +5,20 @@
   "lClawServoOpen" : 1.0,
 
   "minIntakePow" : 0.05,
-  "onIntakePow"   : 1
+  "onIntakePow"   : 1,
+
+  "leftClawServoGrabPos" : -1,
+  "leftClawServoReleasePos" : -1,
+  "rightClawServoGrabPos" : -1,
+  "rightClawServoReleasePos" : -1,
+  "vLiftMaxPos" : 10000000000,
+  "hLiftMaxPos" : 10000000000,
+  "minHightForHLift" : 10,
+
+  "vkp" : 0,
+  "vki" : 0,
+  "vkd" : 0,
+  "hkp" : 0,
+  "hki" : 0,
+  "hkd" : 0
 }
