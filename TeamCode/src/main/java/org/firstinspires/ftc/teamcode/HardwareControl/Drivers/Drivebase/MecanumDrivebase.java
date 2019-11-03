@@ -5,6 +5,7 @@ import android.util.Log;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Logic.Geometry.Vector;
@@ -47,6 +48,9 @@ public class MecanumDrivebase {
         driveMotors[2] = hwMap.get(DcMotor.class, "bldrive");
         driveMotors[3] = hwMap.get(DcMotor.class, "brdrive");
         //pid coeffs for different motion stuff.
+
+        Servo servoTester;
+        servoTester = hwMap.get(Servo.class,"servoTester");
 
 
         for (DcMotor motor:driveMotors) {

@@ -10,11 +10,12 @@ import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.Gyro;
 import org.firstinspires.ftc.teamcode.HardwareControl.Robot;
 import org.firstinspires.ftc.teamcode.Utilities.misc.Button;
 
+
 /**
  * The purpose is to provide a mecanum drivebase teleop drive system, that tracks the position of the robot in inches. Pressing 'a' will
  * reset the posiiton.
  * */
-@TeleOp(name = "RaceCar")
+@TeleOp(name = "TestRaceCar")
 public class TestDriveTeleOp extends LinearOpMode {
 
     @Override
@@ -24,7 +25,7 @@ public class TestDriveTeleOp extends LinearOpMode {
         Robot robot = new Robot(drivebase, gyro, hardwareMap);
 
         Servo servoTester;
-        servoTester = hardwareMap.servo.get("ServoTester");
+        servoTester = hardwareMap.get(Servo.class,"servoTester");
 
         double lastEncoderPos[];
         double currentEncoderPos[];
@@ -37,11 +38,17 @@ public class TestDriveTeleOp extends LinearOpMode {
         double r;
         double l;
 
+
+        double position = 0.0;
+        servoTester.setPosition(position);
+
         Button a = new Button();
+        Button b = new Button();
 
         lastEncoderPos = drivebase.getPos();
         currentEncoderPos = drivebase.getPos();
         waitForStart();
+
         while(opModeIsActive()){
             a.recordNewValue(gamepad1.a);
             if (a.isJustOn()){
@@ -71,16 +78,18 @@ public class TestDriveTeleOp extends LinearOpMode {
             telemetry.addLine("X: " + x + " Y: " + y);
             telemetry.update();
             lastEncoderPos = currentEncoderPos;
-            boolean intakeSwitch = gamepad1.b;
-            double position = 0.0;
-            if (intakeSwitch) {
-                if (position == 0.0) {
-                    position = 0.5;
-                    servoTester.setPosition(position);
-                }
-                else if (position == 0.5) {
-                    position = 0.0;
-                    servoTester.setPosition(position);
+
+            boolean servoTest = gamepad1.b;
+            b.recordNewValue(gamepad1.b);
+            if (b.isJustOn()) {
+                if (servoTest) {
+                    if (position == 0.0) {
+                        position = 0.3;
+                        servoTester.setPosition(position);
+                    } else {
+                        position = 0.0;
+                        servoTester.setPosition(position);
+                    }
                 }
 
             }
