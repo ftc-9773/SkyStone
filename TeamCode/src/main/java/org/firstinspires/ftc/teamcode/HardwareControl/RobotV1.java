@@ -20,7 +20,7 @@ public class RobotV1 extends Robot {
     Intake intake;
     Lifts lifts;
 
-    public RobotV1(MecanumDrivebase drivebase, Gyro gryo, Intake intake, Lifts lifts){
+    public RobotV1(MecanumDrivebase drivebase, Gyro gyro, Intake intake, Lifts lifts){
         this.lifts = lifts;
         this.intake = intake;
         this.gyro = gyro;
@@ -38,6 +38,8 @@ public class RobotV1 extends Robot {
 
         if (gamepad1.left_trigger > 0.05){
             intake.on();
+        } else {
+            intake.off();
         }
 
         //Toggle hooks

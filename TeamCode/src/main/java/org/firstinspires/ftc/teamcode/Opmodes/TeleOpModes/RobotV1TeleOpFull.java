@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Opmodes.TeleOpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.Intake;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.Lifts;
@@ -8,7 +9,7 @@ import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumD
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.Gyro;
 import org.firstinspires.ftc.teamcode.HardwareControl.RobotV1;
 
-
+@TeleOp(name = "RobotTeleOP Full")
 public class RobotV1TeleOpFull extends LinearOpMode {
 
     @Override

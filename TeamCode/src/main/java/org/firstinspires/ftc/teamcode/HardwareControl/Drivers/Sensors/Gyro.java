@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors;
 
+import android.util.Log;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -47,7 +49,8 @@ public class Gyro {
         imuLeft                         = hardwareMap.get(BNO055IMU.class, "imu");
 
         imuLeft.initialize(parameters);
-
+        Log.d(TAG, imuLeft.toString());
+        assert (imuLeft !=null);
         readImu();
         readImu();
     }
