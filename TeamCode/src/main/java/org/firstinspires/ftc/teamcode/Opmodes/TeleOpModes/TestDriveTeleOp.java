@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Opmodes.TeleOpModes;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumDrivebase;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.Gyro;
@@ -14,7 +15,7 @@ import org.firstinspires.ftc.teamcode.Utilities.misc.Button;
  * reset the posiiton.
  * */
 @TeleOp(name = "RaceCar")
-public class MecanumDriveTeleOp extends LinearOpMode {
+public class TestDriveTeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
