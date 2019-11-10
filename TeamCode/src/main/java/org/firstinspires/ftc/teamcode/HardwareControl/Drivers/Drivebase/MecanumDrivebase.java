@@ -49,8 +49,8 @@ public class MecanumDrivebase {
         driveMotors[3] = hwMap.get(DcMotor.class, "brdrive");
         //pid coeffs for different motion stuff.
 
-        Servo servoTester;
-        servoTester = hwMap.get(Servo.class,"servoTester");
+
+
 
 
         for (DcMotor motor:driveMotors) {

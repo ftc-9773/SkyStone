@@ -65,8 +65,8 @@ public class Intake implements Attachment{
     }
 
     public void update(){
-        this.leftMotor.setPower(pow);
-        this.rightMotor.setPower(-pow);
+        this.leftMotor.setPower(-pow);
+        this.rightMotor.setPower(pow);
     }
 
     public void stop(){

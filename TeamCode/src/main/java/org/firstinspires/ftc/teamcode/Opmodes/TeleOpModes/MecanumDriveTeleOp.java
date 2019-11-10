@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Opmodes.TeleOpModes;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumDrivebase;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.Gyro;
@@ -32,6 +33,13 @@ public class MecanumDriveTeleOp extends LinearOpMode {
         double[] readings;
         double r;
         double l;
+        Servo leftHook;
+        leftHook = hardwareMap.get(Servo.class,"leftHook");
+        Servo rightHook;
+        rightHook = hardwareMap.get(Servo.class,"leftHook");
+
+        Button rb = new Button();
+        double hookPosition = 0.0;
 
         Button a = new Button();
 
@@ -67,6 +75,23 @@ public class MecanumDriveTeleOp extends LinearOpMode {
             telemetry.addLine("X: " + x + " Y: " + y);
             telemetry.update();
             lastEncoderPos = currentEncoderPos;
+
+            boolean hookServos = gamepad1.right_bumper;
+            rb.recordNewValue(gamepad1.right_bumper);
+            if (rb.isJustOn()) {
+                if (hookServos) {
+                    if (hookPosition == 0.0) {
+                        hookPosition = 0.3;
+                        rightHook.setPosition(hookPosition);
+                        leftHook.setPosition(hookPosition);
+                    } else {
+                        hookPosition= 0.0;
+                        rightHook.setPosition(hookPosition);
+                        leftHook.setPosition(hookPosition);
+                    }
+                }
+
+            }
         }
     }
 

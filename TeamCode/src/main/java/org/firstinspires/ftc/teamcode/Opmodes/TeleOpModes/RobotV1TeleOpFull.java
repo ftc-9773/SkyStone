@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Opmodes.TeleOpModes;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.BackHooks;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.Intake;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.Lifts;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumDrivebase;
@@ -26,7 +27,10 @@ public class RobotV1TeleOpFull extends LinearOpMode {
         Lifts lifts = new Lifts(hardwareMap);
         sendTelemetry("Lifts created");
 
-        RobotV1 robot = new RobotV1(drivebase, gyro, intake, lifts);
+        BackHooks backHooks = new BackHooks(hardwareMap);
+        sendTelemetry("Back Hooks interface created");
+
+        RobotV1 robot = new RobotV1(drivebase, gyro, intake, lifts, backHooks, telemetry);
         sendTelemetry("Robot created");
 
 
@@ -48,6 +52,11 @@ public class RobotV1TeleOpFull extends LinearOpMode {
             // interested in seeing cycle time
             long currTime = System.currentTimeMillis();
             telemetry.addData("elapsed time miliseconds", (currTime - lastTime));
+            telemetry.addLine("Vertical Lift pos " + lifts.getVliftPos());
+            telemetry.addLine("H position "  + lifts.getHLiftPos());
+            telemetry.addLine("Target V pos " + lifts.vLiftTargetPos);
+            telemetry.addLine("Target H pos " + lifts.hLiftTargetPos);
+            telemetry.addLine("Intake Loaded  " + intake.isLoaded());
             lastTime = currTime;
 
             telemetry.update();

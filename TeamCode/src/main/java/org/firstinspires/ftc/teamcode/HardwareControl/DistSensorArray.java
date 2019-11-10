@@ -8,15 +8,15 @@ public class DistSensorArray {
     DistSensor rDistSensor, lDistSensor;
 
     public DistSensorArray(HardwareMap hardwareMap){
-        rDistSensor = new DistSensor(hardwareMap, "rdistsensor");
-        lDistSensor = new DistSensor(hardwareMap, "ldistsensor");
+        //rDistSensor = new DistSensor(hardwareMap, "rdistsensor");
+        //lDistSensor = new DistSensor(hardwareMap, "ldistsensor");
     }
 
     public double rReading(){
-        return rDistSensor.getReading();
+        return 0;//return rDistSensor.getReading();
     }
     public double lReading() {
-        return lDistSensor.getReading();
+        return 0;//return lDistSensor.getReading();
     }
     public double diff(){
         return rReading() - lReading();

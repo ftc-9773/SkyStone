@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.BackHooks;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.Intake;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.Lifts;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumDrivebase;
@@ -37,7 +38,10 @@ public abstract class BasicRasiAuton extends LinearOpMode {
         Lifts lifts = new Lifts(hardwareMap);
         sendTelemetry("Lifts created");
 
-        RobotV1 robot = new RobotV1(drivebase,gyro,intake, lifts);
+        BackHooks backHooks = new BackHooks(hardwareMap);
+        sendTelemetry("Created back hooks interface");
+
+        RobotV1 robot = new RobotV1(drivebase,gyro,intake, lifts, backHooks, telemetry);
         sendTelemetry("Robot created");
 
         //sendTelemetry("starting vision...");

@@ -57,14 +57,14 @@ public class TestDriveTeleOp extends LinearOpMode {
             }
 
             double xp = gamepad1.left_stick_x;
-            if (xp < 0.05){
+            if (Math.abs(xp) < 0.05){
                 xp = 0;
             }
             double yp = gamepad1.left_stick_y;
-            if (yp < 0.05){
+            if (Math.abs(yp) < 0.05){
                 yp = 0;
             }
-            drivebase.drive(xp, yp, gamepad1.right_stick_x, true);
+            drivebase.drive(xp, -yp, gamepad1.right_stick_x, true);
             drivebase.update();
 
             readings = robot.getDistSensorReadings();
