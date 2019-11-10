@@ -26,10 +26,15 @@
   "leftBackHookUpPos" : 0,
   "rightBackHookUpPos" : 0,
 
-  "vkp" : 0.01,
-  "vki" : 0.02,
-  "vkd" : 0.03,
+  "vkp" : 0.05,
+  "vki" : 0.0,
+  "vkd" : 0.0,
   "hkp" : 0.2,
   "hki" : 0,
-  "hkd" : 0
+  "hkd" : 0,
+  "vLiftMinPow": 0,
+  "vLiftMaxVelocity" : 0,
+  "hLiftMinPow" : 0,
+  "hLiftMaxVelocity": 0
+
 }

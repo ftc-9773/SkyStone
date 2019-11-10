@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Utilities.Controllers.PIDController;
+import org.firstinspires.ftc.teamcode.Utilities.Controllers.VelocityController;
 import org.firstinspires.ftc.teamcode.Utilities.json.SafeJsonReader;
 
 public class Lifts implements Attachment {
@@ -37,8 +38,9 @@ public class Lifts implements Attachment {
 
     public int minPositiveHPos;
 
-    private PIDController vpid, hpid;
+    private VelocityController vpid, hpid;
     double vkp, vkd, vki, hkp, hkd, hki;
+    double va, ha, vMaxV, hMaxV, vMinPow, hMinPow;
 
 
     /**
@@ -121,11 +123,17 @@ public class Lifts implements Attachment {
         vkp = reader.getDouble("vkp");
         vkd = reader.getDouble("vkd");
         vki = reader.getDouble("vki");
-        vpid = new PIDController(vkp, vki, vkd);
+        vMaxV = reader.getDouble("vLiftMaxVelocity");
+        va = vMaxV / 10; //10 percent of velocity per ms
+        vMinPow = reader.getDouble("vLiftMinPow");
+        vpid = new VelocityController(vMaxV, va, vMinPow, vkp, vki, vkd);
         hkp = reader.getDouble("hkp");
         hkd = reader.getDouble("hkd");
         hki = reader.getDouble("hki");
-        hpid = new PIDController(hkp, hki, hkd);
+        hMaxV = reader.getDouble("hLiftMaxVelocity");
+        ha  = hMaxV / 10;
+        hMinPow = reader.getDouble("hLiftMinPow");
+        hpid = new VelocityController(hMaxV, ha, hMinPow, hkp, hki, hkd);
 
         rotateServoTargetPos = rotateZeroPos;
         Log.d(TAG, "Zero Pos " + vliftZeroPos);
@@ -283,8 +291,8 @@ public class Lifts implements Attachment {
 
     @Override
     public void update() {
-        double vCorrection = vpid.getPIDCorrection(vLiftTargetPos, getVliftPos());
-        double hCorrection = hpid.getPIDCorrection(hLiftTargetPos, getHLiftPos());
+        double vCorrection = vpid.getPower(vLiftTargetPos, getVliftPos());
+        double hCorrection = hpid.getPower(hLiftTargetPos, getHLiftPos());
 
         Log.d(TAG, "VCORRECTION " + vCorrection);
         Log.d(TAG, "hcorrection" + hCorrection);
@@ -305,11 +313,9 @@ public class Lifts implements Attachment {
         }
 
         vCorrection = bound(-1, 1, -vCorrection);
-        if (vCorrection < 0) {
-            vCorrection *= 0.75;
-        }
+
         if (Math.abs(getVliftPos() - vLiftTargetPos) < 15 && vLiftTargetPos != vliftZeroPos) {
-            vCorrection = 0.01;
+            vCorrection = 0;
         }
         setVLiftPow(vCorrection);
         //setHLiftPow(bound(-1, 1, -hCorrection));
