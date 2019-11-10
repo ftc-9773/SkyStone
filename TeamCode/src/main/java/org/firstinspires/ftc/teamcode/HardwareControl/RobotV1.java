@@ -45,10 +45,12 @@ public class RobotV1 extends Robot {
         if (Math.abs(xp) < 0.06){xp = 0;}
         if (Math.abs(yp) < 0.06){yp = 0;}
         if (Math.abs(rp) < 0.06){rp = 0;}
-        drivebase.drive(xp, yp, rp, true);
+        drivebase.drive(xp, -yp, rp, true);
 
         if (gamepad1.left_trigger > 0.05){
             intake.on();
+        } else if (gamepad1.right_trigger > 0.05){
+            intake.reverse();
         } else {
             intake.off();
         }

@@ -49,6 +49,11 @@ public class Intake implements Attachment{
         this.isOn = true;
     }
 
+    public void reverse(){
+        this.pow = -onPow;
+        this.isOn = true;
+    }
+
     /**
      * For manually setting the power, if you want to do that for some reason.
      * */
