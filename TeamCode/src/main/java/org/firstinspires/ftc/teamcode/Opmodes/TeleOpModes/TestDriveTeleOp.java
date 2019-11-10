@@ -44,6 +44,10 @@ public class TestDriveTeleOp extends LinearOpMode {
 
         Button a = new Button();
         Button b = new Button();
+        Button xButton = new Button();
+        boolean inverseCondition = false;
+
+
 
         Button downDPad = new Button();
         boolean condition = false;
@@ -90,6 +94,38 @@ public class TestDriveTeleOp extends LinearOpMode {
                 drivebase.drive(xp, -yp, gamepad1.right_stick_x, true);
                 drivebase.update();
             }
+
+            xButton.recordNewValue(gamepad1.x);
+            if (xButton.isJustOn()) {
+                if (inverseCondition == false) {
+                    inverseCondition = true;
+                } else {
+                    inverseCondition = false;
+                }
+            }
+
+            if (inverseCondition) {
+                double invXp = -(gamepad1.left_stick_x);
+                double invYp = -(gamepad1.left_stick_y);
+
+                if (Math.abs(invXp) < 0.05){
+                    invXp = 0;
+                }
+
+                if (Math.abs(invYp) < 0.05){
+                    invYp = 0;
+                }
+                drivebase.drive((invXp / 1.75), (-invYp / 1.75), gamepad1.right_stick_x, true);
+                drivebase.update();
+            }
+
+
+
+
+
+
+
+
 
             readings = robot.getDistSensorReadings();
             r = readings[0];
