@@ -45,6 +45,9 @@ public class TestDriveTeleOp extends LinearOpMode {
         Button a = new Button();
         Button b = new Button();
 
+        Button downDPad = new Button();
+        boolean condition = false;
+
         lastEncoderPos = drivebase.getPos();
         currentEncoderPos = drivebase.getPos();
         waitForStart();
@@ -57,15 +60,36 @@ public class TestDriveTeleOp extends LinearOpMode {
             }
 
             double xp = gamepad1.left_stick_x;
+            boolean dDPad = gamepad1.dpad_down;
+            downDPad.recordNewValue(gamepad1.dpad_down);
+            if (downDPad.isJustOn()) {
+                if (condition == false) {
+                    condition = true;
+                }
+                else {
+                    condition = false;
+                }
+            }
+
+
             if (Math.abs(xp) < 0.05){
                 xp = 0;
             }
+
             double yp = gamepad1.left_stick_y;
             if (Math.abs(yp) < 0.05){
                 yp = 0;
             }
-            drivebase.drive(xp, -yp, gamepad1.right_stick_x, true);
-            drivebase.update();
+
+
+            if (condition) {
+                drivebase.drive((xp / 1.75), (-yp / 1.75), gamepad1.right_stick_x, true);
+                drivebase.update();
+            }
+            else {
+                drivebase.drive(xp, -yp, gamepad1.right_stick_x, true);
+                drivebase.update();
+            }
 
             readings = robot.getDistSensorReadings();
             r = readings[0];
