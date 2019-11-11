@@ -10,12 +10,12 @@
   "leftClawServoGrabPos" : 0,
   "leftClawServoReleasePos" : 1,
   "rightClawServoGrabPos" : 0,
-  "rightClawServoReleasePos" : 1,
+  "rightClawServoReleasePos" : -1,
   "vLiftMaxPos" : 5000,
-  "hLiftMaxPos" : 10000000000,
-  "vLiftIdlePos" : 0,
+  "hLiftMaxPos" : 235,
+  "vLiftIdlePos" : 410,
   "minHeightForHLift" : 240,
-  "minHorizontalToLowerVLIFT" : 10,
+  "minHorizontalToLowerVLIFT" : 0,
 
   "rotateServoZeroPos" : 0,
   "rotateServo90Pos" : 0.5,
@@ -26,15 +26,15 @@
   "leftBackHookUpPos" : 0,
   "rightBackHookUpPos" : 0,
 
-  "vkp" : 0.05,
-  "vki" : 0.0,
-  "vkd" : 0.0,
-  "hkp" : 0.2,
+  "vkp" : 0.005,
+  "vki" : 1.1,
+  "vkd" : 0.22,
+  "hkp" : 0.01,
   "hki" : 0,
   "hkd" : 0,
-  "vLiftMinPow": 0,
+  "vLiftMinPow": -1,
   "vLiftMaxVelocity" : 0,
-  "hLiftMinPow" : 0,
+  "hLiftMinPow" : -1,
   "hLiftMaxVelocity": 0
 
 }

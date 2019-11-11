@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.HardwareControl;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -21,8 +20,10 @@ public class RobotV1 extends Robot {
     //TeleOP variables
     double xp, yp, rp;
     double numBlocksHigh = 0;
-    Button X = new Button(), B = new Button(), RB = new Button();
+    Button GP2X = new Button(), B = new Button(), RB = new Button(), DPDOWN = new Button(), GP1X = new Button();
     boolean hooksDown = false;
+    boolean slow = false;
+    double drive_direction = 1;
     Telemetry telemetry;
 
     Intake intake;
@@ -45,10 +46,26 @@ public class RobotV1 extends Robot {
         if (Math.abs(xp) < 0.06){xp = 0;}
         if (Math.abs(yp) < 0.06){yp = 0;}
         if (Math.abs(rp) < 0.06){rp = 0;}
-        drivebase.drive(xp, -yp, rp, true);
+        GP1X.recordNewValue(gamepad1.x);
+        DPDOWN.recordNewValue(gamepad1.dpad_down);
+        if (GP1X.isJustOff()){
+            drive_direction *= -1;
+        }
+        if (DPDOWN.isJustOff()){ //Slow mode
+            slow = !slow;
+        }
+        if (slow){ //Slow mode is 60% speed
+            xp *= 0.6;
+            yp *= 0.6;
+            rp *= 0.6;
+        }
+        drivebase.drive(drive_direction * xp,drive_direction *  -yp, drive_direction * rp, true);
 
         if (gamepad1.left_trigger > 0.05){
             intake.on();
+            if (lifts.getVliftPos() == 0){
+
+            }
         } else if (gamepad1.right_trigger > 0.05){
             intake.reverse();
         } else {
@@ -58,8 +75,8 @@ public class RobotV1 extends Robot {
         //Toggle hooks
         RB.recordNewValue(gamepad1.right_bumper);
         if (RB.isJustOff()){
-
-
+            if (hooksDown){backHooks.up();}else{backHooks.down();}
+            hooksDown = !hooksDown;
         }
 
         //Grab or release block
@@ -94,14 +111,17 @@ public class RobotV1 extends Robot {
             numBlocksHigh += 1;
             lifts.setvLiftPos(numBlocksHigh);
         }
-        X.recordNewValue(gamepad2.x);
-        if (X.isJustOff()) {
+        GP2X.recordNewValue(gamepad2.x);
+        if (GP2X.isJustOff()) {
             numBlocksHigh -= 1;
             lifts.setvLiftPos(numBlocksHigh);
         }
 
         if (Math.abs(gamepad2.left_stick_y) > 0.05) {
-            lifts.adjustHLift(gamepad2.left_stick_y);
+            //lifts.adjustHLift(gamepad2.left_stick_y);
+            lifts.setHLiftPow(0.5 * gamepad2.left_stick_y);
+        } else {
+            lifts.setHLiftPow(0);
         }
         if (gamepad2.left_trigger > 0.1){
             //lifts.setVLiftPow(gamepad2.left_trigger);

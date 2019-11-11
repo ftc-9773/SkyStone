@@ -35,10 +35,11 @@ public class Lifts implements Attachment {
     public int vLiftTargetPos = 0, hLiftTargetPos = 0;
     int minVPosForH;
     int minHPosForLowerV; // Minimum distance needed to extend the horizontal lift to lower the vertical lift passed minVPosForH
-
+    boolean magical_boolean = false;
     public int minPositiveHPos;
 
-    private VelocityController vpid, hpid;
+    private PIDController vpid, hpid;
+    //private PIDController vpid, hpid;
     double vkp, vkd, vki, hkp, hkd, hki;
     double va, ha, vMaxV, hMaxV, vMinPow, hMinPow;
 
@@ -123,17 +124,11 @@ public class Lifts implements Attachment {
         vkp = reader.getDouble("vkp");
         vkd = reader.getDouble("vkd");
         vki = reader.getDouble("vki");
-        vMaxV = reader.getDouble("vLiftMaxVelocity");
-        va = vMaxV / 10; //10 percent of velocity per ms
-        vMinPow = reader.getDouble("vLiftMinPow");
-        vpid = new VelocityController(vMaxV, va, vMinPow, vkp, vki, vkd);
+        vpid = new PIDController(vkp, vki, vkd);
         hkp = reader.getDouble("hkp");
         hkd = reader.getDouble("hkd");
         hki = reader.getDouble("hki");
-        hMaxV = reader.getDouble("hLiftMaxVelocity");
-        ha  = hMaxV / 10;
-        hMinPow = reader.getDouble("hLiftMinPow");
-        hpid = new VelocityController(hMaxV, ha, hMinPow, hkp, hki, hkd);
+        hpid = new PIDController(hkp, hki, hkd);
 
         rotateServoTargetPos = rotateZeroPos;
         Log.d(TAG, "Zero Pos " + vliftZeroPos);
@@ -172,8 +167,10 @@ public class Lifts implements Attachment {
     public VerticalLiftStates checkVLiftState(){
         if (getVliftPos() <= minVPosForH){
             vLiftState = VerticalLiftStates.DOWN;
+            Log.d(TAG, "State of Vertical Lift: " + vLiftState);
         } else if (getVliftPos() > minVPosForH){
             vLiftState = VerticalLiftStates.UP;
+            Log.d(TAG, "State of Vertical Lift: " + vLiftState);
         } else {
             Log.e(TAG, "An invalid Horizontal Lift position was reached with position " + getHLiftPos());
         }
@@ -227,7 +224,7 @@ public class Lifts implements Attachment {
     }
 
     public void grabBlock(){
-        if(getVliftPos() >= vliftZeroPos || false){
+        if(getVliftPos() >= vliftZeroPos && false){
             vLiftTargetPos = vliftZeroPos;
             waitingToGrabBlock = true;
         } else {
@@ -248,12 +245,14 @@ public class Lifts implements Attachment {
         return -vLiftMotor.getCurrentPosition();
     }
 
+    private int getRawHLift(){ return -hLiftMotor.getCurrentPosition();}
+
     public int getVliftPos(){
         return getRawVlift() + vliftZeroPos;
     }
 
     public int getHLiftPos(){
-        return hLiftMotor.getCurrentPosition() - hliftZeroPos;
+        return getRawHLift();
     }
 
     public boolean hLiftIsRetracted(){
@@ -267,35 +266,24 @@ public class Lifts implements Attachment {
     }
 
     public void adjustHLift(double pow){
-        if (hLiftTargetPos < minHPosForLowerV && pow > 0){
-            hLiftTargetPos = minHPosForLowerV;
-            return;
-        } else if (hLiftTargetPos < minHPosForLowerV) {
-            hLiftTargetPos = hliftZeroPos;
-        }
-        hLiftTargetPos = (int) bound(hliftZeroPos, hLiftMaxPos, hLiftTargetPos + 200 * pow);
-        if (getHLiftPos() > minHPosForLowerV && hLiftTargetPos < minHPosForLowerV){
-            hLiftTargetPos = hliftZeroPos;
-        }
+        hLiftTargetPos = (int) bound(hliftZeroPos, hLiftMaxPos, hLiftTargetPos + 10 * pow);
     }
 
     public void setVLiftPow(double pow){
         vLiftMotor.setPower(pow);
     }
 
-    private void setHLiftPow(double pow){
-        if (getVliftPos() > minVPosForH){
+    public void setHLiftPow(double pow){
         hLiftMotor.setPower(pow);
-        }
     }
 
     @Override
     public void update() {
-        double vCorrection = vpid.getPower(vLiftTargetPos, getVliftPos());
-        double hCorrection = hpid.getPower(hLiftTargetPos, getHLiftPos());
+        double vCorrection = vpid.getPIDCorrection(vLiftTargetPos, getVliftPos());
+        double hCorrection = hpid.getPIDCorrection(hLiftTargetPos, getHLiftPos());
 
         Log.d(TAG, "VCORRECTION " + vCorrection);
-        Log.d(TAG, "hcorrection" + hCorrection);
+        Log.d(TAG, "hcorrection " + hCorrection);
         Log.d(TAG, "Vpos " + getVliftPos());
         Log.d(TAG, "Hpos " + getHLiftPos());
         Log.d(TAG, "vTarget  " + vLiftTargetPos);
@@ -312,13 +300,13 @@ public class Lifts implements Attachment {
             vLiftTargetPos = targetVLiftPos;
         }
 
-        vCorrection = bound(-1, 1, -vCorrection);
-
-        if (Math.abs(getVliftPos() - vLiftTargetPos) < 15 && vLiftTargetPos != vliftZeroPos) {
+        vCorrection = bound(-1, 1, -vCorrection); //Correct the sign. According to the hardware: counterclockwise = pos, clockwise = neg. Unfortunately, this is backwards with up and down. Therefore, this correction. Same for the vertical lift.
+        if (getVliftPos() - targetVLiftPos < 10 && getVliftPos() - targetVLiftPos > 0){
             vCorrection = 0;
         }
+        hCorrection = bound(-1, 1, -hCorrection); // Correct the sign
         setVLiftPow(vCorrection);
-        //setHLiftPow(bound(-1, 1, -hCorrection));
+        //setHLiftPow(bound(-1, 1, hCorrection));
 
         rightClawServo.setPosition(rightServoTargetPos);
         leftClawServo.setPosition(leftServoTargetPos);
