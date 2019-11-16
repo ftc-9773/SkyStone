@@ -63,9 +63,7 @@ public class RobotV1 extends Robot {
 
         if (gamepad1.left_trigger > 0.05){
             intake.on();
-            if (lifts.getVliftPos() == 0){
-
-            }
+            lifts.intake();
         } else if (gamepad1.right_trigger > 0.05){
             intake.reverse();
         } else {
@@ -78,6 +76,7 @@ public class RobotV1 extends Robot {
             if (hooksDown){backHooks.up();}else{backHooks.down();}
             hooksDown = !hooksDown;
         }
+        //THE FOLLOWING IS GAMEPAD 2
 
         //Grab or release block
         if (gamepad2.left_bumper){
@@ -103,8 +102,7 @@ public class RobotV1 extends Robot {
         }
         //Hold Y button to do this.
         if (gamepad2.y) {
-            lifts.setHLiftPos(lifts.minPositiveHPos);
-
+            lifts.setvLiftPos(numBlocksHigh);
         }
         B.recordNewValue(gamepad2.b);
         if (B.isJustOff()){
@@ -144,6 +142,7 @@ public class RobotV1 extends Robot {
         intake.update();
         heading = getHeading();
         lifts.update();
+        backHooks.update();
     }
 
     public void stop(){}

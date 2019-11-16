@@ -7,13 +7,13 @@
   "minIntakePow" : 0.05,
   "onIntakePow"   : 1,
 
-  "leftClawServoGrabPos" : 0,
-  "leftClawServoReleasePos" : 1,
-  "rightClawServoGrabPos" : 0,
-  "rightClawServoReleasePos" : -1,
+  "leftClawServoGrabPos" : 0.3,
+  "leftClawServoReleasePos" : 0.5,
+  "rightClawServoGrabPos" : 0.3,
+  "rightClawServoReleasePos" : -0.5,
   "vLiftMaxPos" : 5000,
   "hLiftMaxPos" : 235,
-  "vLiftIdlePos" : 410,
+  "vLiftIdlePos" : 370,
   "minHeightForHLift" : 240,
   "minHorizontalToLowerVLIFT" : 0,
 
@@ -21,8 +21,8 @@
   "rotateServo90Pos" : 0.5,
   "rotateServoneg90Pos" : -0.5,
 
-  "leftBackHookDownPos" : 0,
-  "rightBackHookDownPos" : 0,
+  "leftBackHookDownPos" : -0.2,
+  "rightBackHookDownPos" : 0.2,
   "leftBackHookUpPos" : 0,
   "rightBackHookUpPos" : 0,
 
