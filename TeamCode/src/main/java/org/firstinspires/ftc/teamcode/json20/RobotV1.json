@@ -17,9 +17,9 @@
   "minHeightForHLift" : 240,
   "minHorizontalToLowerVLIFT" : 0,
 
-  "rotateServoZeroPos" : 0.1,
-  "rotateServo90Pos" : 0.3,
-  "rotateServo180Pos" : 0.66,
+  "rotateServoZeroPos" : 0.09,
+  "rotateServo90Pos" : 0.47,
+  "rotateServo180Pos" : 0.9,
 
   "leftBackHookDownPos" : 1,
   "rightBackHookDownPos" : 1,
