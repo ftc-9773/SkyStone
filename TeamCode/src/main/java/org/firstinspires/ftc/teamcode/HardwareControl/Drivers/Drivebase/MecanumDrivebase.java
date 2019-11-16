@@ -131,7 +131,7 @@ public class MecanumDrivebase {
         for (int i = 0; i<4; i++) {
             if(slowdownMode) driveMotors[i].setPower(motorPowers[i]*slowdownScaleFactor);
             else driveMotors[i].setPower(motorPowers[i]);
-        /*Log.d("Drivebase", "Wrote power " + motorPowers[i] + " to motor " + i); */
+            Log.d("Drivebase", "Wrote power " + motorPowers[i] + " to motor " + i);
         }
     }
 
@@ -147,7 +147,7 @@ public class MecanumDrivebase {
         return value;
     }
 
-    public void runWithEncoders(){for(DcMotor d:driveMotors){ d.setMode(DcMotor.RunMode.RUN_USING_ENCODER);}}
+    public void runWithEncoders(){for(DcMotor d:driveMotors){ d .setMode(DcMotor.RunMode.RUN_USING_ENCODER);}}
     public void runWithoutEncoders() { for (DcMotor d:driveMotors) {d.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);}}
     public void runToPosition(){for(DcMotor d:driveMotors){
         //d.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Utilities.Controllers.PIDController;
-import org.firstinspires.ftc.teamcode.Utilities.Controllers.VelocityController;
 import org.firstinspires.ftc.teamcode.Utilities.json.SafeJsonReader;
 
 public class Lifts implements Attachment {
@@ -27,7 +26,7 @@ public class Lifts implements Attachment {
 
     double leftClawServoGrabPos, rightClawServoGrabPos, leftClawServoReleasePos, rightClawServoReleasePos;
     double leftServoTargetPos, rightServoTargetPos, rotateServoTargetPos;
-    double rotateZeroPos, rotate90Pos, rotateneg90Pos;
+    double rotateZeroPos, rotate90Pos, rotate180Pos;
 
     int vLiftMaxPos;
     int hLiftMaxPos;
@@ -111,7 +110,7 @@ public class Lifts implements Attachment {
         rightClawServoReleasePos = reader.getDouble("rightClawServoReleasePos");
         rotateZeroPos = reader.getDouble("rotateServoZeroPos");
         rotate90Pos = reader.getDouble("rotateServo90Pos");
-        rotateneg90Pos = reader.getDouble("rotateServoneg90Pos");
+        rotate180Pos = reader.getDouble("rotateServo180Pos");
 
         vLiftMaxPos = reader.getInt("vLiftMaxPos");
         vliftZeroPos = getVliftPos();
@@ -139,12 +138,7 @@ public class Lifts implements Attachment {
 
         //releaseBlock();
         //update();
-        //rotateServo.setPosition(0.5);
-        rotateServo.setPosition(0.1);
-        Log.d(TAG, "TESTING ROTATE SERVO " + rotateServo.getPosition());
-        rotateServo.setPosition(0.2);
-        Log.d(TAG, "TESTING ROTATE SERVO " + rotateServo.getPosition());
-
+        rotateServo.setDirection(Servo.Direction.REVERSE);
     }
 
     //Returns both Hlift and Vlift to state to intake another block.
@@ -195,17 +189,22 @@ public class Lifts implements Attachment {
     //Right now, in encoder ticks
     public void setHLiftPos(int pos){
         hLiftTargetPos = (int) bound(hliftZeroPos, hLiftMaxPos, pos);
-
     }
 
     public void rotateClaw(double speed){
-        rotateServoTargetPos = bound(rotateneg90Pos, rotate90Pos, rotateServoTargetPos + 0.01 * speed);
+        rotateServoTargetPos = bound(rotate180Pos, rotate90Pos, rotateServoTargetPos + 0.1 * speed);
     }
-    /**
-     * @param direction: either -1 or 1 depending on which way you want to rotate 90 degrees.
-     * */
-    public void rotateClaw90(double direction){
-        rotateServoTargetPos = bound(rotateneg90Pos, rotate90Pos, rotateServoTargetPos + direction * (rotate90Pos + rotateneg90Pos) / 2);
+
+    public void setClawRot(double pos){
+        rotateServoTargetPos = pos;
+    }
+
+    public void rotateClaw90(){
+        rotateServoTargetPos = rotate90Pos;
+    }
+
+    public void rotateClaw180(){
+        rotateServoTargetPos = rotate180Pos;
     }
 
     public void resetClawtoZero(){
@@ -243,7 +242,7 @@ public class Lifts implements Attachment {
     }
 
     public void adjustVLift(double pow){
-        vLiftTargetPos = (int)bound(vliftZeroPos, vLiftMaxPos, vLiftTargetPos + 50 * pow);
+        vLiftTargetPos = (int)bound(vliftZeroPos, vLiftMaxPos, vLiftTargetPos + 100 * pow);
 
     }
 
@@ -286,6 +285,7 @@ public class Lifts implements Attachment {
 
         rightClawServo.setPosition(rightServoTargetPos);
         leftClawServo.setPosition(leftServoTargetPos);
+        rotateServo.setPosition(rotateServoTargetPos);
         Log.d(TAG, "Right target pos " + rightServoTargetPos);
         Log.d(TAG, "Right Curr pos " + rightClawServo.getPosition());
         Log.d(TAG, "Left target pos " + leftServoTargetPos);

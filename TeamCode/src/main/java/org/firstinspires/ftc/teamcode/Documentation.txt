@@ -1,0 +1,25 @@
+
+Directory Structure:
+ - Teamcode
+ - - Hardware Control: For directly interfacing with the hardware. Code here shouldn't do much more than provide more abstract functions to control attachments.
+       (cont.) The top level class for this directory is Robot (or RobotV1) which offer general control of the robot
+     - Drivers: Control of specific attachments
+       - Attachments: For controlling things that influence the environment
+       - Drivebase: For controlling the drivebase.
+       - Sensors: For controlling things that read from the environment
+ - - Logic: For controlling the robot as a whole, doing things such as autonomous driving.
+     - Curves: For driving in circles
+     - Geometry: OUTDATED FOLDER for possibly doing something w/ path planning
+     - Graphs: OUTDATED FOLDER for possibly doing something w/ path planning
+     - Pathfinding: INCOMPLETE FOLDER for possibly doing something w/ path planning
+     - CLASS DriveUtil: for autonomous driving
+ - - Opmodes
+     - AutonomousOpModes: Contains autonomous opmodes
+       - ABSTRACT CLASS BasicRasiAuton: Extend this class to create a rasi opmode. More instructions in the class
+     - TeleOpModes: Contains teleOpModes
+     - Testing: Contains miscellaneous opmodes
+ - - RASI
+     - guides: instructions for how to use RASI
+     - Rasi:
+ - - Utilities
+ - - json20

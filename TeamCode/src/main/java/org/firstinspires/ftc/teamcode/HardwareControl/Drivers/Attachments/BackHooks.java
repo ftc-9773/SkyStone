@@ -21,7 +21,7 @@ public class BackHooks implements Attachment {
         rightDownPos = reader.getDouble("rightBackHookDownPos");
         leftUpPos = reader.getDouble("leftBackHookUpPos");
         rightUpPos = reader.getDouble("rightBackHookUpPos");
-
+        up();
     }
 
     public void down(){
@@ -36,7 +36,7 @@ public class BackHooks implements Attachment {
 
     @Override
     public void stop() {
-        down();
+        up();
         update();
     }
 

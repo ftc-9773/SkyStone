@@ -14,13 +14,11 @@ import org.firstinspires.ftc.teamcode.Utilities.misc.Button;
 public class RobotV1 extends Robot {
     double x = 0, y = 0;
 
-    Servo leftHook;
-    Servo rightHook;
 
     //TeleOP variables
     double xp, yp, rp;
     double numBlocksHigh = 0;
-    Button GP2X = new Button(), B = new Button(), RB = new Button(), DPDOWN = new Button(), GP1X = new Button();
+    Button GP2X = new Button(), B = new Button(), RB = new Button(), DPDOWN = new Button(), GP1X = new Button(), DPR = new Button(), DPL = new Button(), DPD = new Button();
     boolean hooksDown = false;
     boolean slow = false;
     double drive_direction = 1;
@@ -29,6 +27,7 @@ public class RobotV1 extends Robot {
     Intake intake;
     BackHooks backHooks;
     Lifts lifts;
+    double clawPos = 0;
 
     public RobotV1(MecanumDrivebase drivebase, Gyro gyro, Intake intake, Lifts lifts, BackHooks backHooks, Telemetry telemetry){
         this.lifts = lifts;
@@ -59,7 +58,7 @@ public class RobotV1 extends Robot {
             yp *= 0.6;
             rp *= 0.6;
         }
-        drivebase.drive(drive_direction * xp,drive_direction *  -yp, drive_direction * rp, true);
+        drivebase.drive(drive_direction * xp,drive_direction *  -yp, rp, true);
 
         if (gamepad1.left_trigger > 0.05){
             intake.on();
@@ -76,6 +75,7 @@ public class RobotV1 extends Robot {
             if (hooksDown){backHooks.up();}else{backHooks.down();}
             hooksDown = !hooksDown;
         }
+
         //THE FOLLOWING IS GAMEPAD 2
 
         //Grab or release block
@@ -86,13 +86,14 @@ public class RobotV1 extends Robot {
         }
 
         //Rotate claw
-        if (gamepad2.dpad_left){
-            lifts.rotateClaw90(-1);
-        } else if (gamepad2.dpad_right){
-            lifts.rotateClaw90(1);
-        } else if (Math.abs(gamepad2.right_stick_x) > 0.05){
-            lifts.rotateClaw(gamepad2.right_stick_x);
-        } else if (gamepad2.left_stick_button){
+        DPL.recordNewValue(gamepad2.dpad_left);
+        DPR.recordNewValue(gamepad2.dpad_right);
+        DPD.recordNewValue(gamepad2.dpad_down);
+        if (DPL.isJustOn()){
+            lifts.rotateClaw90();
+        } else if (DPR.isJustOn()){
+            lifts.rotateClaw180();
+        } else if (DPD.isJustOn()){
             lifts.resetClawtoZero();
         }
 
@@ -102,6 +103,7 @@ public class RobotV1 extends Robot {
         }
         //Hold Y button to do this.
         if (gamepad2.y) {
+            telemetry.addLine("Set to number of blocks " + numBlocksHigh);
             lifts.setvLiftPos(numBlocksHigh);
         }
         B.recordNewValue(gamepad2.b);
@@ -121,11 +123,9 @@ public class RobotV1 extends Robot {
         } else {
             lifts.setHLiftPow(0);
         }
-        if (gamepad2.left_trigger > 0.1){
+        if (Math.abs(gamepad2.right_stick_y) > 0.05){
             //lifts.setVLiftPow(gamepad2.left_trigger);
-            lifts.adjustVLift(gamepad2.left_trigger);
-        } else if (gamepad2.right_trigger > 0.1){
-            lifts.adjustVLift(-gamepad2.right_trigger);
+            lifts.adjustVLift(- gamepad2.right_stick_y);
         }
 
     }

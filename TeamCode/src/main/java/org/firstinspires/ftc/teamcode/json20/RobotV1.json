@@ -17,14 +17,14 @@
   "minHeightForHLift" : 240,
   "minHorizontalToLowerVLIFT" : 0,
 
-  "rotateServoZeroPos" : 0,
-  "rotateServo90Pos" : 0.5,
-  "rotateServoneg90Pos" : -0.5,
+  "rotateServoZeroPos" : 0.1,
+  "rotateServo90Pos" : 0.3,
+  "rotateServo180Pos" : 0.66,
 
-  "leftBackHookDownPos" : -0.2,
-  "rightBackHookDownPos" : 0.2,
-  "leftBackHookUpPos" : 0,
-  "rightBackHookUpPos" : 0,
+  "leftBackHookDownPos" : 1,
+  "rightBackHookDownPos" : 1,
+  "leftBackHookUpPos" : 1,
+  "rightBackHookUpPos" : 1,
 
   "vkp" : 0.005,
   "vki" : 1.1,
