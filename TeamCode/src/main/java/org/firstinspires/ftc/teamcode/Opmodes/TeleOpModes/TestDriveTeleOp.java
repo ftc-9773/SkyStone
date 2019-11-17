@@ -3,12 +3,14 @@ package org.firstinspires.ftc.teamcode.Opmodes.TeleOpModes;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumDrivebase;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.Gyro;
 import org.firstinspires.ftc.teamcode.HardwareControl.Robot;
 import org.firstinspires.ftc.teamcode.Utilities.misc.Button;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
 /**
@@ -18,17 +20,21 @@ import org.firstinspires.ftc.teamcode.Utilities.misc.Button;
 @TeleOp(name = "TestRaceCar")
 public class TestDriveTeleOp extends LinearOpMode {
 
+    private DistanceSensor sensorRange;
     @Override
     public void runOpMode() throws InterruptedException {
         MecanumDrivebase drivebase = new MecanumDrivebase(hardwareMap, telemetry);
         Gyro gyro = new Gyro(hardwareMap);
         Robot robot = new Robot(drivebase, gyro, hardwareMap);
+        DistanceSensor sensorRange;
 
         Servo servoTester;
         servoTester = hardwareMap.get(Servo.class,"servoTester");
 
         double lastEncoderPos[];
         double currentEncoderPos[];
+
+        sensorRange = hardwareMap.get(DistanceSensor.class, "sensor_range");
 
         double x, y;
         x = 0;
@@ -120,11 +126,9 @@ public class TestDriveTeleOp extends LinearOpMode {
             }
 
 
-
-
-
-
-
+            telemetry.addData("deviceName",sensorRange.getDeviceName());
+            telemetry.addData("range", String.format("%.01f in", sensorRange.getDistance(DistanceUnit.INCH)));
+            telemetry.update();
 
 
             readings = robot.getDistSensorReadings();

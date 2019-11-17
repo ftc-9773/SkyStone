@@ -72,6 +72,7 @@ public class MecanumDriveTeleOp extends LinearOpMode {
             currentEncoderPos = drivebase.getPos();
             x += getDistX(lastEncoderPos, currentEncoderPos);
             y += getDistY(lastEncoderPos, currentEncoderPos);
+            y += getDistY(lastEncoderPos, currentEncoderPos);
             telemetry.addLine("X: " + x + " Y: " + y);
             telemetry.update();
             lastEncoderPos = currentEncoderPos;
