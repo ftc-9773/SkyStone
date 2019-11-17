@@ -75,9 +75,16 @@ public class RobotV1 extends Robot {
 
         //Toggle hooks
         RB.recordNewValue(gamepad1.right_bumper);
-        if (RB.isJustOff()){
-            if (hooksDown){backHooks.up();}else{backHooks.down();}
-            hooksDown = !hooksDown;
+        if (RB.isJustOn()){
+            if (hooksDown){
+                backHooks.up();
+                backHooks.update();
+                hooksDown = !hooksDown;
+            }else{
+                backHooks.down();
+                backHooks.update();
+                hooksDown = !hooksDown;
+            }
         }
 
         //THE FOLLOWING IS GAMEPAD 2
@@ -128,7 +135,7 @@ public class RobotV1 extends Robot {
 
         if (Math.abs(gamepad2.left_stick_y) > 0.05) {
             //lifts.adjustHLift(gamepad2.left_stick_y);
-            lifts.setHLiftPow(0.35 * gamepad2.left_stick_y);
+            lifts.setHLiftPow(0.3 * gamepad2.left_stick_y);
         } else {
             lifts.setHLiftPow(0);
         }
