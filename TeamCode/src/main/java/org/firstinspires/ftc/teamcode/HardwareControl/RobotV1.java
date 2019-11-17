@@ -47,15 +47,15 @@ public class RobotV1 extends Robot {
         if (Math.abs(rp) < 0.06){rp = 0;}
         GP1X.recordNewValue(gamepad1.x);
         DPDOWN.recordNewValue(gamepad1.dpad_down);
-        if (GP1X.isJustOff()){
+        if (GP1X.isJustOn()){
             drive_direction *= -1;
         }
-        if (DPDOWN.isJustOff()){ //Slow mode
+        if (DPDOWN.isJustOn()){ //Slow mode
             slow = !slow;
         }
         if (slow){ //Slow mode is 60% speed
             xp *= 0.6;
-            yp *= 0.6;
+            yp *= 0.6 * 0.6;
             rp *= 0.6;
         }
         drivebase.drive(drive_direction * xp,drive_direction *  -yp, rp, true);
@@ -83,6 +83,8 @@ public class RobotV1 extends Robot {
             lifts.grabBlock();
         } else if (gamepad2.right_bumper){
             lifts.releaseBlock();
+        } else {
+            lifts.stopClaw();
         }
 
         //Rotate claw
@@ -114,6 +116,9 @@ public class RobotV1 extends Robot {
         GP2X.recordNewValue(gamepad2.x);
         if (GP2X.isJustOff()) {
             numBlocksHigh -= 1;
+            if (numBlocksHigh < 0){
+                numBlocksHigh = 0;
+            }
             lifts.setvLiftPos(numBlocksHigh);
         }
 
@@ -122,10 +127,11 @@ public class RobotV1 extends Robot {
             lifts.setHLiftPow(0.5 * gamepad2.left_stick_y);
         } else {
             lifts.setHLiftPow(0);
+            lifts.setHLiftPow(0);
         }
         if (Math.abs(gamepad2.right_stick_y) > 0.05){
             //lifts.setVLiftPow(gamepad2.left_trigger);
-            lifts.adjustVLift(- gamepad2.right_stick_y);
+            lifts.setvLiftPow(- gamepad2.right_stick_y);
         }
 
     }

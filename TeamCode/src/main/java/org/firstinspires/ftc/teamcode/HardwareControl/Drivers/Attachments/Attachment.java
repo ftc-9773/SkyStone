@@ -19,6 +19,7 @@ public interface Attachment {
 
     /**
      *  Sets configuration to a safe stop state.
+     *  (mostly unused)
      * */
     void stop();
 }

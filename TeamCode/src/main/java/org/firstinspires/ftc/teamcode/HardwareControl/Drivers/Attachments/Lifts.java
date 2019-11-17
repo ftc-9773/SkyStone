@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments;
 
 import android.util.Log;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -17,72 +18,38 @@ public class Lifts implements Attachment {
     public static final double STUD_HEIGHT_INCHES = 1;
     public final double HEIGHT_OF_PLATFORM_INCHES = 1.25;
 
+    //Physical interface
     DcMotor vLiftMotor, hLiftMotor;
-    Servo leftClawServo, rightClawServo, rotateServo;
+    CRServo leftClawServo, rightClawServo;
+    Servo rotateServo;
 
+    //Stores the lowest position the lift should go to. (Which is the initial position of the lifts)
     int vliftZeroPos = 0, hliftZeroPos = 0;
 
     SafeJsonReader reader;
 
-    double leftClawServoGrabPos, rightClawServoGrabPos, leftClawServoReleasePos, rightClawServoReleasePos;
-    double leftServoTargetPos, rightServoTargetPos, rotateServoTargetPos;
+    //Possible states
+    double leftClawServoGrabPow, rightClawServoGrabPow, leftClawServoReleasePow, rightClawServoReleasePow;
+    double leftServoTargetPow, rightServoTargetPow, rotateServoTargetPos;
     double rotateZeroPos, rotate90Pos, rotate180Pos;
 
+    //Safety information, so we don't try to go too high
     int vLiftMaxPos;
     int hLiftMaxPos;
+
+    //Height where it is safe to intake blocks
     int vLiftIdlePos;
+
+    //Stores the target states of the robot. Only one of vLiftTargetPow and vLiftTargetPos can be used at a time. pow is for manual control of the lift.
     public int vLiftTargetPos = 0, hLiftTargetPos = 0;
+    public double vLiftTargetPow = Double.NaN;
     int minVPosForH;
     int minHPosForLowerV; // Minimum distance needed to extend the horizontal lift to lower the vertical lift passed minVPosForH
-    boolean magical_boolean = false;
     public int minPositiveHPos;
 
     private PIDController vpid, hpid;
-    //private PIDController vpid, hpid;
     double vkp, vkd, vki, hkp, hkd, hki;
-    double va, ha, vMaxV, hMaxV, vMinPow, hMinPow;
 
-
-    /**
-     * The following is deperecated:
-     *
-     * For coordinating when doing stuff (auton, not teleOp. TeleOp just doesn't work if it's an invalid state):
-     *
-     * lowering vertical Lift:
-     *  - IF Vlift.DOWN -> Lower, everything should be fine. Double check HLIFT to see if something went very wrong
-     *  - IF Vlift.UP -> Check Hlift
-     *  - - IF Hlift.OUT or Hlift.IN -> lower Vlift, everything should be fine.
-     *  - - IF Hlift.MID -> extend or retract hlift. If it is in the back 1/3 -> retract otherwise extend to hlift.OUT
-     *  raising vertical lift:
-     *  - Shouldn't every cause problems. TODO: check to make sure it never causes problems
-     *  extending Horizontal Lift:
-     *  - IF Hlift.OUT -> won't cause problems, because Hlift is already out.
-     *  - IF Hlift.IN -> Check Vlift
-     *  - - If Vlift.DOWN -> raise Vlift to UP, then extend Hlift
-     *  - - If Vlift.UP -> No problems will occur (probably)
-     *  retracting Horizontal Lift
-     *   - IF VLift.UP || Hlift.IN -> No problems will occur.
-     *   - IF VLift.DOWN && HLift.OUT && Target pos <= HLift.MID -> Raise VLift to UP before retracting
-     *   - IF Vlift.DOWN && HLift.OUT && Target pos > Hlift.MID -> Retract lift, it won't cause problems.
-     *
-     *  Action Meanings:
-     *   - VLift.RAISE = Raise the vertical lift as soon as the state of the robot permits it. In the meantime, take actions to move the robot to a valid state.
-     *   - VLift.LOWER = Lower the vertical lift as soon as the state of the robot permits it. In the meantime, take actions to move the robot to a valid state.
-     *   - VLift.NONE =  No actions are queued for the vertical lift. Note: this does NOT mean that the vertical lift is not moving. Just that it is safe for the vertical lift to do what it is doing.
-     *   (horizontal actions mean analogous things for the HLift)
-     *  All Queued actions use variables like targetSubAttachementPos to specify parameters when the queued action is executed.
-     *  e.g targetHLiftPos
-     * */
-    enum VerticalLiftStates {UP, DOWN} // UP = High enough to retract the horizontal lift from all the way out to in. DOWN = Not high enough to……
-    enum HorizontalLiftStates {OUT, MID, IN} // OUT = Far enough out to lower Vertical lift to DOWN pos, MID = Can't lower V lift past DOWN pos, IN = All the way in, can lower vLIft
-    enum VerticalLiftActions {RAISE, LOWER, NONE} //What is currently happening to the vLift. Keeps track, if actions have to happen in sequence.
-    enum HorizontalLiftActions {EXTEND, RETRACT, NONE} //What is currently happening to the hLift
-
-    public VerticalLiftActions vLiftAction = VerticalLiftActions.NONE;
-    public VerticalLiftStates vLiftState = VerticalLiftStates.DOWN;
-    public HorizontalLiftActions hLiftAction = HorizontalLiftActions.NONE;
-    public HorizontalLiftStates hLiftState  = HorizontalLiftStates.IN;
-    boolean waitingToGrabBlock = false;
     int targetVLiftPos;
     int targetHLiftPos;
 
@@ -91,8 +58,8 @@ public class Lifts implements Attachment {
         //Intialise hardware
         vLiftMotor = hardwareMap.get(DcMotor.class, "vLiftMotor");
         hLiftMotor = hardwareMap.get(DcMotor.class, "hLiftMotor");
-        leftClawServo = hardwareMap.get(Servo.class, "leftClawServo");
-        rightClawServo = hardwareMap.get(Servo.class, "rightClawServo");
+        leftClawServo = hardwareMap.get(CRServo.class, "leftClawServo");
+        rightClawServo = hardwareMap.get(CRServo.class, "rightClawServo");
         rotateServo = hardwareMap.get(Servo.class, "rClawServo");
 
         //Reset encoders
@@ -104,10 +71,10 @@ public class Lifts implements Attachment {
         //Get config values
         reader = new SafeJsonReader("RobotV1");
 
-        leftClawServoGrabPos = reader.getDouble("leftClawServoGrabPos");
-        leftClawServoReleasePos = reader.getDouble("leftClawServoReleasePos");
-        rightClawServoGrabPos = reader.getDouble("rightClawServoGrabPos");
-        rightClawServoReleasePos = reader.getDouble("rightClawServoReleasePos");
+        leftClawServoGrabPow = reader.getDouble("leftClawServoGrabPow");
+        leftClawServoReleasePow = reader.getDouble("leftClawServoReleasePow");
+        rightClawServoGrabPow = reader.getDouble("rightClawServoGrabPow");
+        rightClawServoReleasePow = reader.getDouble("rightClawServoReleasePow");
         rotateZeroPos = reader.getDouble("rotateServoZeroPos");
         rotate90Pos = reader.getDouble("rotateServo90Pos");
         rotate180Pos = reader.getDouble("rotateServo180Pos");
@@ -132,48 +99,14 @@ public class Lifts implements Attachment {
         hpid = new PIDController(hkp, hki, hkd);
 
         rotateServoTargetPos = rotateZeroPos;
-        Log.d(TAG, "Zero Pos " + vliftZeroPos);
-        Log.d(TAG, "Target Pos " + vLiftTargetPos);
-        Log.d(TAG, "Vertical Pos " + getVliftPos());
-
-        //releaseBlock();
-        //update();
         rotateServo.setDirection(Servo.Direction.REVERSE);
     }
 
     //Returns both Hlift and Vlift to state to intake another block.
     public void resetLifts(){
-        setVLiftPow(vliftZeroPos);
+        setvLiftPos(vliftZeroPos);
         setHLiftPos(hliftZeroPos);
     }
-
-    //Update and return the state of the hLift
-    public HorizontalLiftStates checkHliftState(){
-        if (getHLiftPos() <= hliftZeroPos + 10){
-            hLiftState = HorizontalLiftStates.IN;
-        } else if (getHLiftPos() > hliftZeroPos && getHLiftPos() < minHPosForLowerV){
-            hLiftState = HorizontalLiftStates.MID;
-        } else if (getHLiftPos() > minHPosForLowerV){
-            hLiftState = HorizontalLiftStates.OUT;
-        } else {
-            Log.e(TAG, "An invalid Horizontal Lift position was reached with position " + getHLiftPos());
-        }
-        return hLiftState;
-    }
-    //Update and return the state of the vLift
-    public VerticalLiftStates checkVLiftState(){
-        if (getVliftPos() <= minVPosForH){
-            vLiftState = VerticalLiftStates.DOWN;
-            Log.d(TAG, "State of Vertical Lift: " + vLiftState);
-        } else if (getVliftPos() > minVPosForH){
-            vLiftState = VerticalLiftStates.UP;
-            Log.d(TAG, "State of Vertical Lift: " + vLiftState);
-        } else {
-            Log.e(TAG, "An invalid Horizontal Lift position was reached with position " + getHLiftPos());
-        }
-        return vLiftState;
-    }
-
 
     //In number of blocks. 1 block is 4 inches high, the stud on top is 1 inch.
     public void setvLiftPos(double pos){
@@ -186,18 +119,11 @@ public class Lifts implements Attachment {
         vLiftTargetPos = (int) bound(vliftZeroPos, vLiftMaxPos, pos);
     }
 
-    //Right now, in encoder ticks
+    //in encoder ticks
     public void setHLiftPos(int pos){
         hLiftTargetPos = (int) bound(hliftZeroPos, hLiftMaxPos, pos);
     }
 
-    public void rotateClaw(double speed){
-        rotateServoTargetPos = bound(rotate180Pos, rotate90Pos, rotateServoTargetPos + 0.1 * speed);
-    }
-
-    public void setClawRot(double pos){
-        rotateServoTargetPos = pos;
-    }
 
     public void rotateClaw90(){
         rotateServoTargetPos = rotate90Pos;
@@ -212,15 +138,19 @@ public class Lifts implements Attachment {
     }
 
     public void grabBlock(){
-            leftServoTargetPos = leftClawServoGrabPos;
-            rightServoTargetPos = rightClawServoGrabPos;
-            waitingToGrabBlock = false;
+            leftServoTargetPow = leftClawServoGrabPow;
+            rightServoTargetPow = rightClawServoGrabPow;
             //resetLifts();
     }
 
+    public void stopClaw(){
+        leftServoTargetPow = 0;
+        rightServoTargetPow = 0;
+    }
+
     public void releaseBlock(){
-        rightServoTargetPos = rightClawServoReleasePos;
-        leftServoTargetPos = leftClawServoReleasePos;
+        rightServoTargetPow = rightClawServoReleasePow;
+        leftServoTargetPow = leftClawServoReleasePow;
     }
 
     private int getRawVlift(){
@@ -237,10 +167,6 @@ public class Lifts implements Attachment {
         return getRawHLift();
     }
 
-    public boolean hLiftIsRetracted(){
-        return (getHLiftPos() - hliftZeroPos) < 10;
-    }
-
     public void adjustVLift(double pow){
         vLiftTargetPos = (int)bound(vliftZeroPos, vLiftMaxPos, vLiftTargetPos + 100 * pow);
 
@@ -250,7 +176,13 @@ public class Lifts implements Attachment {
         hLiftTargetPos = (int) bound(hliftZeroPos, hLiftMaxPos, hLiftTargetPos + 10 * pow);
     }
 
-    public void setVLiftPow(double pow){
+    //Public facing method, with some checks and stuff
+    public void setvLiftPow(double pow){
+        vLiftTargetPow = pow;
+        targetVLiftPos = getVliftPos();
+    }
+
+    private void setVLiftPow(double pow){
         vLiftMotor.setPower(pow);
     }
 
@@ -259,7 +191,7 @@ public class Lifts implements Attachment {
     }
 
     public void intake(){
-        releaseBlock();
+        //releaseBlock();
         vLiftTargetPos = vLiftIdlePos;
     }
 
@@ -275,21 +207,29 @@ public class Lifts implements Attachment {
         Log.d(TAG, "vTarget  " + vLiftTargetPos);
         Log.d(TAG, "hTarget " + hLiftTargetPos);
 
-        vCorrection = bound(-1, 1, -vCorrection); //Correct the sign. According to the hardware: counterclockwise = pos, clockwise = neg. Unfortunately, this is backwards with up and down. Therefore, this correction. Same for the vertical lift.
-        if (getVliftPos() - targetVLiftPos < 10 && getVliftPos() - targetVLiftPos > 0){
-            vCorrection = 0;
+        if (!Double.isNaN(vLiftTargetPow)){
+            setVLiftPow(vLiftTargetPow);
+            vLiftTargetPos = getVliftPos();
+            if (vLiftTargetPow == 0){
+                vLiftTargetPow = Double.NaN;
+            }
+        } else {
+            vCorrection = bound(-1, 1, -vCorrection); //Correct the sign. According to the hardware: counterclockwise = pos, clockwise = neg. Unfortunately, this is backwards with up and down. Therefore, this correction. Same for the vertical lift.
+            if (getVliftPos() - targetVLiftPos < 10 && getVliftPos() - targetVLiftPos > 0){
+                vCorrection = 0;
+            }
+            setVLiftPow(vCorrection);
         }
         hCorrection = bound(-1, 1, -hCorrection); // Correct the sign
-        setVLiftPow(vCorrection);
         //setHLiftPow(bound(-1, 1, hCorrection));
 
-        rightClawServo.setPosition(rightServoTargetPos);
-        leftClawServo.setPosition(leftServoTargetPos);
+        rightClawServo.setPower(rightServoTargetPow);
+        leftClawServo.setPower(leftServoTargetPow);
         rotateServo.setPosition(rotateServoTargetPos);
-        Log.d(TAG, "Right target pos " + rightServoTargetPos);
-        Log.d(TAG, "Right Curr pos " + rightClawServo.getPosition());
-        Log.d(TAG, "Left target pos " + leftServoTargetPos);
-        Log.d(TAG, "Left  Curr pos " + leftClawServo.getPosition());
+        Log.d(TAG, "Right target pos " + rightServoTargetPow);
+        Log.d(TAG, "Right Curr pos " + rightClawServo.getPower());
+        Log.d(TAG, "Left target pos " + leftServoTargetPow);
+        Log.d(TAG, "Left  Curr pos " + leftClawServo.getPower());
         Log.d(TAG, "Rotate target pos " + rotateServoTargetPos);
         Log.d(TAG, "Rotate Curr pos " + rotateServo.getPosition());
 

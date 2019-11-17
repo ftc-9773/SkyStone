@@ -24,7 +24,7 @@ public class AlignmentTest extends LinearOpMode {
         waitForStart();
         while(opModeIsActive()){
             if (gamepad1.left_stick_y > 0.05){
-                lifts.setVLiftPow(gamepad1.left_stick_y);
+                //lifts.setVLiftPow(gamepad1.left_stick_y);
             }
             if (!gamepad1.x){
                 dt = ot - System.currentTimeMillis();
