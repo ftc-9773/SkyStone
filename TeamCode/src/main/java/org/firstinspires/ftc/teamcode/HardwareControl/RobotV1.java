@@ -18,7 +18,7 @@ public class RobotV1 extends Robot {
     //TeleOP variables
     double xp, yp, rp;
     double numBlocksHigh = 0;
-    Button GP2X = new Button(), B = new Button(), RB = new Button(), DPDOWN = new Button(), GP1X = new Button(), DPR = new Button(), DPL = new Button(), DPD = new Button();
+    Button GP2X = new Button(), B = new Button(), RB = new Button(), LB = new Button(), DPDOWN = new Button(), GP1X = new Button(), DPR = new Button(), DPL = new Button(), DPD = new Button();
     boolean hooksDown = false;
     boolean slow = false;
     double drive_direction = 1;
@@ -54,8 +54,8 @@ public class RobotV1 extends Robot {
             slow = !slow;
         }
         if (slow){ //Slow mode is 60% speed
-            xp *= 0.6;
-            yp *= 0.6 * 0.6;
+            xp *= 0.6 * 0.6;
+            yp *= 0.6;
             rp *= 0.6;
         }
         drivebase.drive(drive_direction * xp,drive_direction *  -yp, rp, true);
@@ -67,6 +67,10 @@ public class RobotV1 extends Robot {
             intake.reverse();
         } else {
             intake.off();
+        }
+        LB.recordNewValue(gamepad1.left_bumper);
+        if (LB.isJustOn()){
+            lifts.intake();
         }
 
         //Toggle hooks
@@ -124,14 +128,15 @@ public class RobotV1 extends Robot {
 
         if (Math.abs(gamepad2.left_stick_y) > 0.05) {
             //lifts.adjustHLift(gamepad2.left_stick_y);
-            lifts.setHLiftPow(0.5 * gamepad2.left_stick_y);
+            lifts.setHLiftPow(0.35 * gamepad2.left_stick_y);
         } else {
-            lifts.setHLiftPow(0);
             lifts.setHLiftPow(0);
         }
         if (Math.abs(gamepad2.right_stick_y) > 0.05){
-            //lifts.setVLiftPow(gamepad2.left_trigger);
-            lifts.setvLiftPow(- gamepad2.right_stick_y);
+            lifts.adjustVLift(-gamepad2.right_stick_y);
+            //lifts.setvLiftPow(gamepad2.right_stick_y);
+        } else {
+            //lifts.setvLiftPow(0);
         }
 
     }

@@ -197,10 +197,8 @@ public class Lifts implements Attachment {
 
     @Override
     public void update() {
-        double vCorrection = vpid.getPIDCorrection(vLiftTargetPos, getVliftPos());
         double hCorrection = hpid.getPIDCorrection(hLiftTargetPos, getHLiftPos());
 
-        Log.d(TAG, "VCORRECTION " + vCorrection);
         Log.d(TAG, "hcorrection " + hCorrection);
         Log.d(TAG, "Vpos " + getVliftPos());
         Log.d(TAG, "Hpos " + getHLiftPos());
@@ -208,12 +206,16 @@ public class Lifts implements Attachment {
         Log.d(TAG, "hTarget " + hLiftTargetPos);
 
         if (!Double.isNaN(vLiftTargetPow)){
-            setVLiftPow(vLiftTargetPow);
             vLiftTargetPos = getVliftPos();
             if (vLiftTargetPow == 0){
                 vLiftTargetPow = Double.NaN;
+                vLiftTargetPow = 0;
             }
+            Log.d(TAG, "VPOWER " + vLiftTargetPow);
+            setVLiftPow(vLiftTargetPow);
         } else {
+            double vCorrection = vpid.getPIDCorrection(vLiftTargetPos, getVliftPos());
+            Log.d(TAG, "VCORRECTION " + vCorrection);
             vCorrection = bound(-1, 1, -vCorrection); //Correct the sign. According to the hardware: counterclockwise = pos, clockwise = neg. Unfortunately, this is backwards with up and down. Therefore, this correction. Same for the vertical lift.
             if (getVliftPos() - targetVLiftPos < 10 && getVliftPos() - targetVLiftPos > 0){
                 vCorrection = 0;
