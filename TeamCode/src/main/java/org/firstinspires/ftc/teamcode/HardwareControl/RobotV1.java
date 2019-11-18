@@ -75,16 +75,15 @@ public class RobotV1 extends Robot {
 
         //Toggle hooks
         RB.recordNewValue(gamepad1.right_bumper);
-        if (RB.isJustOn()){
+        if (RB.isJustOff()){
             if (hooksDown){
                 backHooks.up();
                 backHooks.update();
-                hooksDown = !hooksDown;
             }else{
                 backHooks.down();
                 backHooks.update();
-                hooksDown = !hooksDown;
             }
+            hooksDown = !hooksDown;
         }
 
         //THE FOLLOWING IS GAMEPAD 2
