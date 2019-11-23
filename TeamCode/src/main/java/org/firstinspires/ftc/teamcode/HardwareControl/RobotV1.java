@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.BackHo
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.Intake;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.Lifts;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumDrivebase;
+import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.DistSensor;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.Gyro;
 import org.firstinspires.ftc.teamcode.Utilities.misc.Button;
 
@@ -18,7 +19,7 @@ public class RobotV1 extends Robot {
     //TeleOP variables
     double xp, yp, rp;
     double numBlocksHigh = 0;
-    Button GP2X = new Button(), B = new Button(), RB = new Button(), LB = new Button(), DPDOWN = new Button(), GP1X = new Button(), DPR = new Button(), DPL = new Button(), DPD = new Button();
+    Button GP2X = new Button(), B = new Button(), RB = new Button(), LB = new Button(), DPDOWN = new Button(), GP1X = new Button(), DPR = new Button(), DPU = new Button(), DPD = new Button();
     boolean hooksDown = false;
     boolean slow = false;
     double drive_direction = 1;
@@ -38,6 +39,14 @@ public class RobotV1 extends Robot {
         this.telemetry = telemetry;
     }
 
+    public RobotV1(MecanumDrivebase drivebase, Gyro gyro, Intake intake, Lifts lifts, DistSensor distSensor, BackHooks backHooks, Telemetry telemetry){
+        this.lifts = lifts;
+        this.intake = intake;
+        this.gyro = gyro;
+        this.drivebase = drivebase;
+        this.backHooks = backHooks;
+        this.telemetry = telemetry;
+    }
     public void runGamepadCommands(Gamepad gamepad1, Gamepad gamepad2){
         xp = gamepad1.left_stick_x;
         yp = gamepad1.left_stick_y;
@@ -98,12 +107,12 @@ public class RobotV1 extends Robot {
         }
 
         //Rotate claw
-        DPL.recordNewValue(gamepad2.dpad_left);
+        DPU.recordNewValue(gamepad2.dpad_up);
         DPR.recordNewValue(gamepad2.dpad_right);
         DPD.recordNewValue(gamepad2.dpad_down);
-        if (DPL.isJustOn()){
+        if (DPR.isJustOn()){
             lifts.rotateClaw90();
-        } else if (DPR.isJustOn()){
+        } else if (DPU.isJustOn()){
             lifts.rotateClaw180();
         } else if (DPD.isJustOn()){
             lifts.resetClawtoZero();

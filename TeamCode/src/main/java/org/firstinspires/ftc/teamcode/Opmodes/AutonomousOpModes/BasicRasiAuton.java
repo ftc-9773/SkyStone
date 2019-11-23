@@ -38,10 +38,9 @@ public abstract class BasicRasiAuton extends LinearOpMode {
         Lifts lifts = new Lifts(hardwareMap);
         sendTelemetry("Lifts created");
 
-        BackHooks backHooks = new BackHooks(hardwareMap);
         sendTelemetry("Created back hooks interface");
 
-        RobotV1 robot = new RobotV1(drivebase,gyro,intake, lifts, backHooks, telemetry);
+        RobotV1 robot = new RobotV1(drivebase,gyro,intake, lifts, null, telemetry);
         sendTelemetry("Robot created");
 
         //sendTelemetry("starting vision...");

@@ -110,7 +110,8 @@ public class Lifts implements Attachment {
 
     //In number of blocks. 1 block is 4 inches high, the stud on top is 1 inch.
     public void setvLiftPos(double pos){
-        vLiftTargetPos = (int)bound(vliftZeroPos, vLiftMaxPos, ((pos * INCHES_PER_BLOCK_HEIGHT + STUD_HEIGHT_INCHES + HEIGHT_OF_PLATFORM_INCHES) * ENCODER_TICKS_PER_INCH));
+        //vLiftTargetPos = (int)bound(vliftZeroPos, vLiftMaxPos, ((pos * INCHES_PER_BLOCK_HEIGHT + STUD_HEIGHT_INCHES + HEIGHT_OF_PLATFORM_INCHES) * ENCODER_TICKS_PER_INCH));
+        vLiftTargetPos = (int)bound(vliftZeroPos, vLiftMaxPos, pos * 500 + 850);
         Log.d(TAG, "Set pos to " + pos + " calculated from num blocks");
     }
 
