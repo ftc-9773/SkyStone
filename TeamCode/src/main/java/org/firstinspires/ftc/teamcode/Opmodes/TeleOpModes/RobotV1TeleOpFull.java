@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumD
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.Gyro;
 import org.firstinspires.ftc.teamcode.HardwareControl.RobotV1;
 
-@TeleOp(name = "RobotTeleOP Full")
+@TeleOp(name = "RobotTeleOPFull")
 public class RobotV1TeleOpFull extends LinearOpMode {
 
     @Override

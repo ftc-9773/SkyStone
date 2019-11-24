@@ -24,7 +24,7 @@ public class Lifts implements Attachment {
     Servo rotateServo;
 
     //Stores the lowest position the lift should go to. (Which is the initial position of the lifts)
-    int vliftZeroPos = 0, hliftZeroPos = 0;
+    public int vliftZeroPos = 0, hliftZeroPos = 0;
 
     SafeJsonReader reader;
 
@@ -116,7 +116,7 @@ public class Lifts implements Attachment {
     }
 
     //Set v lift position in terms of encoders.
-    private void setvLiftPos(int pos) {
+    public void setvLiftPos(int pos) {
         vLiftTargetPos = (int) bound(vliftZeroPos, vLiftMaxPos, pos);
     }
 

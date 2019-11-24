@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumD
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.Gyro;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.VoltSensor;
 import org.firstinspires.ftc.teamcode.HardwareControl.Robot;
+import org.firstinspires.ftc.teamcode.Logic.Curves.InnerFollower;
 import org.firstinspires.ftc.teamcode.Utilities.Controllers.PIDController;
 import org.firstinspires.ftc.teamcode.Utilities.json.SafeJsonReader;
 import org.firstinspires.ftc.teamcode.Utilities.misc.Timer;
@@ -53,15 +54,17 @@ public class DriveUtil {
     static double[] headingPidCoeffs = new double[3];
     PIDController headingPid;
 
+    InnerFollower innerFollower;
+
     final static double km = (4.2 / 40) / 8.5; //Proportionality constant (torque)
     final static double ke = 12 / (150 * 40); // Proportionality constant (emf)
     final static double rw = 0.0064; // Wheel radius (m)
-    final static double m  = 18.688; //Robot mass (kg)
+    final static double m  = 17.3; //Robot mass (kg)
     final static double tf = (4.2 / 40) * 0.2 * 4 / 8.5; //Friction torque in motor (stall torque * no load current * num motor / stall current)
     final static double OMEGA = 0.1; //The big omega (motor resistance + battery resistance)
     double omega = 0; // The small omega (motor rotational speed)
     double v = 0; //
-    final double a = (0.9) / 39.37 / 4 * 560; // meters / s^2 in paranthesis  "????????????" —Future (now past) Cadence
+    final double a = (0.9) / 39.37 / 4 * 560; // meters / s^2 in parenthesis  "????????????" —Future (now past) Cadence
     double s;
 
     /**
@@ -175,7 +178,43 @@ public class DriveUtil {
          Log.d(TAG, "Wrote to drive. correction was" + correction +" x was " + x + " y was " + y);
 
          drivebase.drive(x, y, -correction, false);
-         drivebase.update();
+         robot.update();
+     }
+
+
+     public void TankCurve(double x, double y, double theta){
+         innerFollower = new InnerFollower(0,0, x, y, theta);
+
+         double x_ = x;
+         double y_ = y;
+         x = 0;
+         y = 0;
+
+         double last_robot_x = robot.x;
+         double last_robot_y = robot.y;
+         double temp[];
+         double xp;
+         double yp;
+         Log.d(TAG, "Curving");
+         Log.d(TAG, "params x " + x_ + " and y " + y_ );
+         while((Math.abs(x - x_) > distTol && Math.abs(y - y_) > distTol) && !opMode.isStopRequested()){
+
+             //theta = Math.acos(1 - Math.sqrt(x * x + y * y) / 2 / test.r / test.r);
+
+             robot.update();
+             x -= (last_robot_x - robot.x);
+             y -= (last_robot_y - robot.y);
+             last_robot_x = robot.x;
+             last_robot_y = robot.y;
+
+             temp = innerFollower.getXY(x, y);
+             xp = temp[0];
+             yp = temp[0];
+             drivebase.drive(xp, yp, 0, false);
+             robot.update();
+             Log.d(TAG, "Wrote power x " + 0 + " y " + yp + " t " + Math.acos(xp));
+
+         }
      }
 
     /**
@@ -291,4 +330,133 @@ public class DriveUtil {
         }
     }
 
+    // Strafe Motion Profiling
+    @Deprecated
+    public void strafeStraight(double dist){
+        double direction = -90; //Whether to go left or right
+        Log.d(TAG, "Strafing with MP " + dist);
+        double distSign = Math.signum(dist);
+        //direction *= distSign;
+        dist = dist * distSign;
+        drivebase.stop();
+        drivebase.update();
+        s = 0;
+        double pow;
+        double sign;
+        double accelerating = 1;
+        v = minDistPow  * distSign;
+        long[] inits = drivebase.getMotorPositions();
+        inits[1] *= -1;
+        inits[2] *= -1;
+        Log.d(TAG, "Got inits " + inits);
+        driveHoldHeading(v, direction, gyro.getHeading());
+        drivebase.update();
+        while((dist - s) > distTol &&  !opMode.isStopRequested()){
+            Log.d(TAG, "dsError:" + (dist - s));
+            Log.d(TAG, "Velocity: " + v);
+            if (dist - s > dist / 2){
+                v = (2 * a * s);
+                accelerating = 1;
+            }else {
+                v = (2 * a * (dist - s));
+                accelerating = -1;
+            }
+            sign = Math.signum(v);
+            Log.d(TAG, "V^2: " + v);
+            v = Math.sqrt(v);
+            omega = sign * v * (1 / 560) * 60; //Magic equation
+            pow =  (accelerating * a * m * rw * OMEGA / km + OMEGA * ke + tf * omega / km) / 12.7; // More magical equations
+            s = Math.abs(avgDistElapsedInchesStrafe(inits));
+            pow = Math.max(minDistPow, pow);
+            if (sign == 1){
+                pow = distSign * Math.min(1, pow);
+            } else {
+                pow = distSign * Math.max(-1, pow);
+            }
+            driveHoldHeading(pow, direction, gyro.getHeading());
+            Log.d(TAG, "Wrote power " + pow);
+        }
+        driveHoldHeading(0, direction, gyro.getHeading());
+        drivebase.stop();
+        drivebase.update();
+    }
+
+    @Deprecated
+    public void driveStraight(double dist, double maxVCoeffecient){
+        Log.d(TAG, "Driving with MP " + dist);
+        double distSign = Math.signum(dist);
+        dist = dist * distSign;
+        drivebase.stop();
+        drivebase.update();
+        s = 0;
+        double pow;
+        double sign;
+        double accelerating = 1;
+        v = minDistPow;
+        long[] inits = drivebase.getMotorPositions();
+        Log.d(TAG, "Got inits " + inits);
+        driveHoldHeading(v, 0, gyro.getHeading());
+        while((dist - s) > distTol &&  !opMode.isStopRequested()){
+            Log.d(TAG, "dsError:" + (dist - s));
+            Log.d(TAG, "Velocity: " + v);
+            if (dist - s > dist / 2){
+                v = (2 * a * s);
+                accelerating = 1;
+            }else {
+                v = (2 * a * (dist - s));
+                accelerating = -1;
+            }
+            sign = Math.signum(v);
+            Log.d(TAG, "V^2: " + v);
+            v = Math.sqrt(v);
+            omega = sign * v * (1 / 560) * 60; //Magic equation
+            pow =  (accelerating * a * m * rw * OMEGA / km + OMEGA * ke + tf * omega / km) / 12.7; // More magical equations
+            s = Math.abs(avgDistElapsedInchesForward(inits));
+            pow = Math.max(minDistPow, pow);;
+            if (sign == 1){
+                pow = distSign * Math.min(1 * maxVCoeffecient, pow);
+            } else {
+                pow = distSign * Math.max(-1 * maxVCoeffecient, pow);
+            }
+            driveHoldHeading(pow, 0, gyro.getHeading());
+            Log.d(TAG, "Wrote power " + pow);
+        }
+        driveHoldHeading(0, 0, gyro.getHeading());
+        drivebase.stop();
+        drivebase.update();
+    }
+
+    @Deprecated
+    public double avgDistElapsedInchesForward(long[] initpositions){
+        long[] positions = drivebase.getMotorPositions();
+        double sum=0;
+        for(int i = 0; i<4; i++){
+            double diff = (double) positions[i] - initpositions[i];
+            //Log.d(TAG, "adding motor position: " +i+" ticks: " + positions[i]  + " diff:" + diff);
+            if(i==0 ||i==2) diff *=-1;
+            sum +=diff;
+        }
+        sum /=4;
+        sum /= drivebase.COUNTS_PER_INCH;;
+        Log.d(TAG, "INCHES " + sum);
+        return sum ;
+    }
+
+    @Deprecated
+    public double avgDistElapsedInchesStrafe(long[] initpositions){
+        long[] positions = drivebase.getMotorPositions();
+        positions[1] *= -1;
+        positions[2] *= -1;
+        double sum=0;
+        for(int i = 0; i<4; i++){
+            double diff = (double) positions[i] - initpositions[i];
+            //Log.d(TAG, "adding motor position: " +i+" ticks: " + positions[i]  + " diff:" + diff);
+            if(i==0 ||i==2) diff *=-1;
+            sum +=diff;
+        }
+        sum /=4;
+        sum /= drivebase.COUNTS_PER_INCH;;
+        Log.d(TAG, "STRAFE INCHES " + sum);
+        return sum ;
+    }
 }

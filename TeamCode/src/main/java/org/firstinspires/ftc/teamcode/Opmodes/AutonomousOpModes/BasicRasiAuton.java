@@ -40,13 +40,15 @@ public abstract class BasicRasiAuton extends LinearOpMode {
 
         sendTelemetry("Created back hooks interface");
 
-        RobotV1 robot = new RobotV1(drivebase,gyro,intake, lifts, null, telemetry);
+        BackHooks backHooks = new BackHooks(hardwareMap);
+
+        RobotV1 robot = new RobotV1(drivebase,gyro,intake, lifts, backHooks, telemetry);
         sendTelemetry("Robot created");
 
         //sendTelemetry("starting vision...");
         // wait to begin opMode
         RobotV1Commands rc = new RobotV1Commands(this, robot);
-        RasiInterpreter rasiInterpreter = new RasiInterpreter("/sdcard/FIRST/team9773/MercurialRasi/", fileName(), this, rc);
+        RasiInterpreter rasiInterpreter = new RasiInterpreter("/sdcard/FIRST/team9773/Rasi2019/", fileName(), this, rc);
 
         //rasiInterpreter.runRasiActually();
         sendTelemetry("Waiting for start");

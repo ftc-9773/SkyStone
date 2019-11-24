@@ -172,4 +172,31 @@ public class RobotV1 extends Robot {
     }
 
     public void stop(){}
+
+    public void dropHooks(){
+        backHooks.down();
+        hooksDown = true;
+    }
+
+    public void upHooks(){
+        backHooks.up();
+        hooksDown = false;
+    }
+
+    public void grab(){
+        lifts.grabBlock();
+    }
+
+    public void release(){
+        lifts.releaseBlock();
+    }
+
+    public void clawOff(){
+        lifts.stopClaw();
+    }
+
+    public void setVLiftPos(int pos){
+        lifts.setvLiftPos(pos);
+    }
 }
+

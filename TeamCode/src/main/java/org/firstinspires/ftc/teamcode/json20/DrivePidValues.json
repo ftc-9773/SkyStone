@@ -1,5 +1,5 @@
 {
-    "minDistPow": 0.3,
+  "minDistPow": 0.3,
   "minExitDist": 0.05,
 
   "rotKp": 0.4,

@@ -1,0 +1,21 @@
+a:strafe -9
+a:driveStraight 9
+a:intakeOn
+a:driveStraight 10
+a:wait 0.5
+
+driveStraight 15.5
+intakeOn
+wait 0.5
+turn 40
+
+driveStraight 2
+driveSlow 6.5 0.4
+
+wait 0.5
+intakeOff
+vLiftDown
+grab
+
+
+wait 1
