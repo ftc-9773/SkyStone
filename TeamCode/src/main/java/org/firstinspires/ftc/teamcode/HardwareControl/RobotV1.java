@@ -77,10 +77,6 @@ public class RobotV1 extends Robot {
         } else {
             intake.off();
         }
-        LB.recordNewValue(gamepad1.left_bumper);
-        if (LB.isJustOn()){
-            lifts.intake();
-        }
 
         //Toggle hooks
         RB.recordNewValue(gamepad1.right_bumper);
@@ -96,6 +92,11 @@ public class RobotV1 extends Robot {
         }
 
         //THE FOLLOWING IS GAMEPAD 2
+
+        //Sets List Intake Position
+        if (gamepad2.left_trigger > 0.05){
+            lifts.intake();
+        }
 
         //Grab or release block
         if (gamepad2.left_bumper){
