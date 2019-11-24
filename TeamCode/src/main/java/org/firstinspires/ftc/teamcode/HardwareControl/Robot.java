@@ -13,6 +13,11 @@ public class Robot {
     public MecanumDrivebase drivebase;
     public Gyro gyro;
     public double heading;
+    public double x;
+    public double y;
+
+    private long lastx[], lasty[];
+
     DistSensorArray distSensorArray;
 
     //Default constructer
@@ -22,6 +27,7 @@ public class Robot {
         this.drivebase = drivebase;
         this.gyro = gyro;
         distSensorArray = new DistSensorArray(hardwareMap);
+        lastx = lasty = drivebase.getMotorPositions();
     }
 
     public double getHeading(){
@@ -38,6 +44,21 @@ public class Robot {
     public void update(){
         drivebase.update();
         heading = getHeading();
+        getdistancetraveledencoder();
+    }
+
+    private void getdistancetraveledencoder(){
+        long cur[] = drivebase.getMotorPositions();
+        double dx = 0;
+        dx += ((cur[0] - lastx[0]) + (cur[1] - lasty[1])) / 2;
+        x += dx;
+        long cury[] = drivebase.getMotorPositions();
+        double dy = 0;
+        dy += ((cury[0] - lasty[0]) - (cury[1] - lasty[1])) / 2;
+        y += dy;
+
+        lastx = cur;
+        lasty = cury;
     }
 
 }
