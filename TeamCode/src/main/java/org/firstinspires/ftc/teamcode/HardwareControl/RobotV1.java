@@ -19,8 +19,9 @@ public class RobotV1 extends Robot {
     //TeleOP variables
     double xp, yp, rp;
     double numBlocksHigh = 0;
-    Button GP2X = new Button(), B = new Button(), RB = new Button(), LB = new Button(), DPDOWN = new Button(), GP1X = new Button(), DPR = new Button(), DPU = new Button(), DPD = new Button();
+    Button GP2X = new Button(), B = new Button(), Y = new Button(),  RB = new Button(), LB = new Button(), DPDOWN = new Button(), GP1X = new Button(), DPR = new Button(), DPU = new Button(), DPD = new Button();
     boolean hooksDown = false;
+    double clicksB = 0;
     boolean slow = false;
     double drive_direction = 1;
     Telemetry telemetry;
@@ -96,6 +97,7 @@ public class RobotV1 extends Robot {
         //Sets List Intake Position
         if (gamepad2.left_trigger > 0.05){
             lifts.intake();
+            clicksB = 0.0;
         }
 
         //Grab or release block
@@ -123,16 +125,23 @@ public class RobotV1 extends Robot {
         if (gamepad2.a) {
             lifts.resetLifts();
         }
-        //Hold Y button to do this.
-        if (gamepad2.y) {
+        //Left Stick button to do this.
+        if (gamepad2.left_stick_button) {
             telemetry.addLine("Set to number of blocks " + numBlocksHigh);
             lifts.setvLiftPos(numBlocksHigh);
         }
         B.recordNewValue(gamepad2.b);
         if (B.isJustOff()){
+            clicksB += 1.0;
+            lifts.setvLiftPos(clicksB);
+        }
+        Y.recordNewValue(gamepad2.y);
+        if (Y.isJustOff()){
             numBlocksHigh += 1;
             lifts.setvLiftPos(numBlocksHigh);
         }
+
+
         GP2X.recordNewValue(gamepad2.x);
         if (GP2X.isJustOff()) {
             numBlocksHigh -= 1;
