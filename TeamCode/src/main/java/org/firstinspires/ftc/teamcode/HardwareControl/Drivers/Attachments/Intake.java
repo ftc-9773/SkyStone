@@ -49,7 +49,7 @@ public class Intake implements Attachment{
         this.isOn = true;
     }
 
-    public void reverse(){
+    public void onReverse(){
         this.pow = -onPow;
         this.isOn = true;
     }

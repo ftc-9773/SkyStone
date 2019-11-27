@@ -19,9 +19,9 @@ public class RobotV1 extends Robot {
     //TeleOP variables
     double xp, yp, rp;
     double numBlocksHigh = 0;
-    Button GP2X = new Button(), B = new Button(), Y = new Button(),  RB = new Button(), LB = new Button(), DPDOWN = new Button(), GP1X = new Button(), DPR = new Button(), DPU = new Button(), DPD = new Button();
+    Button GP1X = new Button(), B = new Button(), Y = new Button(),  RB = new Button(), LB = new Button(), GP1_DPDOWN = new Button(), GP2X = new Button(), DPR = new Button(), DPU = new Button(), GP2_DPDOWN = new Button();
     boolean hooksDown = false;
-    double currentBlockHeight = 0;
+    double currentLiftHeight = 0;
     boolean slow = false;
     double drive_direction = 1;
     Telemetry telemetry;
@@ -49,6 +49,9 @@ public class RobotV1 extends Robot {
         this.telemetry = telemetry;
     }
     public void runGamepadCommands(Gamepad gamepad1, Gamepad gamepad2){
+
+        //THE FOLLOWING IS GAMEPAD 1
+
         xp = gamepad1.left_stick_x;
         yp = gamepad1.left_stick_y;
         rp = gamepad1.right_stick_x;
@@ -56,14 +59,14 @@ public class RobotV1 extends Robot {
         if (Math.abs(yp) < 0.06){yp = 0;}
         if (Math.abs(rp) < 0.06){rp = 0;}
         GP1X.recordNewValue(gamepad1.x);
-        DPDOWN.recordNewValue(gamepad1.dpad_down);
+        GP1_DPDOWN.recordNewValue(gamepad1.dpad_down);
         if (GP1X.isJustOn()){
             drive_direction *= -1;
         }
-        if (DPDOWN.isJustOn()){ //Slow mode
+        if (GP1_DPDOWN.isJustOn()){ //Slow mode
             slow = !slow;
         }
-        if (slow){ //Slow mode is 60% speed
+        if (slow){ //Slow mode is 60% speed (x-position is 36%)
             xp *= 0.6 * 0.6;
             yp *= 0.6;
             rp *= 0.6;
@@ -74,7 +77,7 @@ public class RobotV1 extends Robot {
             intake.on();
             lifts.intake();
         } else if (gamepad1.right_trigger > 0.05){
-            intake.reverse();
+            intake.onReverse();
         } else {
             intake.off();
         }
@@ -97,7 +100,7 @@ public class RobotV1 extends Robot {
         //Sets List Intake Position
         if (gamepad2.left_trigger > 0.05){
             lifts.intake();
-            currentBlockHeight = 0.0;
+            currentLiftHeight = 0.0;
         }
 
         //Grab or release block
@@ -112,12 +115,12 @@ public class RobotV1 extends Robot {
         //Rotate claw
         DPU.recordNewValue(gamepad2.dpad_up);
         DPR.recordNewValue(gamepad2.dpad_right);
-        DPD.recordNewValue(gamepad2.dpad_down);
+        GP2_DPDOWN.recordNewValue(gamepad2.dpad_down);
         if (DPR.isJustOn()){
             lifts.rotateClaw90();
         } else if (DPU.isJustOn()){
             lifts.rotateClaw180();
-        } else if (DPD.isJustOn()){
+        } else if (GP2_DPDOWN.isJustOn()){
             lifts.resetClawtoZero();
         }
 
@@ -128,12 +131,12 @@ public class RobotV1 extends Robot {
         //Left Stick button to do this.
         if (gamepad2.left_stick_button) {
             telemetry.addLine("Set to number of blocks " + numBlocksHigh);
-            lifts.setvLiftPos(numBlocksHigh);
         }
+
         B.recordNewValue(gamepad2.b);
         if (B.isJustOff()){
-            currentBlockHeight += 1.0;
-            lifts.setvLiftPos(currentBlockHeight);
+            currentLiftHeight += 1.0;
+            lifts.setvLiftPos(currentLiftHeight);
         }
         Y.recordNewValue(gamepad2.y);
         if (Y.isJustOff()){
@@ -143,9 +146,9 @@ public class RobotV1 extends Robot {
 
         GP2X.recordNewValue(gamepad2.x);
         if (GP2X.isJustOff()) {
-            currentBlockHeight -= 1.0;
-            if (currentBlockHeight >= 0.0){
-                lifts.setvLiftPos(currentBlockHeight);
+            currentLiftHeight -= 1.0;
+            if (currentLiftHeight >= 0.0){
+                lifts.setvLiftPos(currentLiftHeight);
             }
         }
 
