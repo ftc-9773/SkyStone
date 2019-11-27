@@ -19,7 +19,7 @@ public class RobotV1 extends Robot {
     //TeleOP variables
     double xp, yp, rp;
     double numBlocksHigh = 0;
-    Button GP1X = new Button(), B = new Button(), Y = new Button(),  RB = new Button(), LB = new Button(), GP1_DPDOWN = new Button(), GP2X = new Button(), DPR = new Button(), DPU = new Button(), GP2_DPDOWN = new Button();
+    Button GP1X = new Button(), A = new Button(), B = new Button(), Y = new Button(),  RB = new Button(), LB = new Button(), GP1_DPDOWN = new Button(), GP2X = new Button(), DPR = new Button(), DPU = new Button(), GP2_DPDOWN = new Button();
     boolean hooksDown = false;
     double currentLiftHeight = 0;
     boolean slow = false;
@@ -125,8 +125,10 @@ public class RobotV1 extends Robot {
         }
 
         //Retract all lifts
-        if (gamepad2.a) {
+        A.recordNewValue(gamepad2.a);
+        if (A.isJustOff()) {
             lifts.resetLifts();
+            currentLiftHeight = 0.0;
         }
         //Left Stick button to do this.
         if (gamepad2.left_stick_button) {
@@ -136,12 +138,13 @@ public class RobotV1 extends Robot {
         B.recordNewValue(gamepad2.b);
         if (B.isJustOff()){
             currentLiftHeight += 1.0;
-            lifts.setvLiftPos(currentLiftHeight);
-        }
-        Y.recordNewValue(gamepad2.y);
-        if (Y.isJustOff()){
-            numBlocksHigh += 1;
-            lifts.setvLiftPos(numBlocksHigh);
+            if ((int)(currentLiftHeight) * 500 + 850 < lifts.getvLiftMaxPos()){
+                lifts.setvLiftPos(currentLiftHeight);
+            }
+            else {
+                currentLiftHeight = (double)((lifts.getvLiftMaxPos() - 850) / 500);
+            }
+
         }
 
         GP2X.recordNewValue(gamepad2.x);
@@ -150,7 +153,17 @@ public class RobotV1 extends Robot {
             if (currentLiftHeight >= 0.0){
                 lifts.setvLiftPos(currentLiftHeight);
             }
+            else {
+                currentLiftHeight = 0.0;
+            }
         }
+
+        Y.recordNewValue(gamepad2.y);
+        if (Y.isJustOff()){
+            numBlocksHigh += 1;
+            lifts.setvLiftPos(numBlocksHigh);
+        }
+
 
         if (Math.abs(gamepad2.left_stick_y) > 0.05) {
             //lifts.adjustHLift(gamepad2.left_stick_y);

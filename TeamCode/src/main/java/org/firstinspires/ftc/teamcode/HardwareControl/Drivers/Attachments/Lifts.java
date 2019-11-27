@@ -104,8 +104,9 @@ public class Lifts implements Attachment {
 
     //Returns both Hlift and Vlift to state to intake another block.
     public void resetLifts(){
-        setvLiftPos(vliftZeroPos);
+        //setvLiftPos(vliftZeroPos);
         setHLiftPos(hliftZeroPos);
+        setvLiftPos(vLiftIdlePos);
     }
 
     //In number of blocks. 1 block is 4 inches high, the stud on top is 1 inch.
@@ -113,6 +114,10 @@ public class Lifts implements Attachment {
         //vLiftTargetPos = (int)bound(vliftZeroPos, vLiftMaxPos, ((pos * INCHES_PER_BLOCK_HEIGHT + STUD_HEIGHT_INCHES + HEIGHT_OF_PLATFORM_INCHES) * ENCODER_TICKS_PER_INCH));
         vLiftTargetPos = (int)bound(vliftZeroPos, vLiftMaxPos, pos * 500 + 850);
         Log.d(TAG, "Set pos to " + pos + " calculated from num blocks");
+    }
+
+    public int getvLiftMaxPos(){
+        return vLiftMaxPos;
     }
 
     //Set v lift position in terms of encoders.
