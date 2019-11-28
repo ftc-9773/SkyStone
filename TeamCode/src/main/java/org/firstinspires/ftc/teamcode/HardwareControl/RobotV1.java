@@ -138,7 +138,7 @@ public class RobotV1 extends Robot {
         B.recordNewValue(gamepad2.b);
         if (B.isJustOff()){
             currentLiftHeight += 1.0;
-            if ((int)(currentLiftHeight) * 500 + 850 < lifts.getvLiftMaxPos()){
+            if (((int)currentLiftHeight)* 500 + 850 < lifts.getvLiftMaxPos()){
                 lifts.setvLiftPos(currentLiftHeight);
             }
             else {
@@ -171,6 +171,7 @@ public class RobotV1 extends Robot {
         } else {
             lifts.setHLiftPow(0);
         }
+
         if (Math.abs(gamepad2.right_stick_y) > 0.05){
             lifts.adjustVLift(-gamepad2.right_stick_y);
             //lifts.setvLiftPow(gamepad2.right_stick_y);
