@@ -20,7 +20,6 @@ import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.Gyro;
  * Test IMU functions.
  * */
 @Deprecated
-@TeleOp(name = "") // To be removed if necessary
 public class testingstuff extends LinearOpMode {
 
 

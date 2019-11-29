@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumDrivebase;
 import org.firstinspires.ftc.teamcode.Logic.Curves.InnerFollower;
 
-@Autonomous(name = "TestInnerCurves")
+
 public class InnerTest extends LinearOpMode {
 
     @Override

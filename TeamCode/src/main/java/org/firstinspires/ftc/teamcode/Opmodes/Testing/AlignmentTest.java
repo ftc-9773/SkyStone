@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.Gyro;
 import org.firstinspires.ftc.teamcode.HardwareControl.Robot;
 import org.firstinspires.ftc.teamcode.Logic.DriveUtil;
 
-@TeleOp(name = "Measurements")
+
 public class AlignmentTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

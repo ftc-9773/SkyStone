@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Logic.Curves.TangentFollower;
 /**
  * Testing a tangent-to-circle follower.
  * */
-@TeleOp(name = "") // Change if needed
+
 public class CurveTesterThingOpMode extends LinearOpMode {
     String TAG = "CURVETESTING";
 

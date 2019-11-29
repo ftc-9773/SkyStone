@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.Logic.DriveUtil;
 /**
  * Testing omnidirectional motion profile driving. Conclusion: It works
  * */
-@Autonomous(name = "MP Testing")
+
 public class MPTesting extends LinearOpMode {
 
     @Override
