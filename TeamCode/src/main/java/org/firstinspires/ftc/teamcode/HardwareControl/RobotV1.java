@@ -19,10 +19,11 @@ public class RobotV1 extends Robot {
     //TeleOP variables
     double xp, yp, rp;
     double numBlocksHigh = 0;
-    Button GP1X = new Button(), A = new Button(), B = new Button(), Y = new Button(),  RB = new Button(), LB = new Button(), GP1_DPDOWN = new Button(), GP2X = new Button(), DPR = new Button(), DPU = new Button(), GP2_DPDOWN = new Button();
+    Button GP1X = new Button(), GP1B = new Button(), A = new Button(), B = new Button(), Y = new Button(),  RB = new Button(), LB = new Button(), GP1_DPLEFT = new Button(), GP1_DPRIGHT = new Button(), GP2X = new Button(), DPR = new Button(), DPU = new Button(), GP2_DPDOWN = new Button();
     boolean hooksDown = false;
     double currentLiftHeight = 0;
     boolean slow = false;
+    boolean releaseCapstone = false;
     double drive_direction = 1;
     Telemetry telemetry;
 
@@ -55,23 +56,36 @@ public class RobotV1 extends Robot {
         xp = gamepad1.left_stick_x;
         yp = gamepad1.left_stick_y;
         rp = gamepad1.right_stick_x;
-        if (Math.abs(xp) < 0.06){xp = 0;}
-        if (Math.abs(yp) < 0.06){yp = 0;}
-        if (Math.abs(rp) < 0.06){rp = 0;}
+
+        if (Math.abs(xp) < 0.0001){xp = 0;}
+        if (Math.abs(yp) < 0.01){yp = 0;}
+        if (Math.abs(rp) < 0.01){rp = 0;}
+
         GP1X.recordNewValue(gamepad1.x);
-        GP1_DPDOWN.recordNewValue(gamepad1.dpad_down);
+        GP1B.recordNewValue(gamepad1.b);
+        GP1_DPLEFT.recordNewValue(gamepad1.dpad_left);
+        GP1_DPRIGHT.recordNewValue(gamepad1.dpad_right);
+
         if (GP1X.isJustOn()){
-            drive_direction *= -1;
+            drive_direction = -1;
         }
-        if (GP1_DPDOWN.isJustOn()){ //Slow mode
-            slow = !slow;
+        if (GP1B.isJustOn()){
+            drive_direction = 1;
         }
-        if (slow){ //Slow mode is 60% speed (x-position is 36%)
-            xp *= 0.6 * 0.6;
+
+        if (GP1_DPLEFT.isJustOn()){ //Slow mode
+            slow = true;
+        }
+        if (GP1_DPRIGHT.isJustOn()){
+            slow = false;
+        }
+        if (slow){ //Slow mode is 60% speed
+            xp *= 0.6;
             yp *= 0.6;
             rp *= 0.6;
         }
         drivebase.drive(drive_direction * xp,drive_direction *  -yp, rp, true);
+
 
         if (gamepad1.left_trigger > 0.05){
             intake.on();
@@ -138,11 +152,11 @@ public class RobotV1 extends Robot {
         B.recordNewValue(gamepad2.b);
         if (B.isJustOff()){
             currentLiftHeight += 1.0;
-            if (((int)currentLiftHeight)* 500 + 850 < lifts.getvLiftMaxPos()){
+            if (((int)currentLiftHeight)* lifts.getBlockHeightInEncoders() + 670 < lifts.getvLiftMaxPos()){
                 lifts.setvLiftPos(currentLiftHeight);
             }
             else {
-                currentLiftHeight = (double)((lifts.getvLiftMaxPos() - 850) / 500);
+                currentLiftHeight = (double)((lifts.getvLiftMaxPos() - 670) / lifts.getBlockHeightInEncoders());
             }
 
         }
@@ -177,6 +191,13 @@ public class RobotV1 extends Robot {
             //lifts.setvLiftPow(gamepad2.right_stick_y);
         } else {
             //lifts.setvLiftPow(0);
+        }
+
+
+        if (gamepad2.right_trigger > 0.05) {
+            lifts.releaseCapstone();
+        } else {
+            lifts.resetCapstone();
         }
 
     }

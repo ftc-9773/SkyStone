@@ -17,6 +17,8 @@
   "minHeightForHLift" : 240,
   "minHorizontalToLowerVLIFT" : 0,
 
+  "blockHeightInEncoders" : 483,
+
   "rotateServoZeroPos" : 0.21,
   "rotateServo90Pos" : 0.58,
   "rotateServo180Pos" : 0.95,
@@ -25,6 +27,9 @@
   "rightBackHookDownPos" : 0.43,
   "leftBackHookUpPos" : 0.2,
   "rightBackHookUpPos" : 0.7,
+
+  "capstoneZeroPos" : 0.38,
+  "capstoneReleasePos": 0.0,
 
   "vkp" : 0.005,
   "vki" : 1.1,

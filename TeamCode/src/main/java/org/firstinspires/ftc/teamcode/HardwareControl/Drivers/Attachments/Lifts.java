@@ -22,6 +22,7 @@ public class Lifts implements Attachment {
     DcMotor vLiftMotor, hLiftMotor;
     CRServo leftClawServo, rightClawServo;
     Servo rotateServo;
+    Servo capstoneServo;
 
     //Stores the lowest position the lift should go to. (Which is the initial position of the lifts)
     public int vliftZeroPos = 0, hliftZeroPos = 0;
@@ -32,6 +33,9 @@ public class Lifts implements Attachment {
     double leftClawServoGrabPow, rightClawServoGrabPow, leftClawServoReleasePow, rightClawServoReleasePow;
     double leftServoTargetPow, rightServoTargetPow, rotateServoTargetPos;
     double rotateZeroPos, rotate90Pos, rotate180Pos;
+    int blockHeightInEncoders;
+
+    double capstoneZeroPos, capstoneReleasePos, capstoneTargetPos;
 
     //Safety information, so we don't try to go too high
     int vLiftMaxPos;
@@ -61,12 +65,13 @@ public class Lifts implements Attachment {
         leftClawServo = hardwareMap.get(CRServo.class, "leftClawServo");
         rightClawServo = hardwareMap.get(CRServo.class, "rightClawServo");
         rotateServo = hardwareMap.get(Servo.class, "rClawServo");
+        capstoneServo = hardwareMap.get(Servo.class, "capServo");
 
         //Reset encoders
         vLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         hLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         vLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        hLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        hLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //Get config values
         reader = new SafeJsonReader("RobotV1");
@@ -80,6 +85,7 @@ public class Lifts implements Attachment {
         rotate180Pos = reader.getDouble("rotateServo180Pos");
 
         vLiftMaxPos = reader.getInt("vLiftMaxPos");
+        blockHeightInEncoders = reader.getInt("blockHeightInEncoders");
         vliftZeroPos = getVliftPos();
         vLiftIdlePos = reader.getInt("vLiftIdlePos");
         hLiftMaxPos = reader.getInt("hLiftMaxPos");
@@ -87,6 +93,9 @@ public class Lifts implements Attachment {
         minVPosForH = reader.getInt("minHeightForHLift");
         minHPosForLowerV = reader.getInt("minHorizontalToLowerVLIFT");
         minPositiveHPos = minHPosForLowerV;
+
+        capstoneZeroPos = reader.getDouble("capstoneZeroPos");
+        capstoneReleasePos = reader.getDouble("capstoneReleasePos");
 
         //Set up pids.
         vkp = reader.getDouble("vkp");
@@ -106,19 +115,21 @@ public class Lifts implements Attachment {
     public void resetLifts(){
         //setvLiftPos(vliftZeroPos);
         setHLiftPos(hliftZeroPos);
-        setvLiftPos(vLiftIdlePos);
+        setvLiftPos(vliftZeroPos);
     }
 
     //In number of blocks. 1 block is 4 inches high, the stud on top is 1 inch.
     public void setvLiftPos(double pos){
         //vLiftTargetPos = (int)bound(vliftZeroPos, vLiftMaxPos, ((pos * INCHES_PER_BLOCK_HEIGHT + STUD_HEIGHT_INCHES + HEIGHT_OF_PLATFORM_INCHES) * ENCODER_TICKS_PER_INCH));
-        vLiftTargetPos = (int)bound(vliftZeroPos, vLiftMaxPos, pos * 500 + 850);
+        vLiftTargetPos = (int)bound(vliftZeroPos, vLiftMaxPos, pos * blockHeightInEncoders + 660);
         Log.d(TAG, "Set pos to " + pos + " calculated from num blocks");
     }
 
     public int getvLiftMaxPos(){
         return vLiftMaxPos;
     }
+
+    public int getBlockHeightInEncoders(){ return blockHeightInEncoders;}
 
     //Set v lift position in terms of encoders.
     public void setvLiftPos(int pos) {
@@ -201,6 +212,16 @@ public class Lifts implements Attachment {
         vLiftTargetPos = vLiftIdlePos;
     }
 
+    public void releaseCapstone(){
+        capstoneTargetPos = capstoneReleasePos;
+        capstoneServo.setPosition(capstoneTargetPos);
+    }
+
+    public void resetCapstone() {
+        capstoneTargetPos = capstoneZeroPos;
+        capstoneServo.setPosition(capstoneTargetPos);
+    }
+
     @Override
     public void update() {
         double hCorrection = hpid.getPIDCorrection(hLiftTargetPos, getHLiftPos());
@@ -211,7 +232,7 @@ public class Lifts implements Attachment {
         Log.d(TAG, "vTarget  " + vLiftTargetPos);
         Log.d(TAG, "hTarget " + hLiftTargetPos);
 
-        if (!Double.isNaN(vLiftTargetPow)){
+        if (!Double.isNaN(vLiftTargetPow) && false){
             vLiftTargetPos = getVliftPos();
             if (vLiftTargetPow == 0){
                 vLiftTargetPow = Double.NaN;
@@ -223,9 +244,10 @@ public class Lifts implements Attachment {
             double vCorrection = vpid.getPIDCorrection(vLiftTargetPos, getVliftPos());
             Log.d(TAG, "VCORRECTION " + vCorrection);
             vCorrection = bound(-1, 1, -vCorrection); //Correct the sign. According to the hardware: counterclockwise = pos, clockwise = neg. Unfortunately, this is backwards with up and down. Therefore, this correction. Same for the vertical lift.
-            if (getVliftPos() - targetVLiftPos < 10 && getVliftPos() - targetVLiftPos > 0){
-                vCorrection = 0;
-            }
+//            if (getVliftPos() - targetVLiftPos < 10 && getVliftPos() - targetVLiftPos > 0){
+//                vCorrection = 0;
+//            }
+            Log.d(TAG, "VCOR2 " + vCorrection);
             setVLiftPow(vCorrection);
         }
         hCorrection = bound(-1, 1, -hCorrection); // Correct the sign
