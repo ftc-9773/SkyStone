@@ -4,8 +4,8 @@
 
   "rotKp": 0.4,
   "rotKi": 0.0,
-  "rotKd": 10.,
-  "rotTol": 0.025,
+  "rotKd": 25,
+  "rotTol": 0.03,
   "Comment" : "rotTol used to be 0.074533",
   "rotExitSpeed": 0.01,
   "rotMinSpeed": 0.1,

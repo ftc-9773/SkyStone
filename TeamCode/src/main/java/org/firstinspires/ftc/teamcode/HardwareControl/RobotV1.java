@@ -142,7 +142,6 @@ public class RobotV1 extends Robot {
         A.recordNewValue(gamepad2.a);
         if (A.isJustOff()) {
             lifts.resetLifts();
-            currentLiftHeight = 0.0;
         }
         //Left Stick button to do this.
         if (gamepad2.left_stick_button) {
@@ -166,6 +165,11 @@ public class RobotV1 extends Robot {
             currentLiftHeight -= 1.0;
             if (currentLiftHeight >= 0.0){
                 lifts.setvLiftPos(currentLiftHeight);
+            }
+
+            else if (numBlocksHigh > 0){
+                numBlocksHigh -= 1;
+                lifts.setvLiftPos(numBlocksHigh);
             }
             else {
                 currentLiftHeight = 0.0;

@@ -3,7 +3,7 @@ strafe 43
 
 
 dropHooks
-driveStraight -31
+driveStraight -30
 
 
 driveStraight 6
@@ -20,9 +20,9 @@ strafe 7
 driveStraight -3
 
 upHooks
+strafe -1
 
-CASE_ALLIANCE_PARKS_NEXT_TO_WALL_ENTER:
-strafe -18.5
+CASE_ALLIANCE_PARKS_NEXT_TO_WALL_ENTER: strafe -17.5
 
 driveStraight 38
 
