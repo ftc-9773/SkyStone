@@ -1,4 +1,3 @@
-
 //
 // build.gradle in TeamCode
 //
@@ -14,8 +13,3 @@
 
 // Include common definitions from above.
 apply from: '../build.common.gradle'
-
-dependencies {
-    implementation project(':endercv')
-    implementation project(':openCVLibrary3')
-}

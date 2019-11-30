@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcode.Opmodes.TeleOpModes;
 
-import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumDrivebase;
@@ -17,7 +14,7 @@ import org.firstinspires.ftc.teamcode.Utilities.misc.Button;
  * The purpose is to provide a mecanum drivebase teleop drive system, that tracks the position of the robot in inches. Pressing 'a' will
  * reset the posiiton.
  * */
-@TeleOp(name = "MecanumDriveTeleOp")
+@TeleOp(name = "RaceCar")
 public class MecanumDriveTeleOp extends LinearOpMode {
 
     @Override
@@ -36,13 +33,10 @@ public class MecanumDriveTeleOp extends LinearOpMode {
         double[] readings;
         double r;
         double l;
-//        Servo leftHook;
-//        leftHook = hardwareMap.get(Servo.class,"leftHook");
-//        Servo rightHook;
-//        rightHook = hardwareMap.get(Servo.class,"leftHook");
-
-        ColorSensor colorSensor = hardwareMap.get(ColorSensor.class, "ColorSensor");
-        OpticalDistanceSensor opticalSensor = hardwareMap.get(OpticalDistanceSensor.class, "opticalSensor");
+        Servo leftHook;
+        leftHook = hardwareMap.get(Servo.class,"leftHook");
+        Servo rightHook;
+        rightHook = hardwareMap.get(Servo.class,"leftHook");
 
         Button rb = new Button();
         double hookPosition = 0.0;
@@ -60,11 +54,11 @@ public class MecanumDriveTeleOp extends LinearOpMode {
             }
 
             double xp = gamepad1.left_stick_x;
-            if (Math.abs(xp) < 0.05){
+            if (xp < 0.05){
                 xp = 0;
             }
             double yp = gamepad1.left_stick_y;
-            if (Math.abs(yp) < 0.05){
+            if (yp < 0.05){
                 yp = 0;
             }
             drivebase.drive(xp, yp, gamepad1.right_stick_x, true);
@@ -80,23 +74,6 @@ public class MecanumDriveTeleOp extends LinearOpMode {
             y += getDistY(lastEncoderPos, currentEncoderPos);
             y += getDistY(lastEncoderPos, currentEncoderPos);
             telemetry.addLine("X: " + x + " Y: " + y);
-            telemetry.addLine("ColorSensor reading red" + colorSensor.red());
-            telemetry.addLine("ColorSensor reading blue" + colorSensor.blue());
-            telemetry.addLine("ColorSensor reading green" + colorSensor.green());
-            telemetry.addLine("OpticalDistSensor reading " + opticalSensor.getRawLightDetected());
-
-            double blue = colorSensor.blue();
-            double red = colorSensor.red();
-            double green = colorSensor.green();
-            telemetry.addLine("red/blue ratio " + blue/red);
-
-
-            if (blue / red < .60){
-                telemetry.addLine("Color: yellow");
-            } else {
-                telemetry.addLine("Color: black");
-            }
-
             telemetry.update();
             lastEncoderPos = currentEncoderPos;
 
@@ -106,12 +83,12 @@ public class MecanumDriveTeleOp extends LinearOpMode {
                 if (hookServos) {
                     if (hookPosition == 0.0) {
                         hookPosition = 0.3;
-//                        rightHook.setPosition(hookPosition);
-//                        leftHook.setPosition(hookPosition);
+                        rightHook.setPosition(hookPosition);
+                        leftHook.setPosition(hookPosition);
                     } else {
                         hookPosition= 0.0;
-//                        rightHook.setPosition(hookPosition);
-//                        leftHook.setPosition(hookPosition);
+                        rightHook.setPosition(hookPosition);
+                        leftHook.setPosition(hookPosition);
                     }
                 }
 
