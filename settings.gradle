@@ -1,2 +1,4 @@
-include ':FtcRobotController'
+include ':FtcRobotController', ':endercv', ':openCVLibrary3'
 include ':TeamCode'
+include ':endercv'
+include ':openCVLibrary3'
