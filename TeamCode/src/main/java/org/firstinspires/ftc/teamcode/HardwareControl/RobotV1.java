@@ -202,6 +202,12 @@ public class RobotV1 extends Robot {
 
     }
 
+    public void setIntake(boolean on){
+        if (on) intake.on();
+        else intake.off();
+    }
+
+
     @Override
     public void update() {
         drivebase.update();
@@ -212,20 +218,6 @@ public class RobotV1 extends Robot {
     }
 
     public void stop(){}
-
-    boolean intakeOn;
-
-    public void setIntake(boolean on){
-        intakeOn = on;
-        if (intakeOn) intake.on();
-        else intake.off();
-    }
-
-    public void setReverseIntake(boolean on){
-        intakeOn = on;
-        if (on) intake.onReverse();
-        else intake.off();
-    }
 
     public void dropHooks(){
         backHooks.down();
@@ -252,11 +244,5 @@ public class RobotV1 extends Robot {
     public void setVLiftPos(int pos){
         lifts.setvLiftPos(pos);
     }
-
-    public int getBlockHeightInEncoders(){ return lifts.getBlockHeightInEncoders();}
-
-    public void extendHLift() { lifts.setHLiftPos(lifts.gethLiftMaxPos());}
-
-    public void retractHLift() {lifts.setHLiftPos(lifts.gethLiftZeroPos());}
 }
 

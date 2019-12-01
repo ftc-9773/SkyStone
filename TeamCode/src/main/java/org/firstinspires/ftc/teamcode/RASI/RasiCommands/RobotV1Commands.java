@@ -64,25 +64,13 @@ public class RobotV1Commands extends RasiCommands{
         robot.setIntake(true);
     }
 
-    public void reverseIntakeOn() {robot.setReverseIntake(true);}
-
     public void intakeOff(){
         robot.setIntake(false);
-        robot.setReverseIntake(false);
     }
 
     public void vLiftDown(){
         robot.setVLiftPos(0);
     }
-
-    public void vLiftIntakePos() { robot.setVLiftPos(390);}
-
-    public void vLiftRaise(int blocks) { robot.setVLiftPos(blocks*robot.getBlockHeightInEncoders() + 660); }
-
-    public void extendHLift() {robot.extendHLift();}
-
-    public void retractHLift() {robot.retractHLift();}
-
 
     public void grab(){
         robot.grab();
