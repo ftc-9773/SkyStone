@@ -19,7 +19,6 @@ public class Robot {
     private long lastx[], lasty[];
 
     DistSensorArray distSensorArray;
-    public double x, y;
 
     long[] lastpos;
 
@@ -53,7 +52,7 @@ public class Robot {
 
     private void updateposition(){
         long[] cur = drivebase.getMotorPositions();
-        double dx = 0   ;
+        double dx = 0;
         dx += ((cur[0] - lastpos[0]) + (cur[1] - lastpos[1])) / 2;
         x += dx / MecanumDrivebase.COUNTS_PER_INCH;
 

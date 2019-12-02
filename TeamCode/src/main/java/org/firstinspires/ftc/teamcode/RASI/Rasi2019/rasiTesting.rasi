@@ -1,4 +1,42 @@
+vLiftIntakePos
+wait 0.1
+turn 90
+wait 0.1
+turn  90
+upHooks
+strafe -88
+dropHooks
+driveStraight -5
+driveStraight 6
+wait 0.1
 
+turn -9
+driveStraight 6.5
+turn -30
+driveStraight 3.5
+turn -90
+strafe -6
+driveStraight -3
+
+upHooks
+driveStraight 2
+wait 0.2
+vLiftRaise 1
+wait 2
+extendHLift
+wait 1
+release
+wait 1
+retractHLift
+wait 2
+vLiftIntakePos
+wait 0.5
+
+strafe 24
+wait 0.1
+driveSlow 20
+driveStraight 45
+wait 0.5
 
 
 
