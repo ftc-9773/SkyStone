@@ -223,7 +223,7 @@ public class RobotV1 extends Robot {
 
     public void setReverseIntake(boolean on){
         intakeOn = on;
-        if (on) intake.onReverse();
+        if (intakeOn) intake.onReverse();
         else intake.off();
     }
 
