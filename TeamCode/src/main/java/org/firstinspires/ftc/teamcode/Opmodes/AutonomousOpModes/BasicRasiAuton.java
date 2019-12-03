@@ -14,12 +14,17 @@ import org.firstinspires.ftc.teamcode.Logic.DriveUtil;
 import org.firstinspires.ftc.teamcode.RASI.Rasi.RasiInterpreter;
 import org.firstinspires.ftc.teamcode.RASI.RasiCommands.RasiCommands;
 import org.firstinspires.ftc.teamcode.RASI.RasiCommands.RobotV1Commands;
+import org.firstinspires.ftc.teamcode.Vision.SkyStoneDetector;
+import org.firstinspires.ftc.teamcode.Vision.skyPositions;
+import org.corningrobotics.enderbots.endercv.CameraViewDisplay;
 
 /**
  * implement filename to return the filename
  * ovverride doVision() to return false if you don't want to do vision
  * */
 public abstract class BasicRasiAuton extends LinearOpMode {
+
+    SkyStoneDetector detector;
 
     public boolean doVision(){
         return true;
@@ -50,9 +55,41 @@ public abstract class BasicRasiAuton extends LinearOpMode {
         RobotV1Commands rc = new RobotV1Commands(this, robot);
         RasiInterpreter rasiInterpreter = new RasiInterpreter("/sdcard/FIRST/team9773/Rasi2019/", fileName(), this, rc);
 
+        if (doVision()) {
+
+            // run vision
+            detector = new SkyStoneDetector();
+            // init the vision
+            detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance(), 0);
+            detector.enable();
+            skyPositions blackPosition = skyPositions.center;
+            int i = 0;
+            while (!opModeIsActive() && !isStopRequested()) {
+                skyPositions pos = detector.getPosition();
+                if (pos != null) blackPosition = pos;
+                telemetry.addData("VisionReading", blackPosition.toString());
+                telemetry.update();
+                i++;
+            }
+            // pass tags to RASI
+            String[] tags = new String[1];
+            tags[0] = Character.toString(blackPosition.toString().charAt(0)).toUpperCase();
+            rasiInterpreter.setTags(tags);
+            sendTelemetry("Set tags to " + tags[0]);
+            Log.d("RasiAuto", "Set tag to " + tags[0]);
+
+        }
+
+
+
+
+
         //rasiInterpreter.runRasiActually();
         sendTelemetry("Waiting for start");
         waitForStart();
+        if (doVision()){
+            detector.disable();
+        }
 
         // DO EVERYTHING
         rasiInterpreter.runRasiActually();
