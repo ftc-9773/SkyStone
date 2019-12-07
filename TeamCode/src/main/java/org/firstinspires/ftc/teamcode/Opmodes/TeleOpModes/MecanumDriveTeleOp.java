@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.Opmodes.TeleOpModes;
 
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumDrivebase;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.Gyro;
 import org.firstinspires.ftc.teamcode.HardwareControl.Robot;
@@ -16,6 +19,8 @@ import org.firstinspires.ftc.teamcode.Utilities.misc.Button;
  * */
 @TeleOp(name = "RaceCar")
 public class MecanumDriveTeleOp extends LinearOpMode {
+
+    private DistanceSensor sensorRange;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -37,11 +42,16 @@ public class MecanumDriveTeleOp extends LinearOpMode {
         leftHook = hardwareMap.get(Servo.class,"leftHook");
         Servo rightHook;
         rightHook = hardwareMap.get(Servo.class,"leftHook");
+        // you can use this as a regular DistanceSensor.
+        sensorRange = hardwareMap.get(DistanceSensor.class, "sensor_range");
+        Rev2mDistanceSensor sensorTimeOfFlight = (Rev2mDistanceSensor)sensorRange;
+        double distToWall = 1000;
 
         Button rb = new Button();
         double hookPosition = 0.0;
 
         Button a = new Button();
+        Button b = new Button();
 
         lastEncoderPos = drivebase.getPos();
         currentEncoderPos = drivebase.getPos();
@@ -54,13 +64,20 @@ public class MecanumDriveTeleOp extends LinearOpMode {
             }
 
             double xp = gamepad1.left_stick_x;
-            if (xp < 0.05){
-                xp = 0;
-            }
             double yp = gamepad1.left_stick_y;
-            if (yp < 0.05){
-                yp = 0;
+            if (Math.abs(xp) < 0.06){xp = 0;}
+            if (Math.abs(yp) < 0.06){yp = 0;}
+
+            b.recordNewValue(gamepad1.b);
+            if (b.isOn() && xp>0.0) {
+                distToWall = sensorRange.getDistance(DistanceUnit.CM);
+                double stopDist = 10.0;
+                double minX = 0.10;
+                if (distToWall<=stopDist) {
+                    xp = xp * (distToWall) / stopDist + minX;
+                }
             }
+
             drivebase.drive(xp, yp, gamepad1.right_stick_x, true);
             drivebase.update();
 
