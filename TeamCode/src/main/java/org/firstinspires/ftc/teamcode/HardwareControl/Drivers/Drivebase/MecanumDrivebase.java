@@ -226,4 +226,12 @@ public class MecanumDrivebase {
 
         }
     }
+
+    public void driveTank(double p1, double p2){
+        motorPowers[0] = p1;
+        motorPowers[2] = p1;
+        motorPowers[1] = p2;
+        motorPowers[3] = p2;
+
+    }
 }
