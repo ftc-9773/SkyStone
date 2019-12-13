@@ -71,7 +71,7 @@ public class Lifts implements Attachment {
         vLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         hLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         vLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        hLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        hLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Get config values
         reader = new SafeJsonReader("RobotV1");
@@ -109,6 +109,7 @@ public class Lifts implements Attachment {
 
         rotateServoTargetPos = rotateZeroPos;
         rotateServo.setDirection(Servo.Direction.REVERSE);
+        capstoneServo.setPosition(capstoneZeroPos);
     }
 
     //Returns both Hlift and Vlift to state to intake another block.
@@ -185,7 +186,7 @@ public class Lifts implements Attachment {
     }
 
     public int getHLiftPos(){
-        return getRawHLift();
+        return getRawHLift() - hliftZeroPos;
     }
 
     public void adjustVLift(double pow){

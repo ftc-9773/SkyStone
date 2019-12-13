@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -42,6 +44,7 @@ public class BackHooks implements Attachment {
 
     @Override
     public void update() {
+        Log.d("HOOKS","Set positions " + leftTargetPos + " " + rightHook);
         leftHook.setPosition(leftTargetPos);
         rightHook.setPosition(rightTargetPos);
     }

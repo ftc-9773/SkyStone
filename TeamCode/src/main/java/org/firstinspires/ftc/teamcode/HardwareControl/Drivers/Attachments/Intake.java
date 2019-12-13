@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Utilities.json.SafeJsonReader;
 
 import java.sql.Driver;
@@ -11,7 +14,7 @@ import java.sql.Driver;
 public class Intake implements Attachment{
     public DcMotor leftMotor;
     public DcMotor rightMotor;
-    public TouchSensor touchSensor;
+    public DistanceSensor touchSensor;
 
     //Private values, keeping track of the current state
     private double pow;
@@ -32,7 +35,7 @@ public class Intake implements Attachment{
 
         leftMotor = hardwareMap.get(DcMotor.class, "lintakeMotor");
         rightMotor = hardwareMap.get(DcMotor.class, "rintakeMotor");
-        touchSensor = hardwareMap.get(TouchSensor.class, "intakeTouchSensor");
+        touchSensor = hardwareMap.get(DistanceSensor.class, "intakeTouchSensor");
 
         isOn = false;
         off();
@@ -65,7 +68,7 @@ public class Intake implements Attachment{
     }
 
     public boolean isLoaded(){
-        loaded = touchSensor.isPressed();
+        loaded = touchSensor.getDistance(DistanceUnit.CM) < 10;
         return loaded;
     }
 
@@ -77,5 +80,6 @@ public class Intake implements Attachment{
     public void stop(){
         off();
         update();
+        isLoaded();
     }
 }

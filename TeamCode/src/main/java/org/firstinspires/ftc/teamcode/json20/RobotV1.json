@@ -19,24 +19,24 @@
 
   "blockHeightInEncoders" : 483,
 
-  "rotateServoZeroPos" : 0.21,
+  "rotateServoZeroPos" : 0.91,
   "rotateServo90Pos" : 0.58,
-  "rotateServo180Pos" : 0.95,
+  "rotateServo180Pos" : 0.19,
 
   "leftBackHookDownPos" : 0.43,
   "rightBackHookDownPos" : 0.43,
   "leftBackHookUpPos" : 0.2,
   "rightBackHookUpPos" : 0.7,
 
-  "capstoneZeroPos" : 0.38,
-  "capstoneReleasePos": 0.0,
+  "capstoneZeroPos" : 0.25,
+  "capstoneReleasePos": 0.7,
 
   "vkp" : 0.005,
   "vki" : 1.1,
   "vkd" : 0.22,
   "hkp" : 0.01,
   "hki" : 0,
-  "hkd" : 0,
+  "hkd" : 0.1,
   "vLiftMinPow": -1,
   "vLiftMaxVelocity" : 0,
   "hLiftMinPow" : -1,

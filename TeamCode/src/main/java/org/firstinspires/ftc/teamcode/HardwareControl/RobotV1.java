@@ -63,7 +63,7 @@ public class RobotV1 extends Robot {
 
         GP1X.recordNewValue(gamepad1.x);
         GP1B.recordNewValue(gamepad1.b);
-        GP1_DPLEFT.recordNewValue(gamepad1.dpad_left);
+        GP1_DPLEFT.recordNewValue(gamepad1.left_bumper);
         GP1_DPRIGHT.recordNewValue(gamepad1.dpad_right);
 
         if (GP1X.isJustOn()){
@@ -136,6 +136,7 @@ public class RobotV1 extends Robot {
             lifts.rotateClaw180();
         } else if (GP2_DPDOWN.isJustOn()){
             lifts.resetClawtoZero();
+            //lifts.setHLiftPos(lifts.gethLiftMaxPos());
         }
 
         //Retract all lifts
@@ -181,7 +182,7 @@ public class RobotV1 extends Robot {
 
         if (Math.abs(gamepad2.left_stick_y) > 0.05) {
             //lifts.adjustHLift(gamepad2.left_stick_y);
-            lifts.setHLiftPow(0.3 * gamepad2.left_stick_y);
+            lifts.setHLiftPow(0.5 * gamepad2.left_stick_y);
         } else {
             lifts.setHLiftPow(0);
         }

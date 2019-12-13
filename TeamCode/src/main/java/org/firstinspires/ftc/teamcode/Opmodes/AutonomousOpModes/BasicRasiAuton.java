@@ -10,13 +10,10 @@ import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.Lifts;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumDrivebase;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.Gyro;
 import org.firstinspires.ftc.teamcode.HardwareControl.RobotV1;
-import org.firstinspires.ftc.teamcode.Logic.DriveUtil;
+import org.firstinspires.ftc.teamcode.Logic.Vision.skyPositions;
 import org.firstinspires.ftc.teamcode.RASI.Rasi.RasiInterpreter;
-import org.firstinspires.ftc.teamcode.RASI.RasiCommands.RasiCommands;
 import org.firstinspires.ftc.teamcode.RASI.RasiCommands.RobotV1Commands;
-import org.firstinspires.ftc.teamcode.Vision.SkyStoneDetector;
-import org.firstinspires.ftc.teamcode.Vision.skyPositions;
-import org.corningrobotics.enderbots.endercv.CameraViewDisplay;
+import org.firstinspires.ftc.teamcode.Logic.Vision.SkyStoneDetector;
 
 /**
  * implement filename to return the filename
@@ -60,12 +57,13 @@ public abstract class BasicRasiAuton extends LinearOpMode {
             // run vision
             detector = new SkyStoneDetector();
             // init the vision
-            detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance(), 0);
+            detector.init(hardwareMap.appContext);
             detector.enable();
             skyPositions blackPosition = skyPositions.center;
+            skyPositions pos = skyPositions.unknown;
             int i = 0;
             while (!opModeIsActive() && !isStopRequested()) {
-                skyPositions pos = detector.getPosition();
+                //pos = detector.getPosition();
                 if (pos != null) blackPosition = pos;
                 telemetry.addData("VisionReading", blackPosition.toString());
                 telemetry.update();
@@ -79,10 +77,6 @@ public abstract class BasicRasiAuton extends LinearOpMode {
             Log.d("RasiAuto", "Set tag to " + tags[0]);
 
         }
-
-
-
-
 
         //rasiInterpreter.runRasiActually();
         sendTelemetry("Waiting for start");

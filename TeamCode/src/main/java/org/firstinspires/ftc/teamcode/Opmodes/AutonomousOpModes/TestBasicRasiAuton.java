@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.HardwareControl.RobotV1;
 import org.firstinspires.ftc.teamcode.RASI.Rasi.RasiInterpreter;
 import org.firstinspires.ftc.teamcode.RASI.RasiCommands.RasiCommands;
 import org.firstinspires.ftc.teamcode.RASI.RasiCommands.RobotV1Commands;
+import org.firstinspires.ftc.teamcode.RASI.RasiCommands.TestDriveBaseRasiCommands;
 
 /**
  * implement filename to return the filename
@@ -35,8 +36,8 @@ public abstract class TestBasicRasiAuton extends LinearOpMode {
 
         //sendTelemetry("starting vision...");
         // wait to begin opMode
-        RasiCommands rc = new RasiCommands(this);
-        RasiInterpreter rasiInterpreter = new RasiInterpreter("/sdcard/FIRST/team9773/MercurialRasi/", fileName(), this, rc);
+        RasiCommands rc = new TestDriveBaseRasiCommands(this, robot);
+        RasiInterpreter rasiInterpreter = new RasiInterpreter("/sdcard/FIRST/team9773/Rasi2019/", fileName(), this, rc);
 
         //rasiInterpreter.runRasiActually();
         sendTelemetry("Waiting for start");

@@ -1,22 +1,6 @@
-a:strafe -9
-a:driveStraight 9
-a:intakeOn
-a:driveStraight 10
-a:wait 0.5
-
-intakeOn
-driveStraight 15.5
-wait 0.25
-turn 40
-wait 0.25
-
-driveStraight 2
-driveSlow 6.5 0.4
-
-wait 0.5
-intakeOff
-vLiftDown
-grab
-
-
+vLiftIntakePos
 wait 1
+intakeOn
+driveStraight 24
+
+wait 0.1

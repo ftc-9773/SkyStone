@@ -64,7 +64,7 @@ public class DriveUtil {
     final static double OMEGA = 0.1; //The big omega (motor resistance + battery resistance)
     double omega = 0; // The small omega (motor rotational speed)
     double v = 0; //
-    final double a = (0.9) / 39.37 / 4 * 560; // meters / s^2 in parenthesis  "????????????" —Future (now past) Cadence
+    final double a = (1) / 39.37 / 4 * 560; // meters / s^2 in parenthesis  "????????????" —Future (now past) Cadence
     double s;
 
     /**
@@ -140,9 +140,9 @@ public class DriveUtil {
             Log.d(TAG, "V^2: " + v);
             v = Math.sqrt(v);
             omega = sign * v * (1 / 560) * 60; //Magic equation
-            pow =  (accelerating * a * m * rw * OMEGA / km + OMEGA * ke + tf * omega / km) / 12.7; // More magical equations
+            pow =  (accelerating * a * m * rw * OMEGA / km + OMEGA * ke + tf * omega / km) / 12; // More magical equations
             s = Math.abs(avgDistElapsed(inits));
-            pow = Math.max(minDistPow, pow);;
+            pow = Math.max(minDistPow, pow);
             if (sign == 1){
                 pow = distSign * Math.min(1, pow);
             } else {
