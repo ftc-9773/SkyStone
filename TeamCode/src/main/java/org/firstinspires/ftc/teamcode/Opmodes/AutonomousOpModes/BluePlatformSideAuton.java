@@ -8,4 +8,9 @@ public class BluePlatformSideAuton extends BasicRasiAuton {
     public String fileName() {
         return "BluePlatformSideAuton";
     }
+
+    @Override
+    public boolean doVision() {
+        return false;
+    }
 }

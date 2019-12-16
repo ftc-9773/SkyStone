@@ -50,15 +50,14 @@ public class RobotV1 extends Robot {
         this.telemetry = telemetry;
     }
     public void runGamepadCommands(Gamepad gamepad1, Gamepad gamepad2){
-
-        //THE FOLLOWING IS GAMEPAD 1
+              //THE FOLLOWING IS GAMEPAD 1
 
         xp = gamepad1.left_stick_x;
         yp = gamepad1.left_stick_y;
         rp = gamepad1.right_stick_x;
 
         if (Math.abs(xp) < 0.0001){xp = 0;}
-        if (Math.abs(yp) < 0.01){yp = 0;}
+        if (Math.abs(yp) < 0.0001){yp = 0;}
         if (Math.abs(rp) < 0.01){rp = 0;}
 
         GP1X.recordNewValue(gamepad1.x);
@@ -80,9 +79,9 @@ public class RobotV1 extends Robot {
             slow = false;
         }
         if (slow){ //Slow mode is 60% speed
-            xp *= 0.6;
-            yp *= 0.6;
-            rp *= 0.6;
+            xp *= 0.4;
+            yp *= 0.4;
+            rp *= 0.65;
         }
         drivebase.drive(drive_direction * xp,drive_direction *  -yp, rp, true);
 
@@ -110,6 +109,7 @@ public class RobotV1 extends Robot {
         }
 
         //THE FOLLOWING IS GAMEPAD 2
+
 
         //Sets List Intake Position
         if (gamepad2.left_trigger > 0.05){

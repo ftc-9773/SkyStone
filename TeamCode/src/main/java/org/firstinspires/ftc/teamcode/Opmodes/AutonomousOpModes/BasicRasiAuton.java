@@ -62,8 +62,8 @@ public abstract class BasicRasiAuton extends LinearOpMode {
             skyPositions blackPosition = skyPositions.center;
             skyPositions pos = skyPositions.unknown;
             int i = 0;
-            while (!opModeIsActive() && !isStopRequested()) {
-                //pos = detector.getPosition();
+            while (!isStopRequested() && !isStarted()) {
+                pos = detector.getPosition();
                 if (pos != null) blackPosition = pos;
                 telemetry.addData("VisionReading", blackPosition.toString());
                 telemetry.update();

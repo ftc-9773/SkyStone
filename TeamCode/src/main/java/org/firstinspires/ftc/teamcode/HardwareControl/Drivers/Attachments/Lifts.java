@@ -71,7 +71,7 @@ public class Lifts implements Attachment {
         vLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         hLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         vLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        hLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        hLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //Get config values
         reader = new SafeJsonReader("RobotV1");

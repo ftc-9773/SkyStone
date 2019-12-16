@@ -5,7 +5,7 @@
   "lClawServoOpen" : 1.0,
 
   "minIntakePow" : 0.05,
-  "onIntakePow"   : 1,
+  "onIntakePow"   : 0.7,
 
   "leftClawServoGrabPow" : -0.5,
   "leftClawServoReleasePow" : 0.5,
@@ -19,9 +19,9 @@
 
   "blockHeightInEncoders" : 483,
 
-  "rotateServoZeroPos" : 0.91,
-  "rotateServo90Pos" : 0.58,
-  "rotateServo180Pos" : 0.19,
+  "rotateServoZeroPos" : 0.95,
+  "rotateServo90Pos" : 0.56,
+  "rotateServo180Pos" : 0.20,
 
   "leftBackHookDownPos" : 0.43,
   "rightBackHookDownPos" : 0.43,
@@ -34,9 +34,9 @@
   "vkp" : 0.005,
   "vki" : 1.1,
   "vkd" : 0.22,
-  "hkp" : 0.01,
+  "hkp" : 0.005,
   "hki" : 0,
-  "hkd" : 0.1,
+  "hkd" : 0.0,
   "vLiftMinPow": -1,
   "vLiftMaxVelocity" : 0,
   "hLiftMinPow" : -1,

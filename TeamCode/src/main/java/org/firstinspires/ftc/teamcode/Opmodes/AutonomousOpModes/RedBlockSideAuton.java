@@ -6,6 +6,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 public class RedBlockSideAuton extends BasicRasiAuton {
     @Override
     public String fileName() {
-        return "RedBlocksSideAuton";
+        return "RedBlockSideAuton";
+    }
+
+    @Override
+    public boolean doVision() {
+        return false;
     }
 }

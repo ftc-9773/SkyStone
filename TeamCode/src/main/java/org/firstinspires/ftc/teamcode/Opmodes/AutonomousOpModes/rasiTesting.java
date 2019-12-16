@@ -10,4 +10,9 @@ public class rasiTesting extends BasicRasiAuton {
     public String fileName() {
         return "rasiTesting";
     }
+
+    @Override
+    public boolean doVision() {
+        return false;
+    }
 }

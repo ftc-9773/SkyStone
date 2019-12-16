@@ -1,5 +1,4 @@
-
-driveStraight 10
-
-
+wait 2
+driveStraight 12
+strafe -22
 wait 1

@@ -140,7 +140,7 @@ public class DriveUtil {
             Log.d(TAG, "V^2: " + v);
             v = Math.sqrt(v);
             omega = sign * v * (1 / 560) * 60; //Magic equation
-            pow =  (accelerating * a * m * rw * OMEGA / km + OMEGA * ke + tf * omega / km) / 12; // More magical equations
+            pow =  (accelerating * a * m * rw * OMEGA / km + omega * ke + tf * OMEGA/ km) / 12; // More magical equations
             s = Math.abs(avgDistElapsed(inits));
             pow = Math.max(minDistPow, pow);
             if (sign == 1){
@@ -365,7 +365,7 @@ public class DriveUtil {
             Log.d(TAG, "V^2: " + v);
             v = Math.sqrt(v);
             omega = sign * v * (1 / 560) * 60; //Magic equation
-            pow =  (accelerating * a * m * rw * OMEGA / km + OMEGA * ke + tf * omega / km) / 12.7; // More magical equations
+            pow =  (accelerating * a * m * rw * OMEGA / km + omega * ke + tf * OMEGA/ km) / 12.7; // More magical equations
             s = Math.abs(avgDistElapsedInchesStrafe(inits));
             pow = Math.max(minDistPow, pow);
             if (sign == 1){
@@ -410,7 +410,7 @@ public class DriveUtil {
             Log.d(TAG, "V^2: " + v);
             v = Math.sqrt(v);
             omega = sign * v * (1 / 560) * 60; //Magic equation
-            pow =  (accelerating * a * m * rw * OMEGA / km + OMEGA * ke + tf * omega / km) / 12.7; // More magical equations
+            pow =  (accelerating * a * m * rw * OMEGA / km + omega * ke + tf * OMEGA/ km) / 12.7; // More magical equations
             s = Math.abs(avgDistElapsedInchesForward(inits));
             pow = Math.max(minDistPow, pow);;
             if (sign == 1){

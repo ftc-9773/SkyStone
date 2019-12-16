@@ -1,6 +1,0 @@
-vLiftIntakePos
-wait 1
-intakeOn
-driveStraight 24
-
-wait 0.1

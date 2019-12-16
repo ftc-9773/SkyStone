@@ -18,11 +18,16 @@ import org.opencv.imgproc.Imgproc;
 
 import org.opencv.core.*;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+
 public class SkyStoneDetector implements CameraBridgeViewBase.CvCameraViewListener2 {
     static {
         boolean magic = OpenCVLoader.initDebug();
         Log.d("ftc9773skyStoneDetector", "");
     }
+    int i = 0;
     protected JavaCameraView cameraView;
     protected Context context;
     private Mat rgba = new Mat();
@@ -35,7 +40,7 @@ public class SkyStoneDetector implements CameraBridgeViewBase.CvCameraViewListen
     Mat blurred ;
     Mat unblurred ;
     Mat filtered ;
-    Boolean leftIsBlack = null, rightIsBlack = null;
+    Boolean leftIsBlack = null, centerIsBlack = null;
     int totalWidth, totalHeight;
 
     // needs to be tunable
@@ -45,7 +50,7 @@ public class SkyStoneDetector implements CameraBridgeViewBase.CvCameraViewListen
 
     double minDetectionThreshold;
     double onVal = 120.0;
-    double leftCorrectPercent, rightCorrectPercent;
+    double leftCorrectPercent, centerCorrectPercent;
     final static Scalar blue = new Scalar(0,0,255);
     final static Scalar red = new Scalar(255, 0,0);
 
@@ -54,23 +59,31 @@ public class SkyStoneDetector implements CameraBridgeViewBase.CvCameraViewListen
     skyPositions position = skyPositions.unknown;
 
     //Generated
+    private Mat frame = new Mat();
     private Mat blur0Output = new Mat();
     private Mat hsvThresholdOutput = new Mat();
+    private List<MatOfPoint> contours = new ArrayList<>();
+
+    int X1, X2;
+    int Y1, Y2;
+    int relwidth1, relwidth2;
+    int relheight1, relheight2;
+    double total1, total2;
 
     public SkyStoneDetector(){
         super();
         SafeJsonReader reader = new SafeJsonReader("VisionThresholds");
         minDetectionThreshold = reader.getDouble("minDetectionThreshold", 0.1);
         // get boxOne Pos
-        relBoxOne[0] = reader.getDouble("BoxOneTopLeftX",.1818);
-        relBoxOne[1] = reader.getDouble("BoxOneTopLeftY",0.4718137255);
-        relBoxOne[2] = reader.getDouble("BoxOneWidth",.3880);
-        relBoxOne[3] = reader.getDouble("BoxOneLength",0.6050857843);
+        relBoxOne[0] = reader.getDouble("BoxOneTopLeftX",0);
+        relBoxOne[1] = reader.getDouble("BoxOneTopLeftY",0);
+        relBoxOne[2] = reader.getDouble("BoxOneWidth", 0.5);
+        relBoxOne[3] = reader.getDouble("BoxOneLength",0.5);
         // get boxTwo Pos
-        relBoxTwo[0] = reader.getDouble("BoxTwoTopLeftX",0.7761437908);
-        relBoxTwo[1] = reader.getDouble("BoxTwoTopLeftY",0.5208333333);
-        relBoxTwo[2] = reader.getDouble("BoxTwoWidth",0.9803921569);
-        relBoxTwo[3] = reader.getDouble("BoxTwoLength",0.6740196078);
+        relBoxTwo[0] = reader.getDouble("BoxTwoTopLeftX",0.);
+        relBoxTwo[1] = reader.getDouble("BoxTwoTopLeftY",0.);
+        relBoxTwo[2] = reader.getDouble("BoxTwoWidth",0.5);
+        relBoxTwo[3] = reader.getDouble("BoxTwoLength",0.5);
 
         returnMat = reader.getBoolean("returnMat", false);
     }
@@ -87,7 +100,6 @@ public class SkyStoneDetector implements CameraBridgeViewBase.CvCameraViewListen
 
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
-        Log.d(TAG, "input_dims " + inputFrame.toString());
         return processFrame(inputFrame.rgba());
     }
 
@@ -95,80 +107,84 @@ public class SkyStoneDetector implements CameraBridgeViewBase.CvCameraViewListen
      * Called each frame. Updates position using two filters.
      */
     public Mat processFrame(Mat input) {
+        //Strip out alpha channel
+        i++;
+        Vector<Mat> temp = new Vector<>();
+        Core.split(input, temp);
+        temp.remove(temp.size() - 1);
+        Core.merge(temp, input);
+
         // Step 1 Blur:
         Mat blur0Input = input;
-        double blur0Radius = 9.90990990990991;
+        double blur0Radius = 3;
         gaussBlur(blur0Input, blur0Radius, blur0Output);
 
         // Step HSV_Threshold0:
         Mat hsvThresholdInput = blur0Output;
-        double[] hsvThresholdHue = {6.474820143884892, 43.63636363636364};
-        double[] hsvThresholdSaturation = {149.05575539568346, 255.0};
-        double[] hsvThresholdValue = {130.71043165467626, 255.0};
+        double[] hsvThresholdHue = {6.0, 44.};
+        double[] hsvThresholdSaturation = {149.0, 255.0};
+        double[] hsvThresholdValue = {131.0, 255.0};
         hsvThreshold(hsvThresholdInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, hsvThresholdOutput);
-
 
         totalWidth = input.width();
         totalHeight = input.height();
         Log.d(TAG, "TotalWidth " + totalWidth);
         Log.d(TAG, "TotalHeight " + totalHeight);
-        // find the actual size of the bounding box.
-        //boxOneBounds = scaleArray(relBoxOne, totalWidth,totalHeight);
-        //boxTwoBounds = scaleArray(relBoxTwo, totalWidth, totalHeight);
 
-//
-//        int widthOne = boxOneBounds[1] - boxOneBounds[0];
-//        int heightOne = boxOneBounds[3] - boxOneBounds[2];
-        double X1 = relBoxOne[0] * totalWidth;
-        double Y1 = relBoxOne[1] * totalHeight;
-        double relwidth1 = relBoxOne[2] * totalWidth;
-        double relheight1 = relBoxOne[3] * totalHeight;
+        X1 = (int) (relBoxOne[0] * totalWidth);
+        Y1 = (int) (relBoxOne[1] * totalHeight);
+        relwidth1 = (int) (relBoxOne[2] * totalWidth);
+        relheight1 = (int) (relBoxOne[3] * totalHeight);
 
         Log.d(TAG, "X1,Y1,W1,H1 " + X1 + ", " + Y1 + ", " + relwidth1 + ", " + relheight1);
 
-        Rect leftRect = new Rect((int) X1, (int) Y1, (int) relwidth1, (int) relheight1);
-        Mat croppedOne = new Mat(hsvThresholdOutput, leftRect);
-        leftCorrectPercent = croppedOne.total() / (double)croppedOne.rows() / (double)croppedOne.cols();
-//
-//        int widthTwo = boxTwoBounds[1] - boxTwoBounds[0];
-//        int heightTwo = boxTwoBounds[3] - boxTwoBounds[2];
+        total1 = total(blur0Output, (int)X1, (int) (X1 + relwidth1),(int) Y1, (int)(Y1 + relheight1));
+        leftCorrectPercent = total1 / (relheight1 * relwidth1);
 
-        double X2 = relBoxOne[0] * totalWidth;
-        double Y2 = relBoxOne[1] * totalHeight;
-        double relwidth2 = relBoxOne[2] * totalWidth;
-        double relheight2 = relBoxOne[3] * totalHeight;
+        X2 = (int) (relBoxTwo[0] * totalWidth);
+        Y2 = (int) (relBoxTwo[1] * totalHeight);
+        relwidth2 = (int) (relBoxTwo[2] * totalWidth);
+        relheight2 = (int) (relBoxTwo[3] * totalHeight);
 
-        Log.d(TAG, "X1,Y1,W1,H1 " + X2 + ", " + Y2 + ", " + relwidth2 + ", " + relheight2);
+        Log.d(TAG, "X2,Y2,W2,H2 " + X2 + ", " + Y2 + ", " + relwidth2 + ", " + relheight2);
 
-        Rect rightRect = new Rect((int) X1, (int) Y1, (int) relwidth1, (int) relheight1);
-        Mat croppedTwo = new Mat(hsvThresholdOutput, rightRect);
-        rightCorrectPercent = croppedTwo.total() / (double)croppedTwo.rows() / (double)croppedTwo.cols();
+        total2 = total(blur0Output, (int)X2, (int) (X2 + relwidth2),(int) Y2, (int)(Y2 + relheight1));
+        centerCorrectPercent = total2 / (relwidth2 * relheight2);
+        double magic = hsvThresholdOutput.get(X1 + 50, Y1 + 50)[0];
+        double moremagic = hsvThresholdOutput.get(X2 + 158/2, Y2 + 58/2)[0];
+        Log.d(TAG, "Magic " + magic);
+        Log.d(TAG, "More Magic " + moremagic);
 
-        Log.d(TAG, "Ldims" + croppedOne.dims());
-        Log.d(TAG, "Rdims" + croppedOne.dims());
-        Log.d(TAG, "Left total " + croppedOne.total());
-        Log.d(TAG, "Right total " + croppedTwo.total());
-        Log.d(TAG, "Left rows/cols " + croppedOne.rows() + "x" + croppedOne.cols());
-        Log.d(TAG, "Left rows/cols " + croppedTwo.rows() + "x" + croppedTwo.cols());
-        Log.d(TAG, "left correct " + leftCorrectPercent + " right correct " + rightCorrectPercent);
+        Log.d(TAG, "Left total " + total1);
+        Log.d(TAG, "Center total " + total2);
+        Log.d(TAG, "left correct " + leftCorrectPercent + " center correct " + centerCorrectPercent);
+        Log.d(TAG, "Channels " + hsvThresholdOutput.channels());
+
 
         leftIsBlack = leftCorrectPercent < minDetectionThreshold;
-        rightIsBlack = rightCorrectPercent < minDetectionThreshold;
+        centerIsBlack = centerCorrectPercent < minDetectionThreshold;
 
         // determine the position of the gold.
 
         // start with the odd case, if both are true choose the position with the most yellow
-        if(leftIsBlack && rightIsBlack){
+        if(leftIsBlack && centerIsBlack){
             //choose the position with the most yellow
-            if(leftCorrectPercent > rightCorrectPercent) position = skyPositions.center;
-            else if(leftCorrectPercent < rightCorrectPercent) position = skyPositions.right;
+            if(leftCorrectPercent < centerCorrectPercent) position = skyPositions.left;
+            else if(leftCorrectPercent >= centerCorrectPercent) position = skyPositions.center;
         } // otherwise look at which is / isnt true
-        else if (leftIsBlack) position = skyPositions.center;
-        else if (rightIsBlack) position = skyPositions.right;
-        else position = skyPositions.left;
+        else if (leftIsBlack) position = skyPositions.left;
+        else if (centerIsBlack) position = skyPositions.center;
+        else position = skyPositions.right;
 
 
-        mask(input, hsvThresholdOutput, input);
+        input = hsvThresholdOutput;
+
+        draw_rect(input, X1, X1 + relwidth1, Y1, Y1 + relheight1, 0);
+        draw_rect(input, X2, X2 + relwidth2, Y2, Y2 + relheight2, 0);
+
+        //Imgproc.rectangle(input, new Point(0,0), new Point(300,300), new Scalar(0,255,0));
+
+        Log.d(TAG, "-------------------------");
         return input;
     }
     /**
@@ -193,7 +209,7 @@ public class SkyStoneDetector implements CameraBridgeViewBase.CvCameraViewListen
      */
     private void mask(Mat input, Mat mask, Mat output) {
         mask.convertTo(mask, CvType.CV_8UC1);
-        Core.bitwise_xor(output, output, output);
+        Core.bitwise_xor(output, mask, output);
         input.copyTo(output, mask);
     }
 
@@ -207,9 +223,14 @@ public class SkyStoneDetector implements CameraBridgeViewBase.CvCameraViewListen
      */
     private void hsvThreshold(Mat input, double[] hue, double[] sat, double[] val,
                               Mat out) {
-        Imgproc.cvtColor(input, out, Imgproc.COLOR_BGR2HSV);
+        Imgproc.cvtColor(input, out, Imgproc.COLOR_RGB2HSV);
         Core.inRange(out, new Scalar(hue[0], sat[0], val[0]),
                 new Scalar(hue[1], sat[1], val[1]), out);
+    }
+
+    private void toHSV(Mat input, Mat out){
+        Imgproc.cvtColor(input, out, Imgproc.COLOR_BGR2HSV);
+        Imgproc.cvtColor(input, out, Imgproc.COLOR_HSV2RGB);
     }
 
     public void init(Context context) {
@@ -286,69 +307,21 @@ public class SkyStoneDetector implements CameraBridgeViewBase.CvCameraViewListen
         });
     }
 
-//    // looks at processed frame, to get location of black
-//    public void findBlack(Mat input){
-//        totalWidth = input.width();
-//        totalHeight = input.height();
-//        // find the actual size of the bounding box.
-//        boxOneBounds = scaleArray(relBoxOne, totalWidth,totalHeight);
-//        boxTwoBounds = scaleArray(relBoxTwo, totalWidth, totalHeight);
-//        // first look in box 1.
-//        // iterate throughout the box
-//        int correctCounter =0; int counter =0;
-//        for (int x = boxOneBounds[0];x < boxOneBounds[2]; x++){
-//            for (int y = boxOneBounds[1]; y < boxOneBounds[3];y++ ){
-//                counter ++;
-//                if(input.get(y,x)[0] > onVal){
-//                    // if it is correct, increment the correctVals Counter
-//                    correctCounter ++;
-//                }
-//            }
-//        }
-//        leftCorrectPercent = ((double)correctCounter) / ((double)(counter));
-//        Log.i(TAG, "leftSelection: got " +correctCounter +" hits out of " + counter + " fraction: " + leftCorrectPercent);
-//
-//        // reset counters
-//        correctCounter = counter = 0 ;
-//        // then look in box 2
-//        for (int x = boxTwoBounds[0];x < boxTwoBounds[2]; x++){
-//            for (int y = boxTwoBounds[1]; y < boxTwoBounds[3];y++ ) {
-//                counter++;
-//                if (input.get(y, x)[0] > onVal) {
-//                    // if it is correct, increment the correctVals Counter
-//                    correctCounter++;
-//                }
-//            }
-//        }
-//        rightCorrectPercent = ((double)correctCounter) / ((double)(counter));
-//        Log.i(TAG, "rightSelection: got " +correctCounter +" hits out of " + counter + " fraction: " + rightCorrectPercent);
-//
-//        leftIsBlack = leftCorrectPercent > minDetectionThreshold;
-//        rightIsBlack = rightCorrectPercent > minDetectionThreshold;
-//
-//        // determine the position of the gold.
-//
-//        // start with the odd case, if both are true choose the position with the most yellow
-//        if(leftIsBlack && rightIsBlack){
-//            //choose the position with the most yellow
-//            if(leftCorrectPercent > rightCorrectPercent) position = skyPositions.center;
-//            else if(leftCorrectPercent < rightCorrectPercent) position = skyPositions.right;
-//        } // otherwise look at which is / isnt true
-//        else if (leftIsBlack) position = skyPositions.center;
-//        else if (rightIsBlack) position = skyPositions.right;
-//        else position = skyPositions.left;
-//    }
+    public double total(Mat input, int x_min, int x_max, int y_min, int y_max){
+        double total = 0;
+        int x = x_min;
+        int y = y_min;
+        for (; x< x_max; x++){
+            for (; y<y_max;y++){
+                total += input.get(x,y)[0];
+            }
+        }
+        return total;
+    }
 
-//    private int[]scaleArray(double[] input, int scalarX, int scalarY){
-//        int[] result = new int[input.length];
-//        for(int i = 0; i< input.length; i+=2){
-//            result[i] = (int)(scalarX * input[i]);
-//        }
-//        for(int i = 1; i< input.length; i+=2){
-//            result[i] = (int)(scalarY * input[i]);
-//        }
-//        return result;
-//    }
+    public void draw_rect(Mat input, int x_min, int x_max, int y_min, double y_max, int color){
+        Imgproc.rectangle(input, new Point(x_min,y_min), new Point(x_max,y_max), new Scalar(0,255, color));
+    }
 
     public skyPositions getPosition() {
         return position;

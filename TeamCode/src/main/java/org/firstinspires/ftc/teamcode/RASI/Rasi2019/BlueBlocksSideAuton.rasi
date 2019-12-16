@@ -1,0 +1,33 @@
+vLiftIntakePos
+intakeOn
+driveStraight 34
+wait 1
+driveStraight -9
+intakeOff
+vLiftDown
+wait 0.2
+
+turn 187
+
+grab
+
+wait 0.1
+upHooks
+strafe 102
+dropHooks
+driveStraight -3
+
+driveStraight 24
+
+turn 270
+
+wait 0.1
+driveStraight -2
+uphooks
+strafe -4
+wait 0.1
+vLiftDown
+
+driveStraight 45
+
+wait 0.1
