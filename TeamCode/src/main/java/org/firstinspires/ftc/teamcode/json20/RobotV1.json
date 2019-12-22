@@ -7,10 +7,8 @@
   "minIntakePow" : 0.05,
   "onIntakePow"   : 0.7,
 
-  "leftClawServoGrabPow" : -0.5,
-  "leftClawServoReleasePow" : 0.5,
-  "rightClawServoGrabPow" : 0.5,
-  "rightClawServoReleasePow" : -0.5,
+  "clawServoGrabPow" : 0.5,
+  "clawServoReleasePow" : -0.5,
   "vLiftMaxPos" : 5000,
   "hLiftMaxPos" : 235,
   "vLiftIdlePos" : 390,
