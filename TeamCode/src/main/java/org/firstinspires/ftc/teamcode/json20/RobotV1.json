@@ -19,6 +19,18 @@
 
   "blockHeightInEncoders" : 483,
 
+  "baseLiftHeight": 660 ,
+  "oneBlockHigh": 1250 ,
+  "twoBlocksHigh": 1420 ,
+  "threeBlocksHigh": 1910 ,
+  "fourBlocksHigh": 2455,
+  "fiveBlocksHigh": 2950,
+  "sixBlocksHigh": 3475,
+  "sevenBlocksHigh": 3950,
+  "eightBlocksHigh": 4480 ,
+  "nineBlocksHigh": 4975 ,
+
+
   "rotateServoZeroPos" : 0.95,
   "rotateServo90Pos" : 0.56,
   "rotateServo180Pos" : 0.20,

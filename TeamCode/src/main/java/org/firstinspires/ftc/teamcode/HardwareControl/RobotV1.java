@@ -18,7 +18,7 @@ public class RobotV1 extends Robot {
 
     //TeleOP variables
     double xp, yp, rp;
-    double numBlocksHigh = 0;
+    double numBlocksHigh = 0.0;
     Button GP1X = new Button(), GP1B = new Button(), A = new Button(), B = new Button(), Y = new Button(),  RB = new Button(), LB = new Button(), GP1_DPLEFT = new Button(), GP1_DPRIGHT = new Button(), GP2X = new Button(), DPR = new Button(), DPU = new Button(), GP2_DPDOWN = new Button();
     boolean hooksDown = false;
     double currentLiftHeight = 0;
@@ -175,7 +175,7 @@ public class RobotV1 extends Robot {
 
         Y.recordNewValue(gamepad2.y);
         if (Y.isJustOff()){
-            numBlocksHigh += 1;
+            numBlocksHigh += 1.0;
             lifts.setvLiftPos(numBlocksHigh);
         }
 

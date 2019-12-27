@@ -35,6 +35,8 @@ public class Lifts implements Attachment {
     double rotateZeroPos, rotate90Pos, rotate180Pos;
     int blockHeightInEncoders;
 
+    int baseLiftHeight, oneBlockHigh, twoBlocksHigh, threeBlocksHigh, fourBlocksHigh, fiveBlocksHigh, sixBlocksHigh, sevenBlocksHigh, eightBlocksHigh, nineBlocksHigh;
+
     double capstoneZeroPos, capstoneReleasePos, capstoneTargetPos;
 
     //Safety information, so we don't try to go too high
@@ -94,6 +96,17 @@ public class Lifts implements Attachment {
         minHPosForLowerV = reader.getInt("minHorizontalToLowerVLIFT");
         minPositiveHPos = minHPosForLowerV;
 
+        baseLiftHeight = reader.getInt("baseLiftHeight");
+        oneBlockHigh = reader.getInt("oneBlockHigh");
+        twoBlocksHigh = reader.getInt("twoBlocksHigh");
+        threeBlocksHigh = reader.getInt("threeBlocksHigh");
+        fourBlocksHigh = reader.getInt("fourBlocksHigh");
+        fiveBlocksHigh = reader.getInt("fiveBlocksHigh");
+        sixBlocksHigh = reader.getInt("sixBlocksHigh");
+        sevenBlocksHigh = reader.getInt("sevenBlocksHigh");
+        eightBlocksHigh = reader.getInt("eightBlocksHigh");
+        nineBlocksHigh = reader.getInt("nineBlocksHigh");
+
         capstoneZeroPos = reader.getDouble("capstoneZeroPos");
         capstoneReleasePos = reader.getDouble("capstoneReleasePos");
 
@@ -122,8 +135,20 @@ public class Lifts implements Attachment {
     //In number of blocks. 1 block is 4 inches high, the stud on top is 1 inch.
     public void setvLiftPos(double pos){
         //vLiftTargetPos = (int)bound(vliftZeroPos, vLiftMaxPos, ((pos * INCHES_PER_BLOCK_HEIGHT + STUD_HEIGHT_INCHES + HEIGHT_OF_PLATFORM_INCHES) * ENCODER_TICKS_PER_INCH));
-        vLiftTargetPos = (int)bound(vliftZeroPos, vLiftMaxPos, pos * blockHeightInEncoders + 660);
+        //vLiftTargetPos = (int)bound(vliftZeroPos, vLiftMaxPos, pos * blockHeightInEncoders + 660);
         Log.d(TAG, "Set pos to " + pos + " calculated from num blocks");
+
+        if (pos == 0.0) { vLiftTargetPos = baseLiftHeight; }
+        if (pos == 1.0) { vLiftTargetPos = oneBlockHigh; }
+        if (pos == 2.0) { vLiftTargetPos = twoBlocksHigh; }
+        if (pos == 3.0) { vLiftTargetPos = threeBlocksHigh; }
+        if (pos == 4.0) { vLiftTargetPos = fourBlocksHigh; }
+        if (pos == 5.0) { vLiftTargetPos = fiveBlocksHigh; }
+        if (pos == 6.0) { vLiftTargetPos = sixBlocksHigh; }
+        if (pos == 7.0) { vLiftTargetPos = sevenBlocksHigh; }
+        if (pos == 8.0) { vLiftTargetPos = eightBlocksHigh; }
+        if (pos == 9.0) { vLiftTargetPos = nineBlocksHigh; }
+
     }
 
     public int getvLiftMaxPos(){
