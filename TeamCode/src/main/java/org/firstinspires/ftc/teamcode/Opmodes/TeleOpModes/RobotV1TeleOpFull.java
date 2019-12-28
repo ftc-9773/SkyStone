@@ -16,22 +16,22 @@ public class RobotV1TeleOpFull extends LinearOpMode {
     @Override
     public void runOpMode(){
         MecanumDrivebase drivebase = new MecanumDrivebase(hardwareMap, telemetry);
-        sendTelemetry("Drivebase created");
+        sendTelemetry("Drivebase created...");
 
         Intake intake = new Intake(hardwareMap);
-        sendTelemetry("Intake created");
+        sendTelemetry("Intake created...");
 
         Gyro gyro = new Gyro(hardwareMap);
-        sendTelemetry("Gyro created");
+        sendTelemetry("Gyro created...");
 
         Lifts lifts = new Lifts(hardwareMap);
-        sendTelemetry("Lifts created");
+        sendTelemetry("Lifts created...");
 
         BackHooks backHooks = new BackHooks(hardwareMap);
-        sendTelemetry("Back Hooks interface created");
+        sendTelemetry("Back Hooks interface created...");
 
         RobotV1 robot = new RobotV1(drivebase, gyro, intake, lifts, backHooks, telemetry);
-        sendTelemetry("Robot created");
+        sendTelemetry("Robot created...");
 
 
         sendTelemetry("Waiting for start...");
@@ -51,12 +51,13 @@ public class RobotV1TeleOpFull extends LinearOpMode {
             robot.update();
             // interested in seeing cycle time
             long currTime = System.currentTimeMillis();
-            telemetry.addData("elapsed time miliseconds", (currTime - lastTime));
-            telemetry.addLine("Vertical Lift pos " + lifts.getVliftPos());
-            telemetry.addLine("H position "  + lifts.getHLiftPos());
-            telemetry.addLine("Target V pos " + lifts.vLiftTargetPos);
-            telemetry.addLine("Target H pos " + lifts.hLiftTargetPos);
+            telemetry.addLine("Lift Height Y: " + robot.yLiftHeight + "  B: " + robot.bLiftHeight);
+            telemetry.addLine("Current V Pos: " + lifts.getVliftPos());
+            telemetry.addLine("Target V Pos: " + lifts.vLiftTargetPos);
+            telemetry.addLine("Current H Pos: "  + lifts.getHLiftPos());
+            telemetry.addLine("Target H Pos: " + lifts.hLiftTargetPos);
             telemetry.addLine("Intake Loaded  " + intake.isLoaded());
+            telemetry.addData("Elapsed Time Milliseconds: ", (currTime - lastTime));
             lastTime = currTime;
 
             telemetry.update();
