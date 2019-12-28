@@ -227,7 +227,7 @@ public class RobotV1 extends Robot {
 
         if (gamepad2.left_bumper) {
             lifts.grabBlock();
-            lifts.setvLiftPos(0);
+            lifts.setvLiftPos(lifts.getVliftZeroPos());
         }
 
     }

@@ -161,6 +161,8 @@ public class Lifts implements Attachment {
 
     public int getBlockHeightInEncoders(){ return blockHeightInEncoders;}
 
+    public int getVliftZeroPos() { return vliftZeroPos;}
+
     //Set v lift position in terms of encoders.
     public void setvLiftPos(int pos) {
         vLiftTargetPos = (int) bound(vliftZeroPos, vLiftMaxPos, pos);
