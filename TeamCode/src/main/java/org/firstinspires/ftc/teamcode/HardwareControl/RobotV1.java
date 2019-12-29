@@ -77,8 +77,15 @@ public class RobotV1 extends Robot {
         if (GP1B.isJustOn()) {
             drive_direction = 1;
         }
+        if (intake.isLoaded()) {
+            drive_direction = -1;
+        }
+        else {
+            drive_direction = 1;
+        }
 
-        if (GP1_DPLEFT.isJustOn()) { //Slow mode
+        //Slow mode
+        if (GP1_DPLEFT.isJustOn()) {
             slow = true;
         }
         if (GP1_DPRIGHT.isJustOn()) {
@@ -229,7 +236,6 @@ public class RobotV1 extends Robot {
             lifts.grabBlock();
             lifts.setvLiftPos(lifts.getVliftZeroPos());
         }
-
     }
 
     //RASI Functions for Auto
@@ -283,6 +289,8 @@ public class RobotV1 extends Robot {
     public void setVLiftPos(int pos){
         lifts.setvLiftPos(pos);
     }
+
+    public void setVLiftPos(double pos) {lifts.setvLiftPos(pos);}
 
     public int getBlockHeightInEncoders(){ return lifts.getBlockHeightInEncoders();}
 

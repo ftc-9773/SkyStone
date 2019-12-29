@@ -127,8 +127,7 @@ public class Lifts implements Attachment {
 
     //Returns both Hlift and Vlift to state to intake another block.
     public void resetLifts(){
-        //setvLiftPos(vliftZeroPos);
-        setHLiftPos(hliftZeroPos);
+        //setHLiftPos(hliftZeroPos);
         setvLiftPos(vliftZeroPos);
     }
 

@@ -68,7 +68,7 @@ public class Intake implements Attachment{
     }
 
     public boolean isLoaded(){
-        loaded = touchSensor.getDistance(DistanceUnit.CM) < 10;
+        loaded = touchSensor.getDistance(DistanceUnit.CM) <= 3;
         return loaded;
     }
 
