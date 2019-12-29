@@ -23,6 +23,7 @@ public class RobotV1 extends Robot {
     boolean hooksDown = false;
     boolean capstoneClick = true;
     boolean slow = false;
+    boolean intakeLoaded, invert = false, regular = true;
     boolean releaseCapstone = false;
     double drive_direction = 1;
     Telemetry telemetry;
@@ -71,16 +72,22 @@ public class RobotV1 extends Robot {
         GP1_DPLEFT.recordNewValue(gamepad1.left_bumper);
         GP1_DPRIGHT.recordNewValue(gamepad1.dpad_right);
 
-        if (GP1X.isJustOn()) {
-            drive_direction = -1;
-        }
-        if (GP1B.isJustOn()) {
-            drive_direction = 1;
-        }
         if (intake.isLoaded()) {
+            invert = true;
+            regular = false;
+        }
+//        if (GP1X.isJustOn()) {
+//            invert = true;
+//            regular = false;
+//        }
+        if (GP1B.isJustOn()) {
+            regular = !regular;
+            invert = !invert;
+        }
+        if (invert) {
             drive_direction = -1;
         }
-        else {
+        if (regular) {
             drive_direction = 1;
         }
 
