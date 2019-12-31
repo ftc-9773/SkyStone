@@ -63,7 +63,11 @@ public class RobotV1Commands extends RasiCommands{
         robot.setIntake(true);
     }
 
-    public void reverseIntakeOn() {robot.setReverseIntake(true);}
+    public void reverseIntakeOn() {
+        robot.setReverseIntake(true);
+        driveUtil.driveStraight(-5.0, 1);
+
+    }
 
     public void intakeOff(){
         robot.setIntake(false);
@@ -74,7 +78,7 @@ public class RobotV1Commands extends RasiCommands{
         robot.setVLiftPos(0);
     }
 
-    public void vLiftIntakePos() { robot.setVLiftPos(390);}
+    public void vLiftIntakePos() { robot.setVLiftPos(450);}
 
     public void vLiftRaise(int blocks) { robot.setVLiftPos(blocks*robot.getBlockHeightInEncoders() + 660); }
 

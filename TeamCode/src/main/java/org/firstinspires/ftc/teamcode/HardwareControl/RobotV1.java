@@ -19,7 +19,7 @@ public class RobotV1 extends Robot {
     double xp, yp, rp;
     public double yLiftHeight = 0.0, bLiftHeight = 0;
     boolean bLastClicked = false, yLastClicked = false;
-    Button GP1X = new Button(), GP1B = new Button(), A = new Button(), B = new Button(), Y = new Button(),  RB = new Button(), LB = new Button(), GP1_DPLEFT = new Button(), GP1_DPRIGHT = new Button(), GP2X = new Button(), DPR = new Button(), DPL = new Button(), DPU = new Button(), GP2_DPDOWN = new Button(), RB2 = new Button();
+    Button GP1X = new Button(), GP1B = new Button(), A = new Button(), B = new Button(), Y = new Button(),  RB = new Button(), LB = new Button(), GP1_DPLEFT = new Button(), GP1_DPRIGHT = new Button(), GP2X = new Button(), DPR = new Button(), GP2_LStick = new Button(), DPU = new Button(), GP2_DPDOWN = new Button(), RB2 = new Button();
     boolean hooksDown = false;
     boolean capstoneClick = true;
     boolean slow = false;
@@ -76,13 +76,13 @@ public class RobotV1 extends Robot {
             invert = true;
             regular = false;
         }
-//        if (GP1X.isJustOn()) {
-//            invert = true;
-//            regular = false;
-//        }
+        if (GP1X.isJustOn()) {
+              invert = true;
+              regular = false;
+        }
         if (GP1B.isJustOn()) {
-            regular = !regular;
-            invert = !invert;
+            regular = true;
+            invert = false;
         }
         if (invert) {
             drive_direction = -1;
@@ -153,8 +153,8 @@ public class RobotV1 extends Robot {
             //lifts.setHLiftPos(lifts.gethLiftMaxPos());
         }
 
-        DPL.recordNewValue(gamepad2.dpad_left);
-        if (DPL.isJustOn()) {
+        GP2_LStick.recordNewValue(gamepad2.left_stick_button);
+        if (GP2_LStick.isJustOn()) {
             if (capstoneClick) {
                 lifts.releaseCapstone();
                 capstoneClick = false;

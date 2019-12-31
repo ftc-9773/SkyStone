@@ -23,7 +23,7 @@ turn 270
 
 wait 0.1
 driveStraight -2
-uphooks
+upHooks
 strafe -4
 wait 0.1
 vLiftDown
