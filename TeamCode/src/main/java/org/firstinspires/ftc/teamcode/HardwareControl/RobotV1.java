@@ -254,6 +254,13 @@ public class RobotV1 extends Robot {
         lifts.update();
         backHooks.update();
     }
+    public void driveFast(double speed) {
+            drivebase.drive(0, speed, 0, false);
+    }
+
+    public void stopDriving() {
+        drivebase.stop();
+    }
 
     public void stop(){}
 
@@ -301,8 +308,7 @@ public class RobotV1 extends Robot {
 
     public int getBlockHeightInEncoders(){ return lifts.getBlockHeightInEncoders();}
 
-    public void extendHLift() { lifts.setHLiftPos(lifts.gethLiftMaxPos());}
+    public void moveHLift(double pow) {lifts.setHLiftPow(pow);}
 
-    public void retractHLift() {lifts.setHLiftPos(lifts.gethLiftZeroPos());}
 }
 

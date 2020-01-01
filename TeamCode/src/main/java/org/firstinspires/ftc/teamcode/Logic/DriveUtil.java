@@ -139,7 +139,7 @@ public class DriveUtil {
             sign = Math.signum(v);
             Log.d(TAG, "V^2: " + v);
             v = Math.sqrt(v);
-            omega = sign * v * (1 / 560) * 60; //Magic equation
+            omega = sign * v * (1.0 / 560) * 60; //Magic equation
             pow =  (accelerating * a * m * rw * OMEGA / km + omega * ke + tf * OMEGA/ km) / 12; // More magical equations
             s = Math.abs(avgDistElapsed(inits));
             pow = Math.max(minDistPow, pow);

@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumDrivebase;
 import org.firstinspires.ftc.teamcode.HardwareControl.RobotV1;
 import org.firstinspires.ftc.teamcode.Logic.DriveUtil;
 import static java.lang.Math.*;
@@ -16,6 +17,18 @@ public class RobotV1Commands extends RasiCommands{
         super(opMode);
         this.robot = robot;
         this.driveUtil = new DriveUtil(robot, opMode);
+    }
+
+    public void driveFast(double time, double speed, double afterDistance) {
+        long initialTime = System.currentTimeMillis();
+        while(initialTime + time*1000 > System.currentTimeMillis()) {
+            robot.update();
+            robot.driveFast(speed);
+            robot.update();
+        }
+        robot.driveFast(0);
+        driveUtil.driveStraight(afterDistance, 1);
+        robot.update();
     }
 
     public void drive(double x, double y){
@@ -38,6 +51,8 @@ public class RobotV1Commands extends RasiCommands{
         Log.d("ROBOTV1COMMANDS", "DrivingStraight dist" + dist);
         driveUtil.driveStraight(dist, 0.5);
     }
+
+
 
     public void dropHooks(){
         robot.dropHooks();
@@ -65,7 +80,6 @@ public class RobotV1Commands extends RasiCommands{
 
     public void reverseIntakeOn() {
         robot.setReverseIntake(true);
-        driveUtil.driveStraight(-5.0, 1);
 
     }
 
@@ -80,11 +94,18 @@ public class RobotV1Commands extends RasiCommands{
 
     public void vLiftIntakePos() { robot.setVLiftPos(450);}
 
-    public void vLiftRaise(int blocks) { robot.setVLiftPos(blocks*robot.getBlockHeightInEncoders() + 660); }
+    public void vLiftRaise(int blocks) { robot.setVLiftPos(blocks*robot.getBlockHeightInEncoders() + 750); }
 
-    public void extendHLift() {robot.extendHLift();}
+    public void moveHLift(double time, double power) {
+        power = -power;
+        long startTime2 = System.currentTimeMillis();
+        while (startTime2 + time * 1000 > System.currentTimeMillis() && !opMode.isStopRequested()) {
+            robot.update();
+            robot.moveHLift(power);
+            robot.update();
+        }
+    }
 
-    public void retractHLift() {robot.retractHLift();}
 
 
     public void grab(){

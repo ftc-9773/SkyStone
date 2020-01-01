@@ -1,37 +1,4 @@
-vLiftIntakePos
-intakeOn
-driveStraight 34
-wait 0.5
-driveStraight 5
-intakeOff
-grab
-wait 0.5
-driveStraight -5
-driveStraight -9
 
-vLiftDown
-wait 0.2
-
-turn 173
-
-
+moveHLift 0.1 0.5
 wait 0.1
-upHooks
-strafe -102
-dropHooks
-driveStraight -3
-
-driveStraight 24
-
-turn 90
-
-wait 0.1
-driveStraight 2
-upHooks
-strafe -4
-wait 0.1
-vLiftDown
-
-driveStraight 45
-
-wait 0.1
+C: moveHLift 0.2 -0.5
