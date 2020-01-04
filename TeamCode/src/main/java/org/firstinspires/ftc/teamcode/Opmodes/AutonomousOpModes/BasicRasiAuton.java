@@ -10,10 +10,10 @@ import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.Lifts;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumDrivebase;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.Gyro;
 import org.firstinspires.ftc.teamcode.HardwareControl.RobotV1;
-import org.firstinspires.ftc.teamcode.Logic.Vision.skyPositions;
 import org.firstinspires.ftc.teamcode.RASI.Rasi.RasiInterpreter;
 import org.firstinspires.ftc.teamcode.RASI.RasiCommands.RobotV1Commands;
 import org.firstinspires.ftc.teamcode.Logic.Vision.SkyStoneDetector;
+import org.firstinspires.ftc.teamcode.Logic.Vision.SkyStoneDetector.skyPositions;
 
 /**
  * implement filename to return the filename
@@ -59,15 +59,13 @@ public abstract class BasicRasiAuton extends LinearOpMode {
             // init the vision
             detector.init(hardwareMap.appContext);
             detector.enable();
-            skyPositions blackPosition = skyPositions.center;
+            skyPositions blackPosition = skyPositions.mid;
             skyPositions pos = skyPositions.unknown;
-            int i = 0;
             while (!isStopRequested() && !isStarted()) {
                 pos = detector.getPosition();
                 if (pos != null) blackPosition = pos;
                 telemetry.addData("VisionReading", blackPosition.toString());
                 telemetry.update();
-                i++;
             }
             // pass tags to RASI
             String[] tags = new String[1];

@@ -4,17 +4,13 @@ import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.Intake;
-import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.Lifts;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumDrivebase;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.Gyro;
 import org.firstinspires.ftc.teamcode.HardwareControl.Robot;
-import org.firstinspires.ftc.teamcode.HardwareControl.RobotV1;
 import org.firstinspires.ftc.teamcode.Logic.Vision.SkyStoneDetector;
-import org.firstinspires.ftc.teamcode.Logic.Vision.skyPositions;
+import org.firstinspires.ftc.teamcode.Logic.Vision.SkyStoneDetector.skyPositions;
 import org.firstinspires.ftc.teamcode.RASI.Rasi.RasiInterpreter;
 import org.firstinspires.ftc.teamcode.RASI.RasiCommands.RasiCommands;
-import org.firstinspires.ftc.teamcode.RASI.RasiCommands.RobotV1Commands;
 import org.firstinspires.ftc.teamcode.RASI.RasiCommands.TestDriveBaseRasiCommands;
 
 /**
@@ -52,12 +48,12 @@ public abstract class TestBasicRasiAuton extends LinearOpMode {
             // init the vision
             detector.init(hardwareMap.appContext);
             detector.enable();
-            skyPositions blackPosition = skyPositions.center;
+            skyPositions blackPosition = skyPositions.mid;
             skyPositions pos = skyPositions.unknown;
             while (!isStopRequested() && !isStarted() && !opModeIsActive()) {
                 pos = detector.getPosition();
                 if (pos != null) blackPosition = pos;
-                telemetry.addData("VisionReading", blackPosition.toString());
+                telemetry.addData("VisionReading ", pos);
                 telemetry.update();
             }
             // pass tags to RASI

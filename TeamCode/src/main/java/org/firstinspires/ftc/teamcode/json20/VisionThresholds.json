@@ -1,14 +1,11 @@
 {
-  "minDetectionThreshold" : 0.01,
-
-  "BoxOneTopLeftX":     0.2,
-  "BoxOneTopLeftY":     0.453,
-  "BoxOneWidth"    :   0.185,
-  "BoxOneLength"   :   0.122,
-
-  "BoxTwoTopLeftX":     0.41,
-  "BoxTwoTopLeftY":     0.453,
-  "BoxTwoLength"   :   0.99,
-  "BoxTwoWidth"    :   0.15,
-  "returnMat":           true
+  "detectionThreshold" : 102,
+  "midx" : 0.47,
+  "midy" : 0.53,
+  "leftx" : 0.30,
+  "lefty" : 0.53,
+  "rightx" : 0.34,
+  "righty" : 0.53,
+  "_rightx" : 0.66,
+  "_righty" : 0.53
 }
