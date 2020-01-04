@@ -59,17 +59,15 @@ public abstract class BasicRasiAuton extends LinearOpMode {
             // init the vision
             detector.init(hardwareMap.appContext);
             detector.enable();
-            skyPositions blackPosition = skyPositions.mid;
-            skyPositions pos = skyPositions.unknown;
+            skyPositions pos = skyPositions.mid;
             while (!isStopRequested() && !isStarted()) {
                 pos = detector.getPosition();
-                if (pos != null) blackPosition = pos;
-                telemetry.addData("VisionReading", blackPosition.toString());
+                telemetry.addData("VisionReading", pos.toString());
                 telemetry.update();
             }
             // pass tags to RASI
             String[] tags = new String[1];
-            tags[0] = Character.toString(blackPosition.toString().charAt(0)).toUpperCase();
+            tags[0] = Character.toString(pos.toString().charAt(0)).toUpperCase();
             rasiInterpreter.setTags(tags);
             sendTelemetry("Set tags to " + tags[0]);
             Log.d("RasiAuto", "Set tag to " + tags[0]);

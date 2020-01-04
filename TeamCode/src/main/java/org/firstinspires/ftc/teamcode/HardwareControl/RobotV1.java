@@ -258,6 +258,8 @@ public class RobotV1 extends Robot {
             drivebase.drive(0, speed, 0, false);
     }
 
+    public void strafeFast(double speed) { drivebase.drive(speed, 0, 0, false);}
+
     public void stopDriving() {
         drivebase.stop();
     }
@@ -310,5 +312,12 @@ public class RobotV1 extends Robot {
 
     public void moveHLift(double pow) {lifts.setHLiftPow(pow);}
 
+    public void servoDown() {
+        intake.autoServoDown();
+    }
+
+    public void servoUp(){
+        intake.autoServoUp();
+    }
 }
 

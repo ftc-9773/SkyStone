@@ -31,6 +31,32 @@ public class RobotV1Commands extends RasiCommands{
         robot.update();
     }
 
+    public void strafeFast(double time, double speed, double afterDistance) {
+        long initialTime = System.currentTimeMillis();
+        while (initialTime + time * 1000 > System.currentTimeMillis()) {
+            robot.update();
+            robot.strafeFast(speed);
+            robot.update();
+        }
+        robot.driveFast(0);
+        driveUtil.strafeStraight(afterDistance);
+        robot.update();
+    }
+
+
+
+    public void driveFast2(double time, double speed, double afterDistance) {
+        long initialTime = System.currentTimeMillis();
+        while(initialTime + time*1000 > System.currentTimeMillis()) {
+            robot.update();
+            robot.driveFast(speed);
+            robot.update();
+        }
+        robot.driveFast(0);
+        driveUtil.driveStraight(afterDistance, 0.5);
+        robot.update();
+    }
+
     public void drive(double x, double y){
         double theta = atan(y / x);
         double dist = pow(x * x + y * y, 0.5);
@@ -88,6 +114,16 @@ public class RobotV1Commands extends RasiCommands{
         robot.setReverseIntake(false);
     }
 
+    public void servoDown() {
+        robot.servoDown();
+        robot.update();
+    }
+
+    public void servoUp() {
+        robot.servoUp();
+        robot.update();
+    }
+
     public void vLiftDown(){
         robot.setVLiftPos(0);
     }
@@ -106,18 +142,30 @@ public class RobotV1Commands extends RasiCommands{
         }
     }
 
+    public void grabWNoTime(){
+        long startTime3 = System.currentTimeMillis();
+        while (startTime3 + 0.5 * 1000 > System.currentTimeMillis() && !opMode.isStopRequested()) {
+            robot.grab();
+            robot.update();
+        }
+        robot.clawOff();
+        robot.update();
+    }
 
-
-    public void grab(){
+    public void grabWTime() {
         robot.grab();
         wait(0.5);
         robot.clawOff();
     }
 
     public void release(){
-        robot.release();
-        wait(0.5);
+        long startTime4 = System.currentTimeMillis();
+        while (startTime4 + 0.5 * 1000 > System.currentTimeMillis() && !opMode.isStopRequested()) {
+            robot.release();
+            robot.update();
+        }
         robot.clawOff();
+        robot.update();
     }
 
     public void curve(double x, double y, double theta){

@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -15,12 +16,14 @@ public class Intake implements Attachment{
     public DcMotor leftMotor;
     public DcMotor rightMotor;
     public DistanceSensor touchSensor;
+    public Servo autoServo;
 
     //Private values, keeping track of the current state
     private double pow;
     private double minPow;
     public boolean isOn;
     public boolean loaded = false;
+    public double autoServoDownPos, autoServoUpPos;
 
     //config values
     private SafeJsonReader reader;
@@ -32,10 +35,13 @@ public class Intake implements Attachment{
         reader = new SafeJsonReader("RobotV1");
         minPow = reader.getDouble("minIntakePow", 0.05);
         onPow = reader.getDouble("onIntakePow", 1.0);
+        autoServoDownPos = reader.getDouble("autoServoDownPos");
+        autoServoUpPos = reader.getDouble("autoServoUpPos");
 
         leftMotor = hardwareMap.get(DcMotor.class, "lintakeMotor");
         rightMotor = hardwareMap.get(DcMotor.class, "rintakeMotor");
         touchSensor = hardwareMap.get(DistanceSensor.class, "intakeTouchSensor");
+        autoServo = hardwareMap.get(Servo.class, "autoServo");
 
         isOn = false;
         off();
@@ -65,6 +71,14 @@ public class Intake implements Attachment{
             this.pow = inPow;
             this.isOn = true;
         }
+    }
+
+    public void autoServoDown() {
+        autoServo.setPosition(autoServoDownPos);
+    }
+
+    public void autoServoUp() {
+        autoServo.setPosition(autoServoUpPos);
     }
 
     public boolean isLoaded(){

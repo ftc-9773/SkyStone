@@ -43,6 +43,9 @@
   "capstoneZeroPos" : 0.25,
   "capstoneReleasePos": 0.7,
 
+  "autoServoDownPos": 0,
+  "autoServoUpPos": 0.3,
+
   "vkp" : 0.005,
   "vki" : 1.1,
   "vkd" : 0.22,
