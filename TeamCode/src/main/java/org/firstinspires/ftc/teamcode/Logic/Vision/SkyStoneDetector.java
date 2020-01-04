@@ -78,12 +78,12 @@ public class SkyStoneDetector extends OpenCVPipeline {
         int rightx = (int) (right[0] * width);
 
 
-        leftval =  yCbCrChan2Mat.get(leftx, y)[0];
-        midval =  yCbCrChan2Mat.get(midx, y)[0];
+        leftval =  yCbCrChan2Mat.get(y, leftx)[0];
+        midval =  yCbCrChan2Mat.get(y, midx)[0];
 
-        Log.d(TAG, " len " + yCbCrChan2Mat.get(leftx, y).length);
-        Log.d(TAG, " len " + yCbCrChan2Mat.get(midx, y).length);
-        Log.d(TAG, "rvalue " + yCbCrChan2Mat.get(rightx, y)[0]);
+        Log.d(TAG, " len " + yCbCrChan2Mat.get(y, leftx).length);
+        Log.d(TAG, " len " + yCbCrChan2Mat.get(y, midx).length);
+        Log.d(TAG, "rvalue " + yCbCrChan2Mat.get(y, rightx)[0]);
 
         if (leftval > 100) {
             position = skyPositions.left;
