@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Logic.Geometry;
 
+import org.firstinspires.ftc.teamcode.Logic.pathing.Point;
+
 import java.util.ArrayList;
 import java.util.List;
 
