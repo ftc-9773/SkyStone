@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.BackHooks;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.Intake;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.Lifts;
+import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.SideHook;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumDrivebase;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.Gyro;
 import org.firstinspires.ftc.teamcode.HardwareControl.RobotV1;
@@ -30,7 +31,9 @@ public class RobotV1TeleOpFull extends LinearOpMode {
         BackHooks backHooks = new BackHooks(hardwareMap);
         sendTelemetry("Back Hooks interface created...");
 
-        RobotV1 robot = new RobotV1(drivebase, gyro, intake, lifts, backHooks, telemetry);
+        SideHook sideHook = new SideHook(hardwareMap);
+
+        RobotV1 robot = new RobotV1(drivebase, gyro, intake, lifts, backHooks, telemetry, sideHook);
         sendTelemetry("Robot created...");
 
 

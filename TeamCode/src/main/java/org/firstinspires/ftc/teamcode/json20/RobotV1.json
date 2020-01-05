@@ -55,6 +55,8 @@
   "vLiftMinPow": -1,
   "vLiftMaxVelocity" : 0,
   "hLiftMinPow" : -1,
-  "hLiftMaxVelocity": 0
+  "hLiftMaxVelocity": 0,
 
+  "sideHookUpPos" : 0,
+  "sideHookDownPos" : 0
 }
