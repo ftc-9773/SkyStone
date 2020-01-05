@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Logic.Geometry;
 
+import org.firstinspires.ftc.teamcode.Logic.pathing.Point;
+
 public class Arc {
     final static double TAU = Math.PI*2;
     Point start;

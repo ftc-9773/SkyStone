@@ -1,6 +1,8 @@
-package org.firstinspires.ftc.teamcode.Logic.Geometry;
+package org.firstinspires.ftc.teamcode.Logic.pathing;
 
 //import org.firstinspires.ftc.teamcode.Logic.Geometry.Vector;
+
+import org.firstinspires.ftc.teamcode.Logic.Geometry.Vector;
 
 /**
  * @author Cadence Weddle and Jonathan Zhou
@@ -29,7 +31,7 @@ public class Point{
      * @return String indicating the ordinate and abyssca of said point (Cartesian)
      */
     public String toString(){
-        return "------------\nPoint\nX:"+this.xCord+"\nY:"+this.yCord+"\n------------\n";
+        return "-Point\nX:"+this.xCord+"\nY:"+this.yCord+"";
     }
     public boolean AreSame(Point compare, double tolerance){
         if (Math.abs(this.xCord - compare.xCord) < tolerance && Math.abs(this.yCord - compare.yCord) < tolerance){

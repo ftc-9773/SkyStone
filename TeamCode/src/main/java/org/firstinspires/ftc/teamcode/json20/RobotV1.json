@@ -58,5 +58,5 @@
   "hLiftMaxVelocity": 0,
 
   "sideHookUpPos" : 0,
-  "sideHookDownPos" : 0
+  "sideHookDownPos" : 0.3
 }
