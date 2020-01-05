@@ -6,6 +6,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.BackHooks;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.Intake;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.Lifts;
+import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.SideHook;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumDrivebase;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.DistSensor;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.Gyro;
@@ -31,25 +32,20 @@ public class RobotV1 extends Robot {
     Intake intake;
     BackHooks backHooks;
     Lifts lifts;
+    SideHook sideHook;
     double clawPos = 0;
 
-    public RobotV1(MecanumDrivebase drivebase, Gyro gyro, Intake intake, Lifts lifts, BackHooks backHooks, Telemetry telemetry){
+    public RobotV1(MecanumDrivebase drivebase, Gyro gyro, Intake intake, Lifts lifts, BackHooks backHooks, Telemetry telemetry, SideHook sideHook){
         this.lifts = lifts;
         this.intake = intake;
         this.gyro = gyro;
         this.drivebase = drivebase;
         this.backHooks = backHooks;
         this.telemetry = telemetry;
+        this.sideHook = sideHook;
     }
 
-    public RobotV1(MecanumDrivebase drivebase, Gyro gyro, Intake intake, Lifts lifts, DistSensor distSensor, BackHooks backHooks, Telemetry telemetry){
-        this.lifts = lifts;
-        this.intake = intake;
-        this.gyro = gyro;
-        this.drivebase = drivebase;
-        this.backHooks = backHooks;
-        this.telemetry = telemetry;
-    }
+
     public void runGamepadCommands(Gamepad gamepad1, Gamepad gamepad2) {
         //THE FOLLOWING IS GAMEPAD 1
 
@@ -245,15 +241,6 @@ public class RobotV1 extends Robot {
         }
     }
 
-    //RASI Functions for Auto
-    @Override
-    public void update() {
-        drivebase.update();
-        intake.update();
-        heading = getHeading();
-        lifts.update();
-        backHooks.update();
-    }
     public void driveFast(double speed) {
             drivebase.drive(0, speed, 0, false);
     }
@@ -310,5 +297,21 @@ public class RobotV1 extends Robot {
 
     public void moveHLift(double pow) {lifts.setHLiftPow(pow);}
 
+    public void sideHookUp(){
+        sideHook.up();
+    }
+
+    public void sideHookDown(){
+        sideHook.down();
+    }
+
+    public void update() {
+        drivebase.update();
+        intake.update();
+        heading = getHeading();
+        lifts.update();
+        backHooks.update();
+        sideHook.update();
+    }
 }
 
