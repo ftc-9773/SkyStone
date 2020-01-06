@@ -13,6 +13,6 @@ public class rasiTesting extends TestBasicRasiAuton {
 
     @Override
     public boolean doVision() {
-        return true;
+        return false;
     }
 }

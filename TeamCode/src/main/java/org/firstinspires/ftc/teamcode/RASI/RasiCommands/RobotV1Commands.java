@@ -31,17 +31,6 @@ public class RobotV1Commands extends RasiCommands{
         robot.update();
     }
 
-    public void strafeFast(double time, double speed, double afterDistance) {
-        long initialTime = System.currentTimeMillis();
-        while (initialTime + time * 1000 > System.currentTimeMillis()) {
-            robot.update();
-            robot.strafeFast(speed);
-            robot.update();
-        }
-        robot.driveFast(0);
-        driveUtil.strafeStraight(afterDistance);
-        robot.update();
-    }
 
 
 
@@ -114,13 +103,13 @@ public class RobotV1Commands extends RasiCommands{
         robot.setReverseIntake(false);
     }
 
-    public void servoDown() {
-        robot.servoDown();
+    public void sideHookDown() {
+        robot.sideHookDown();
         robot.update();
     }
 
-    public void servoUp() {
-        robot.servoUp();
+    public void sideHookUp() {
+        robot.sideHookUp();
         robot.update();
     }
 

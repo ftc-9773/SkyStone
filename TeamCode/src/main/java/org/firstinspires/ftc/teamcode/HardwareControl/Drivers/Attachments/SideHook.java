@@ -21,10 +21,12 @@ public class SideHook {
 
     public void up(){
         targetPos = upPos;
+        //update();
     }
 
     public void down(){
         targetPos = downPos;
+        //update();
     }
 
     public void update(){

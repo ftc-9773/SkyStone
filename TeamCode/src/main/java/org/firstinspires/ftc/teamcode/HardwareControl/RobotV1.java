@@ -20,7 +20,7 @@ public class RobotV1 extends Robot {
     double xp, yp, rp;
     public double yLiftHeight = 0.0, bLiftHeight = 0;
     boolean bLastClicked = false, yLastClicked = false;
-    Button GP1X = new Button(), GP1B = new Button(), A = new Button(), B = new Button(), Y = new Button(),  RB = new Button(), LB = new Button(), GP1_DPLEFT = new Button(), GP1_DPRIGHT = new Button(), GP2X = new Button(), DPR = new Button(), GP2_LStick = new Button(), DPU = new Button(), GP2_DPDOWN = new Button(), RB2 = new Button();
+    Button GP1A = new Button(), GP1X = new Button(), GP1B = new Button(), A = new Button(), B = new Button(), Y = new Button(),  RB = new Button(), LB = new Button(), GP1_DPLEFT = new Button(), GP1_DPRIGHT = new Button(), GP2X = new Button(), DPR = new Button(), GP2_LStick = new Button(), DPU = new Button(), GP2_DPDOWN = new Button(), RB2 = new Button();
     boolean hooksDown = false;
     boolean capstoneClick = true;
     boolean slow = false;
@@ -88,11 +88,12 @@ public class RobotV1 extends Robot {
         }
 
         //Slow mode
-        if (GP1_DPLEFT.isJustOn()) {
+        if (gamepad1.left_bumper) {
             slow = true;
         }
-        if (GP1_DPRIGHT.isJustOn()) {
+        else {
             slow = false;
+
         }
         if (slow) { //Slow mode is 60% speed
             xp *= 0.4;
@@ -100,6 +101,14 @@ public class RobotV1 extends Robot {
             rp *= 0.65;
         }
         drivebase.drive(drive_direction * xp, drive_direction * -yp, rp, true);
+
+        GP1A.recordNewValue(gamepad1.a);
+        if (GP1A.isJustOff()) {
+            sideHook.up();
+        }
+        else {
+            sideHook.down();
+        }
 
 
         if (gamepad1.left_trigger > 0.05) {
@@ -299,10 +308,12 @@ public class RobotV1 extends Robot {
 
     public void sideHookUp(){
         sideHook.up();
+        sideHook.update();
     }
 
     public void sideHookDown(){
         sideHook.down();
+        sideHook.update();
     }
 
     public void update() {

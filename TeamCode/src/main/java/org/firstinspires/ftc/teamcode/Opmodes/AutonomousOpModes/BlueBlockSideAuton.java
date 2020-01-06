@@ -11,6 +11,6 @@ public class BlueBlockSideAuton extends BasicRasiAuton {
 
     @Override
     public boolean doVision() {
-        return false;
+        return true;
     }
 }

@@ -1,4 +1,8 @@
-drive 10 0
+wait 1
+sideHookDown
+wait 2
+sideHookUp
+wait 2
 
 
 
