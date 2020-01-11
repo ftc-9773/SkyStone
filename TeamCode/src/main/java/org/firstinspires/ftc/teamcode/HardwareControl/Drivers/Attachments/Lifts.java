@@ -17,6 +17,7 @@ public class Lifts implements Attachment {
     public static final double INCHES_PER_BLOCK_HEIGHT = 4;
     public static final double STUD_HEIGHT_INCHES = 1;
     public final double HEIGHT_OF_PLATFORM_INCHES = 1.25;
+    public final double GEAR_RATIO = 20.0/36.0;
 
     //Physical interface
     DcMotor vLiftMotor, hLiftMotor;
@@ -131,22 +132,26 @@ public class Lifts implements Attachment {
         setvLiftPos(vliftZeroPos);
     }
 
+    public double getGearRatio() {
+        return GEAR_RATIO;
+    }
+
     //In number of blocks. 1 block is 4 inches high, the stud on top is 1 inch.
     public void setvLiftPos(double pos){
         //vLiftTargetPos = (int)bound(vliftZeroPos, vLiftMaxPos, ((pos * INCHES_PER_BLOCK_HEIGHT + STUD_HEIGHT_INCHES + HEIGHT_OF_PLATFORM_INCHES) * ENCODER_TICKS_PER_INCH));
         //vLiftTargetPos = (int)bound(vliftZeroPos, vLiftMaxPos, pos * blockHeightInEncoders + 660);
         Log.d(TAG, "Set pos to " + pos + " calculated from num blocks");
 
-        if (pos == 0.0) { vLiftTargetPos = baseLiftHeight; }
-        if (pos == 1.0) { vLiftTargetPos = oneBlockHigh; }
-        if (pos == 2.0) { vLiftTargetPos = twoBlocksHigh; }
-        if (pos == 3.0) { vLiftTargetPos = threeBlocksHigh; }
-        if (pos == 4.0) { vLiftTargetPos = fourBlocksHigh; }
-        if (pos == 5.0) { vLiftTargetPos = fiveBlocksHigh; }
-        if (pos == 6.0) { vLiftTargetPos = sixBlocksHigh; }
-        if (pos == 7.0) { vLiftTargetPos = sevenBlocksHigh; }
-        if (pos == 8.0) { vLiftTargetPos = eightBlocksHigh; }
-        if (pos == 9.0) { vLiftTargetPos = nineBlocksHigh; }
+        if (pos == 0.0) { vLiftTargetPos = (int)(baseLiftHeight * GEAR_RATIO); }
+        if (pos == 1.0) { vLiftTargetPos = (int)(oneBlockHigh * GEAR_RATIO); }
+        if (pos == 2.0) { vLiftTargetPos = (int)(twoBlocksHigh * GEAR_RATIO); }
+        if (pos == 3.0) { vLiftTargetPos = (int)(threeBlocksHigh * GEAR_RATIO); }
+        if (pos == 4.0) { vLiftTargetPos = (int)(fourBlocksHigh * GEAR_RATIO); }
+        if (pos == 5.0) { vLiftTargetPos = (int)(fiveBlocksHigh * GEAR_RATIO); }
+        if (pos == 6.0) { vLiftTargetPos = (int)(sixBlocksHigh * GEAR_RATIO); }
+        if (pos == 7.0) { vLiftTargetPos = (int)(sevenBlocksHigh * GEAR_RATIO); }
+        if (pos == 8.0) { vLiftTargetPos = (int)(eightBlocksHigh * GEAR_RATIO); }
+        if (pos == 9.0) { vLiftTargetPos = (int)(nineBlocksHigh * GEAR_RATIO); }
 
     }
 
@@ -240,7 +245,7 @@ public class Lifts implements Attachment {
 
     public void intake(){
         //releaseBlock();
-        vLiftTargetPos = vLiftIdlePos;
+        vLiftTargetPos = (int)(vLiftIdlePos * GEAR_RATIO);
     }
 
     public void releaseCapstone(){

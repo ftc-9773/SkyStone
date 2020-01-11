@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.HardwareControl.RobotV1;
 import org.firstinspires.ftc.teamcode.Logic.DriveUtil;
 import static java.lang.Math.*;
 
+
 public class RobotV1Commands extends RasiCommands{
     RobotV1 robot;
     DriveUtil driveUtil;
@@ -117,9 +118,9 @@ public class RobotV1Commands extends RasiCommands{
         robot.setVLiftPos(0);
     }
 
-    public void vLiftIntakePos() { robot.setVLiftPos(450);}
+    public void vLiftIntakePos() { robot.setVLiftPos((int)(450 * robot.getGearRatio()));}
 
-    public void vLiftRaise(int blocks) { robot.setVLiftPos(blocks*robot.getBlockHeightInEncoders() + 750); }
+    public void vLiftRaise(int blocks) { robot.setVLiftPos((int)((blocks*robot.getBlockHeightInEncoders()*robot.getGearRatio()) + 750)); }
 
     public void moveHLift(double time, double power) {
         power = -power;

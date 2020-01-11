@@ -13,7 +13,7 @@ L:intakeOn
 L:driveStraight 4.5
 L:wait 0.4
 
-L:strafe -24
+L:strafe -25
 L:intakeOff
 L:wait 0.1
 L:vLiftDown

@@ -284,6 +284,10 @@ public class RobotV1 extends Robot {
         hooksDown = false;
     }
 
+    public double getGearRatio() {
+        return lifts.getGearRatio();
+    }
+
     public void grab(){
         lifts.grabBlock();
     }

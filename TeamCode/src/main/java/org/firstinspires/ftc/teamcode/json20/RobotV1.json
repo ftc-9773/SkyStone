@@ -11,7 +11,7 @@
   "leftClawServoReleasePow" : 0.5,
   "rightClawServoGrabPow" : 0.5,
   "rightClawServoReleasePow" : -0.5,
-  "vLiftMaxPos" : 5000,
+  "vLiftMaxPos" : 3000,
   "hLiftMaxPos" : 235,
   "vLiftIdlePos" : 450,
   "minHeightForHLift" : 240,
@@ -28,7 +28,7 @@
   "sixBlocksHigh": 3500,
   "sevenBlocksHigh": 4010,
   "eightBlocksHigh": 4530 ,
-  "nineBlocksHigh": 5000,
+  "nineBlocksHigh": 5300,
 
 
   "rotateServoZeroPos" : 0.95,
