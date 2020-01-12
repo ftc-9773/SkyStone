@@ -54,10 +54,11 @@ public class RobotV1TeleOpFull extends LinearOpMode {
             robot.update();
             // interested in seeing cycle time
             long currTime = System.currentTimeMillis();
+            telemetry.addLine("Foundation Distance: " + intake.showFoundDist());
             telemetry.addLine("Lift Height Y: " + robot.yLiftHeight + "  B: " + robot.bLiftHeight);
             telemetry.addLine("Current V Pos: " + lifts.getVliftPos());
             telemetry.addLine("Target V Pos: " + lifts.vLiftTargetPos);
-            telemetry.addLine("Current H Pos: "  + lifts.getHLiftPos());
+            //telemetry.addLine("Current H Pos: "  + lifts.getHLiftPos());
             telemetry.addLine("Target H Pos: " + lifts.hLiftTargetPos);
             telemetry.addLine("Intake Loaded  " + intake.isLoaded());
             telemetry.addData("Elapsed Time Milliseconds: ", (currTime - lastTime));

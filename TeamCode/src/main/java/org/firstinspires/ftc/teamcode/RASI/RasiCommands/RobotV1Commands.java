@@ -122,14 +122,24 @@ public class RobotV1Commands extends RasiCommands{
 
     public void vLiftRaise(int blocks) { robot.setVLiftPos((int)((blocks*robot.getBlockHeightInEncoders()*robot.getGearRatio()) + 750)); }
 
-    public void moveHLift(double time, double power) {
-        power = -power;
-        long startTime2 = System.currentTimeMillis();
-        while (startTime2 + time * 1000 > System.currentTimeMillis() && !opMode.isStopRequested()) {
-            robot.update();
-            robot.moveHLift(power);
-            robot.update();
-        }
+//    public void moveHLift(double time, double power) {
+//        power = -power;
+//        long startTime2 = System.currentTimeMillis();
+//        while (startTime2 + time * 1000 > System.currentTimeMillis() && !opMode.isStopRequested()) {
+//            robot.update();
+//            robot.moveHLift(power);
+//            robot.update();
+//        }
+//    }
+
+    public void extendHLift() {
+        robot.extendHLift();
+        robot.update();
+    }
+
+    public void retractHLift() {
+        robot.retractHLift();
+        robot.update();
     }
 
     public void grabWNoTime(){

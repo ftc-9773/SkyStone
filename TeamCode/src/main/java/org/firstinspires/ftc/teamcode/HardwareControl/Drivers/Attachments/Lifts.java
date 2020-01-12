@@ -20,10 +20,12 @@ public class Lifts implements Attachment {
     public final double GEAR_RATIO = 20.0/36.0;
 
     //Physical interface
-    DcMotor vLiftMotor, hLiftMotor;
+    DcMotor vLiftMotor;
+    //DcMotor hLiftMotor;
     CRServo leftClawServo, rightClawServo;
     Servo rotateServo;
     Servo capstoneServo;
+    Servo hLiftServo;
 
     //Stores the lowest position the lift should go to. (Which is the initial position of the lifts)
     public int vliftZeroPos = 0, hliftZeroPos = 0;
@@ -39,6 +41,8 @@ public class Lifts implements Attachment {
     int baseLiftHeight, oneBlockHigh, twoBlocksHigh, threeBlocksHigh, fourBlocksHigh, fiveBlocksHigh, sixBlocksHigh, sevenBlocksHigh, eightBlocksHigh, nineBlocksHigh;
 
     double capstoneZeroPos, capstoneReleasePos, capstoneTargetPos;
+
+    double hLiftServoZeroPos, hLiftServoExtendPos, hLiftServoTargetPos;
 
     //Safety information, so we don't try to go too high
     int vLiftMaxPos;
@@ -64,17 +68,18 @@ public class Lifts implements Attachment {
 
         //Intialise hardware
         vLiftMotor = hardwareMap.get(DcMotor.class, "vLiftMotor");
-        hLiftMotor = hardwareMap.get(DcMotor.class, "hLiftMotor");
+        //hLiftMotor = hardwareMap.get(DcMotor.class, "hLiftMotor");
         leftClawServo = hardwareMap.get(CRServo.class, "leftClawServo");
         rightClawServo = hardwareMap.get(CRServo.class, "rightClawServo");
         rotateServo = hardwareMap.get(Servo.class, "rClawServo");
         capstoneServo = hardwareMap.get(Servo.class, "capServo");
+        hLiftServo = hardwareMap.get(Servo.class, "hLiftServo");
 
         //Reset encoders
         vLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //hLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         vLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        hLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //hLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //Get config values
         reader = new SafeJsonReader("RobotV1");
@@ -92,7 +97,7 @@ public class Lifts implements Attachment {
         vliftZeroPos = getVliftPos();
         vLiftIdlePos = reader.getInt("vLiftIdlePos");
         hLiftMaxPos = reader.getInt("hLiftMaxPos");
-        hliftZeroPos = getHLiftPos();
+        //hliftZeroPos = getHLiftPos();
         minVPosForH = reader.getInt("minHeightForHLift");
         minHPosForLowerV = reader.getInt("minHorizontalToLowerVLIFT");
         minPositiveHPos = minHPosForLowerV;
@@ -110,6 +115,10 @@ public class Lifts implements Attachment {
 
         capstoneZeroPos = reader.getDouble("capstoneZeroPos");
         capstoneReleasePos = reader.getDouble("capstoneReleasePos");
+
+        hLiftServoExtendPos = reader.getDouble("hLiftServoExtend");
+        hLiftServoZeroPos = reader.getDouble("hLiftServoZero");
+
 
         //Set up pids.
         vkp = reader.getDouble("vkp");
@@ -159,9 +168,9 @@ public class Lifts implements Attachment {
         return vLiftMaxPos;
     }
 
-    public int gethLiftMaxPos() { return hLiftMaxPos;}
+    //public int gethLiftMaxPos() { return hLiftMaxPos;}
 
-    public int gethLiftZeroPos() { return hliftZeroPos;}
+    //public int gethLiftZeroPos() { return hliftZeroPos;}
 
     public int getBlockHeightInEncoders(){ return blockHeightInEncoders;}
 
@@ -173,9 +182,9 @@ public class Lifts implements Attachment {
     }
 
     //in encoder ticks
-    public void setHLiftPos(int pos){
-        hLiftTargetPos = (int) bound(hliftZeroPos, hLiftMaxPos, pos);
-    }
+//    public void setHLiftPos(int pos){
+//        hLiftTargetPos = (int) bound(hliftZeroPos, hLiftMaxPos, pos);
+//    }
 
 
     public void rotateClaw90(){
@@ -210,24 +219,25 @@ public class Lifts implements Attachment {
         return -vLiftMotor.getCurrentPosition();
     }
 
-    private int getRawHLift(){ return -hLiftMotor.getCurrentPosition();}
+    //private int getRawHLift(){
+    // return -hLiftMotor.getCurrentPosition();}
 
     public int getVliftPos(){
         return getRawVlift() + vliftZeroPos;
     }
 
-    public int getHLiftPos(){
-        return getRawHLift() - hliftZeroPos;
-    }
+//    public int getHLiftPos(){
+//        return getRawHLift() - hliftZeroPos;
+//    }
 
     public void adjustVLift(double pow){
         vLiftTargetPos = (int)bound(vliftZeroPos, vLiftMaxPos, vLiftTargetPos + 100 * pow);
 
     }
 
-    public void adjustHLift(double pow){
-        hLiftTargetPos = (int) bound(hliftZeroPos, hLiftMaxPos, hLiftTargetPos + 10 * pow);
-    }
+//    public void adjustHLift(double pow){
+//        hLiftTargetPos = (int) bound(hliftZeroPos, hLiftMaxPos, hLiftTargetPos + 10 * pow);
+//    }
 
     //Public facing method, with some checks and stuff
     public void setvLiftPow(double pow){
@@ -239,8 +249,18 @@ public class Lifts implements Attachment {
         vLiftMotor.setPower(pow);
     }
 
-    public void setHLiftPow(double pow){
-        hLiftMotor.setPower(pow);
+//    public void setHLiftPow(double pow){
+//        hLiftMotor.setPower(pow);
+//    }
+
+    public void extendHLift() {
+        hLiftServoTargetPos = hLiftServoExtendPos;
+        hLiftServo.setPosition(hLiftServoTargetPos);
+    }
+
+    public void retractHLift() {
+        hLiftServoTargetPos = hLiftServoZeroPos;
+        hLiftServo.setPosition(hLiftServoTargetPos);
     }
 
     public void intake(){
@@ -260,11 +280,11 @@ public class Lifts implements Attachment {
 
     @Override
     public void update() {
-        double hCorrection = hpid.getPIDCorrection(hLiftTargetPos, getHLiftPos());
+        //double hCorrection = hpid.getPIDCorrection(hLiftTargetPos, getHLiftPos());
 
-        Log.d(TAG, "hcorrection " + hCorrection);
+        //Log.d(TAG, "hcorrection " + hCorrection);
         Log.d(TAG, "Vpos " + getVliftPos());
-        Log.d(TAG, "Hpos " + getHLiftPos());
+        //Log.d(TAG, "Hpos " + getHLiftPos());
         Log.d(TAG, "vTarget  " + vLiftTargetPos);
         Log.d(TAG, "hTarget " + hLiftTargetPos);
 
@@ -286,9 +306,10 @@ public class Lifts implements Attachment {
             Log.d(TAG, "VCOR2 " + vCorrection);
             setVLiftPow(vCorrection);
         }
-        hCorrection = bound(-1, 1, -hCorrection); // Correct the sign
+        //hCorrection = bound(-1, 1, -hCorrection); // Correct the sign
         //setHLiftPow(bound(-1, 1, hCorrection));
 
+        hLiftServo.setPosition(hLiftServoTargetPos);
         rightClawServo.setPower(rightServoTargetPow);
         leftClawServo.setPower(leftServoTargetPow);
         rotateServo.setPosition(rotateServoTargetPos);

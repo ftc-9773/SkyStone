@@ -55,5 +55,8 @@
   "hLiftMaxVelocity": 0,
 
   "sideHookUpPos" : 0.0,
-  "sideHookDownPos" : 0.3
+  "sideHookDownPos" : 0.3,
+
+  "hLiftServoZero" : 0.0,
+  "hLiftServoExtend" : 0.0
 }

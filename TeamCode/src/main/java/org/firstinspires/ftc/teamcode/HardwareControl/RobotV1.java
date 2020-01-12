@@ -87,7 +87,6 @@ public class RobotV1 extends Robot {
             drive_direction = 1;
         }
 
-        //Slow mode
         if (gamepad1.left_bumper) {
             slow = true;
         }
@@ -95,6 +94,15 @@ public class RobotV1 extends Robot {
             slow = false;
 
         }
+        if (invert = true) {
+            if (intake.slowDown()) {
+                slow = true;
+            }
+            else {
+                slow = false;
+            }
+        }
+
         if (slow) { //Slow mode is 60% speed
             xp *= 0.4;
             yp *= 0.4;
@@ -225,12 +233,20 @@ public class RobotV1 extends Robot {
         }
 
 
-        if (Math.abs(gamepad2.left_stick_y) > 0.05) {
-            //lifts.adjustHLift(gamepad2.left_stick_y);
-            lifts.setHLiftPow(0.5 * gamepad2.left_stick_y);
-        } else {
-            lifts.setHLiftPow(0);
-        }
+//        if (Math.abs(gamepad2.left_stick_y) > 0.05) {
+//            //lifts.adjustHLift(gamepad2.left_stick_y);
+//            lifts.setHLiftPow(0.5 * gamepad2.left_stick_y);
+//        } else {
+//            lifts.setHLiftPow(0);
+//        }
+
+//        if (gamepad2.left_stick_y > 0.05) {
+//            lifts.extendHLift();
+//        }
+//
+//        if (gamepad2.left_stick_y < -0.05) {
+//            lifts.retractHLift();
+//        }
 
         if (Math.abs(gamepad2.right_stick_y) > 0.05) {
             lifts.adjustVLift(-gamepad2.right_stick_y);
@@ -308,7 +324,17 @@ public class RobotV1 extends Robot {
 
     public int getBlockHeightInEncoders(){ return lifts.getBlockHeightInEncoders();}
 
-    public void moveHLift(double pow) {lifts.setHLiftPow(pow);}
+    //public void moveHLift(double pow) {lifts.setHLiftPow(pow);}
+
+    public void extendHLift() {
+        lifts.extendHLift();
+        lifts.update();
+    }
+
+    public void retractHLift() {
+        lifts.retractHLift();;
+        lifts.update();
+    }
 
     public void sideHookUp(){
         sideHook.up();
