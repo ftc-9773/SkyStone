@@ -37,16 +37,30 @@ public class SkyStoneDetector extends OpenCVPipeline {
 
 
     public SkyStoneDetector(){
+        this(false);
+    }
+
+    public SkyStoneDetector(boolean isblue){
         super();
         reader = new SafeJsonReader("VisionThresholds");
 
         threshold = reader.getInt("detectionThreshold");
-        mid[0] = reader.getDouble("midx");
-        mid[1] = reader.getDouble("midy");
-        left[0] = reader.getDouble("leftx");
-        left[1] = reader.getDouble("lefty");
-        right[0] = reader.getDouble("rightx");
-        right[1] = reader.getDouble("righty");
+        if (isblue){
+            mid[0] = reader.getDouble("bluemidx");
+            mid[1] = reader.getDouble("bluemidy");
+            left[0] = reader.getDouble("blueleftx");
+            left[1] = reader.getDouble("bluelefty");
+            right[0] = reader.getDouble("bluerightx");
+            right[1] = reader.getDouble("bluerighty");
+
+        } else {
+            mid[0] = reader.getDouble("midx");
+            mid[1] = reader.getDouble("midy");
+            left[0] = reader.getDouble("leftx");
+            left[1] = reader.getDouble("lefty");
+            right[0] = reader.getDouble("rightx");
+            right[1] = reader.getDouble("righty");
+            }
     }
 
     public skyPositions getPosition(){

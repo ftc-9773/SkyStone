@@ -8,7 +8,6 @@ import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.Intake
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.Lifts;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.SideHook;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumDrivebase;
-import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.DistSensor;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.Gyro;
 import org.firstinspires.ftc.teamcode.Utilities.misc.Button;
 
@@ -23,6 +22,7 @@ public class RobotV1 extends Robot {
     Button GP1A = new Button(), GP1X = new Button(), GP1B = new Button(), A = new Button(), B = new Button(), Y = new Button(),  RB = new Button(), LB = new Button(), GP1_DPLEFT = new Button(), GP1_DPRIGHT = new Button(), GP2X = new Button(), DPR = new Button(), GP2_LStick = new Button(), DPU = new Button(), GP2_DPDOWN = new Button(), RB2 = new Button();
     boolean hooksDown = false;
     boolean capstoneClick = true;
+    boolean hLiftRetracted = true;
     boolean slow = false;
     boolean intakeLoaded, invert = false, regular = true;
     boolean releaseCapstone = false;
@@ -87,14 +87,7 @@ public class RobotV1 extends Robot {
             drive_direction = 1;
         }
 
-        if (gamepad1.left_bumper) {
-            slow = true;
-        }
-        else {
-            slow = false;
-
-        }
-        if (invert = true) {
+        if (invert) {
             if (intake.slowDown()) {
                 slow = true;
             }
@@ -102,6 +95,18 @@ public class RobotV1 extends Robot {
                 slow = false;
             }
         }
+        else {
+            slow = false;
+        }
+
+        if (gamepad1.left_bumper) {
+            slow = true;
+        }
+        else {
+            slow = false;
+
+        }
+
 
         if (slow) { //Slow mode is 60% speed
             xp *= 0.4;
@@ -224,10 +229,10 @@ public class RobotV1 extends Robot {
             bLastClicked = false;
             yLastClicked = true;
             yLiftHeight += 1.0;
-            if (yLiftHeight <= 9.0) {
+            if (yLiftHeight <= 10.0) {
                 lifts.setvLiftPos(yLiftHeight);
             } else {
-                yLiftHeight = 9.0;
+                yLiftHeight = 10.0;
                 lifts.setvLiftPos(yLiftHeight);
             }
         }
@@ -255,9 +260,22 @@ public class RobotV1 extends Robot {
             //lifts.setvLiftPow(0);
         }
 
+        if (hLiftRetracted) {
+            lifts.retractHLift();
+        }
+        else {
+            lifts.extendHLift();
+        }
+
         RB2.recordNewValue(gamepad2.right_bumper);
-        if (RB2.isJustOn()) {
-            lifts.intake();
+        if (RB2.isJustOff()) {
+            if (hLiftRetracted) {
+                lifts.extendHLift();
+            }
+            else {
+                lifts.retractHLift();
+            }
+            hLiftRetracted = !hLiftRetracted;
         }
 
         if (gamepad2.left_bumper) {
@@ -315,6 +333,8 @@ public class RobotV1 extends Robot {
     public void clawOff(){
         lifts.stopClaw();
     }
+
+    public int getvLiftIntakePos() { return lifts.getIntakePos(); }
 
     public void setVLiftPos(int pos){
         lifts.setvLiftPos(pos);

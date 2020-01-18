@@ -17,7 +17,7 @@ public class Lifts implements Attachment {
     public static final double INCHES_PER_BLOCK_HEIGHT = 4;
     public static final double STUD_HEIGHT_INCHES = 1;
     public final double HEIGHT_OF_PLATFORM_INCHES = 1.25;
-    public final double GEAR_RATIO = 20.0/36.0;
+    public final double GEAR_RATIO = 28.0/28.0;
 
     //Physical interface
     DcMotor vLiftMotor;
@@ -38,7 +38,7 @@ public class Lifts implements Attachment {
     double rotateZeroPos, rotate90Pos, rotate180Pos;
     int blockHeightInEncoders;
 
-    int baseLiftHeight, oneBlockHigh, twoBlocksHigh, threeBlocksHigh, fourBlocksHigh, fiveBlocksHigh, sixBlocksHigh, sevenBlocksHigh, eightBlocksHigh, nineBlocksHigh;
+    int baseLiftHeight, oneBlockHigh, twoBlocksHigh, threeBlocksHigh, fourBlocksHigh, fiveBlocksHigh, sixBlocksHigh, sevenBlocksHigh, eightBlocksHigh, nineBlocksHigh, tenBlocksHigh;
 
     double capstoneZeroPos, capstoneReleasePos, capstoneTargetPos;
 
@@ -112,6 +112,7 @@ public class Lifts implements Attachment {
         sevenBlocksHigh = reader.getInt("sevenBlocksHigh");
         eightBlocksHigh = reader.getInt("eightBlocksHigh");
         nineBlocksHigh = reader.getInt("nineBlocksHigh");
+        tenBlocksHigh = reader.getInt("tenBlocksHigh");
 
         capstoneZeroPos = reader.getDouble("capstoneZeroPos");
         capstoneReleasePos = reader.getDouble("capstoneReleasePos");
@@ -133,6 +134,7 @@ public class Lifts implements Attachment {
         rotateServoTargetPos = rotateZeroPos;
         rotateServo.setDirection(Servo.Direction.REVERSE);
         capstoneServo.setPosition(capstoneZeroPos);
+        hLiftServo.setPosition(hLiftServoZeroPos);
     }
 
     //Returns both Hlift and Vlift to state to intake another block.
@@ -161,6 +163,7 @@ public class Lifts implements Attachment {
         if (pos == 7.0) { vLiftTargetPos = (int)(sevenBlocksHigh * GEAR_RATIO); }
         if (pos == 8.0) { vLiftTargetPos = (int)(eightBlocksHigh * GEAR_RATIO); }
         if (pos == 9.0) { vLiftTargetPos = (int)(nineBlocksHigh * GEAR_RATIO); }
+        if (pos == 10.0) { vLiftTargetPos = (int)(tenBlocksHigh * GEAR_RATIO); }
 
     }
 
@@ -262,6 +265,8 @@ public class Lifts implements Attachment {
         hLiftServoTargetPos = hLiftServoZeroPos;
         hLiftServo.setPosition(hLiftServoTargetPos);
     }
+
+    public int getIntakePos() { return vLiftIdlePos;}
 
     public void intake(){
         //releaseBlock();

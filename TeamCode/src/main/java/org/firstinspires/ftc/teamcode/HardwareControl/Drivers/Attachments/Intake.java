@@ -76,7 +76,7 @@ public class Intake implements Attachment{
     }
 
     public boolean slowDown() {
-        slowDown = slowFoundation.getDistance(DistanceUnit.CM) <= 25;
+        slowDown = (slowFoundation.getDistance(DistanceUnit.CM) <= 25);
         return slowDown;
     }
 

@@ -11,24 +11,25 @@
   "leftClawServoReleasePow" : 0.5,
   "rightClawServoGrabPow" : 0.5,
   "rightClawServoReleasePow" : -0.5,
-  "vLiftMaxPos" : 3000,
+  "vLiftMaxPos" : 3010,
   "hLiftMaxPos" : 235,
-  "vLiftIdlePos" : 450,
+  "vLiftIdlePos" : 170,
   "minHeightForHLift" : 240,
   "minHorizontalToLowerVLIFT" : 0,
 
   "blockHeightInEncoders" : 483,
 
-  "baseLiftHeight": 660 ,
-  "oneBlockHigh": 1280 ,
-  "twoBlocksHigh": 1380 ,
-  "threeBlocksHigh": 1910 ,
-  "fourBlocksHigh": 2500,
-  "fiveBlocksHigh": 2980,
-  "sixBlocksHigh": 3500,
-  "sevenBlocksHigh": 4010,
-  "eightBlocksHigh": 4530 ,
-  "nineBlocksHigh": 5300,
+  "baseLiftHeight": 310 ,
+  "oneBlockHigh": 700 ,
+  "twoBlocksHigh": 700 ,
+  "threeBlocksHigh": 950 ,
+  "fourBlocksHigh": 1250,
+  "fiveBlocksHigh": 1550,
+  "sixBlocksHigh": 1850,
+  "sevenBlocksHigh": 2150,
+  "eightBlocksHigh": 2450 ,
+  "nineBlocksHigh": 2710,
+  "tenBlocksHigh": 3005,
 
 
   "rotateServoZeroPos" : 0.95,
@@ -57,6 +58,6 @@
   "sideHookUpPos" : 0.0,
   "sideHookDownPos" : 0.3,
 
-  "hLiftServoZero" : 0.0,
-  "hLiftServoExtend" : 0.0
+  "hLiftServoZero" : 0.085,
+  "hLiftServoExtend" : 0.59
 }

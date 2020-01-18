@@ -58,7 +58,7 @@ public abstract class BasicRasiAuton extends LinearOpMode {
         if (doVision()) {
 
             // run vision
-            detector = new SkyStoneDetector();
+            detector = new SkyStoneDetector(isBlueSide());
             // init the vision
             detector.init(hardwareMap.appContext);
             detector.enable();
@@ -98,6 +98,10 @@ public abstract class BasicRasiAuton extends LinearOpMode {
     }
 
     public abstract String fileName();
+
+    public boolean isBlueSide(){
+        return false;
+    }
 
 }
 

@@ -118,9 +118,9 @@ public class RobotV1Commands extends RasiCommands{
         robot.setVLiftPos(0);
     }
 
-    public void vLiftIntakePos() { robot.setVLiftPos((int)(450 * robot.getGearRatio()));}
+    public void vLiftIntakePos() { robot.setVLiftPos(robot.getvLiftIntakePos());}
 
-    public void vLiftRaise(int blocks) { robot.setVLiftPos((int)((blocks*robot.getBlockHeightInEncoders()*robot.getGearRatio()) + 750)); }
+    public void vLiftRaise(double blocks) { robot.setVLiftPos(blocks); }
 
 //    public void moveHLift(double time, double power) {
 //        power = -power;

@@ -1,50 +1,54 @@
-LEFT: driveStraight 0
+RIGHT: driveStraight 0
 
-L:driveStraight -1.8
-L:wait 0.2
-L:vLiftIntakePos
-L:strafe -1.95
-L:wait 0.3
-L:driveStraight 37.1
-L:strafe -2
-L:wait 0.1
-L:turn -86
-L:intakeOn
-L:driveStraight 4.5
-L:wait 0.4
+R:driveStraight -1.8
+R:wait 0.2
+R:vLiftIntakePos
+R:strafe -1.9
+R:wait 0.3
+R:driveStraight 37.1
+R:strafe -2
+R:wait 0.1
+R:turn -86
+R:intakeOn
+R:driveStraight 4.5
+R:wait 0.4
 
-L:strafe 25
-L:intakeOff
-L:wait 0.1
-L:vLiftDown
-L:wait 0.1
-L:grabWTime
-L:wait 0.1
-L:driveFast 1.525 -0.8 -5
-L:grabWNoTime
+R:strafe 25
+R:intakeOff
+R:retractHLift
+R:wait 0.1
+R:vLiftDown
+R:wait 0.1
+R:retractHLift
+R:grabWTime
+R:wait 0.1
+R:driveFast 1.525 -0.8 -5
+R:grabWNoTime
 
-L:dropHooks
-L:turn -180
-L:intakeOff
-L:driveStraight -5
-L:vLiftRaise 1
-L:wait 0.1
-L:driveFast2 0.75 0.8 7
-L:driveStraight -2
-L:turn -90
-L:driveStraight -4
-L:upHooks
+R:dropHooks
+R:turn -180
+R:intakeOff
+R:driveStraight -5
+R:vLiftRaise 1.0
+R:wait 0.1
+R:driveFast2 0.75 0.8 7
+R:retractHLift
+R:driveStraight -2
+R:turn -90
+R:driveStraight -4
+R:retractHLift
+R:upHooks
 
-L:moveHLift 0.2 0.5
-L:wait 0.25
-L:release
-L:wait 0.35
-L:moveHLift 0.21 -0.5
-L:wait 0.1
-L:strafe -2.3
-L:vLiftDown
-L:strafe -4
-L:driveStraight 38
+R:extendHLift
+R:wait 1
+R:release
+R:wait 0.35
+R:retractHLift
+R:wait 0.1
+R:strafe -2.3
+R:vLiftDown
+R:strafe -4
+R:driveStraight 38
 
 
 
@@ -52,8 +56,8 @@ MID: driveStraight 0
 
 M:driveStraight 2
 M:vLiftIntakePos
-M: wait 0.2
-M:strafe -10.8
+M:wait 0.2
+M:strafe -9
 M:wait 0.3
 M:driveStraight 42
 M:turn -86
@@ -66,8 +70,10 @@ M:wait 0.4
 M:strafe 17
 M:intakeOff
 M:wait 0.1
+M:retractHLift
 M:vLiftDown
 M:wait 0.1
+M:retractHLift
 M:grabWTime
 M:wait 0.1
 M:driveFast 1.38 -0.8 -5
@@ -77,19 +83,21 @@ M:dropHooks
 M:turn -180
 M:intakeOff
 M:driveStraight -6
-M:vLiftRaise 1
+M:vLiftRaise 1.0
 M:wait 0.1
 M:driveFast2 0.75 0.8 8
+M:retractHLift
 M:driveStraight -2
 M:turn -90
+M:retractHLift
 M:driveStraight -4
 M:upHooks
 
-M:moveHLift 0.2 0.5
-M:wait 0.25
+M:extendHLift
+M:wait 1
 M:release
 M:wait 0.35
-M:moveHLift 0.21 -0.5
+M:retractHLift
 M:wait 0.1
 M:strafe -3
 M:vLiftDown
@@ -98,51 +106,55 @@ M:driveStraight 38
 
 
 
-RIGHT: driveStraight 0
+LEFT: driveStraight 0
 
-R:driveStraight 2
-R:wait 0.2
-R:vLiftIntakePos
-R:strafe -11.5
-R:wait 0.3
-R:driveStraight 21
-R:intakeOn
-R:turn -27
-R:wait 0.5
-R:driveStraight 10.5
-R:wait 0.2
-R:driveStraight -18
-R:wait 0.1
-R:turn -87
+L:driveStraight 2
+L:wait 0.2
+L:vLiftIntakePos
+L:strafe -11.5
+L:wait 0.3
+L:driveStraight 21
+L:intakeOn
+L:turn -27
+L:wait 0.5
+L:driveStraight 10.5
+L:wait 0.2
+L:driveStraight -18
+L:wait 0.1
+L:turn -87
 
-R:wait 0.1
-R:vLiftDown
-R:wait 0.1
-R:grabWTime
-R:intakeOff
-R:wait 0.1
-R:driveFast 1.22 -0.8 -5
-R:grabWTime
+L:retractHLift
+L:wait 0.1
+L:vLiftDown
+L:wait 0.1
+L:grabWTime
+L:intakeOff
+L:retractHLift
+L:wait 0.1
+L:driveFast 1.22 -0.8 -5
+L:grabWTime
 
-R:dropHooks
-R:turn -180
-R:intakeOff
-R:driveStraight -6
-R:vLiftRaise 1
-R:wait 0.1
-R:driveFast2 0.75 0.8 8
-R:driveStraight -2
-R:turn -90
-R:driveStraight -4
-R:upHooks
+L:dropHooks
+L:turn -180
+L:intakeOff
+L:driveStraight -6
+L:vLiftRaise 1.0
+L:wait 0.1
+L:driveFast2 0.75 0.8 8
+L:retractHLift
+L:driveStraight -2
+L:turn -90
+L:driveStraight -4
+L:retractHLift
+L:upHooks
 
-R:moveHLift 0.2 0.5
-R:wait 0.25
-R:release
-R:wait 0.35
-R:moveHLift 0.21 -0.5
-R:wait 0.1
-R:strafe -3
-R:vLiftDown
-R:strafe -3.5
-R:driveStraight 38
+L:extendHLift
+L:wait 1
+L:release
+L:wait 0.35
+L:retractHLift
+L:wait 0.1
+L:strafe -3
+L:vLiftDown
+L:strafe -3.5
+L:driveStraight 38
