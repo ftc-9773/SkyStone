@@ -49,9 +49,9 @@ public class RobotV1 extends Robot {
     public void runGamepadCommands(Gamepad gamepad1, Gamepad gamepad2) {
         //THE FOLLOWING IS GAMEPAD 1
 
-        xp = gamepad1.left_stick_x;
-        yp = gamepad1.left_stick_y;
-        rp = gamepad1.right_stick_x;
+        xp = gamepad1.left_stick_x * 0.9;
+        yp = gamepad1.left_stick_y * 0.9;
+        rp = gamepad1.right_stick_x * 0.9;
 
         if (Math.abs(xp) < 0.0001) {
             xp = 0;
@@ -87,17 +87,6 @@ public class RobotV1 extends Robot {
             drive_direction = 1;
         }
 
-        if (invert) {
-            if (intake.slowDown()) {
-                slow = true;
-            }
-            else {
-                slow = false;
-            }
-        }
-        else {
-            slow = false;
-        }
 
         if (gamepad1.left_bumper) {
             slow = true;
@@ -106,6 +95,17 @@ public class RobotV1 extends Robot {
             slow = false;
 
         }
+
+//        if (invert) {
+//            if (intake.slowDown()) {
+//                slow = true;
+//            }
+//            else {
+//                if (!gamepad1.right_bumper) {
+//                    slow = false;
+//                }
+//            }
+//        }
 
 
         if (slow) { //Slow mode is 60% speed
@@ -185,7 +185,24 @@ public class RobotV1 extends Robot {
         //Retract all lifts
         A.recordNewValue(gamepad2.a);
         if (A.isJustOff()) {
-            lifts.resetLifts();
+
+            lifts.setvLiftPos(lifts.getVliftPos() + 400);
+            long startTime = System.currentTimeMillis();
+            while (startTime + 500 > System.currentTimeMillis()){
+                lifts.update();
+            }
+
+            startTime = System.currentTimeMillis();
+            while (startTime + 800 > System.currentTimeMillis()){
+                lifts.retractHLift();
+                lifts.update();
+            }
+
+            lifts.setvLiftPos(0);
+            lifts.update();
+            hLiftRetracted = true;
+            regular = true;
+            invert = false;
             bLiftHeight = 0.0;
         }
 

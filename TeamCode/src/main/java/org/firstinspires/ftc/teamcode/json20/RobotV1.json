@@ -19,17 +19,17 @@
 
   "blockHeightInEncoders" : 483,
 
-  "baseLiftHeight": 310 ,
+  "baseLiftHeight": 310,
   "oneBlockHigh": 700 ,
   "twoBlocksHigh": 700 ,
   "threeBlocksHigh": 950 ,
   "fourBlocksHigh": 1250,
   "fiveBlocksHigh": 1550,
   "sixBlocksHigh": 1850,
-  "sevenBlocksHigh": 2150,
-  "eightBlocksHigh": 2450 ,
+  "sevenBlocksHigh": 2160,
+  "eightBlocksHigh": 2470 ,
   "nineBlocksHigh": 2710,
-  "tenBlocksHigh": 3005,
+  "tenBlocksHigh": 3010,
 
 
   "rotateServoZeroPos" : 0.95,
@@ -58,6 +58,6 @@
   "sideHookUpPos" : 0.0,
   "sideHookDownPos" : 0.3,
 
-  "hLiftServoZero" : 0.085,
+  "hLiftServoZero" : 0.09,
   "hLiftServoExtend" : 0.59
 }

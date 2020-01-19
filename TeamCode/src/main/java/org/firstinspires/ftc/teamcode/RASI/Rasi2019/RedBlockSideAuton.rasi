@@ -20,15 +20,17 @@ L:wait 0.1
 L:vLiftDown
 L:wait 0.1
 L:retractHLift
+L:vLiftDown
 L:grabWTime
 L:wait 0.1
 L:driveFast 1.525 -0.8 -5
-L:grabWNoTime
+L:grabWTime
 
 L:dropHooks
 L:turn 180
 L:intakeOff
 L:driveStraight -5
+L:grabWTime
 L:vLiftRaise 1.0
 L:wait 0.1
 L:driveFast2 0.75 0.8 7
@@ -74,6 +76,7 @@ M:retractHLift
 M:vLiftDown
 M:wait 0.1
 M:retractHLift
+M:vLiftDown
 M:grabWTime
 M:wait 0.1
 M:driveFast 1.38 -0.8 -5
@@ -83,6 +86,7 @@ M:dropHooks
 M:turn 180
 M:intakeOff
 M:driveStraight -6
+M:grabWTime
 M:vLiftRaise 1.0
 M:wait 0.1
 M:driveFast2 0.75 0.8 8
@@ -129,6 +133,7 @@ R:vLiftDown
 R:wait 0.1
 R:grabWTime
 R:intakeOff
+R:vLiftDown
 R:retractHLift
 R:wait 0.1
 R:driveFast 1.22 -0.8 -5
@@ -138,6 +143,7 @@ R:dropHooks
 R:turn 180
 R:intakeOff
 R:driveStraight -6
+R:grabWTime
 R:vLiftRaise 1.0
 R:wait 0.1
 R:driveFast2 0.75 0.8 8
