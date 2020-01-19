@@ -185,15 +185,20 @@ public class RobotV1 extends Robot {
         //Retract all lifts
         A.recordNewValue(gamepad2.a);
         if (A.isJustOff()) {
+            long startTime = System.currentTimeMillis();
+            while (startTime + 400 > System.currentTimeMillis()){
+                lifts.releaseBlock();
+                lifts.update();
+            }
 
             lifts.setvLiftPos(lifts.getVliftPos() + 400);
-            long startTime = System.currentTimeMillis();
-            while (startTime + 500 > System.currentTimeMillis()){
+            startTime = System.currentTimeMillis();
+            while (startTime + 375 > System.currentTimeMillis()){
                 lifts.update();
             }
 
             startTime = System.currentTimeMillis();
-            while (startTime + 800 > System.currentTimeMillis()){
+            while (startTime + 700 > System.currentTimeMillis()){
                 lifts.retractHLift();
                 lifts.update();
             }
@@ -201,8 +206,6 @@ public class RobotV1 extends Robot {
             lifts.setvLiftPos(0);
             lifts.update();
             hLiftRetracted = true;
-            regular = true;
-            invert = false;
             bLiftHeight = 0.0;
         }
 

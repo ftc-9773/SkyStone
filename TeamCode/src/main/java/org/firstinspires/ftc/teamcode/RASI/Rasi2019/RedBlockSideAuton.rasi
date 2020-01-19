@@ -51,6 +51,7 @@ L:strafe 2.3
 L:vLiftDown
 L:strafe 4
 L:driveStraight 38
+L:strafe 3
 
 
 
@@ -107,6 +108,7 @@ M:strafe 3
 M:vLiftDown
 M:strafe 3.5
 M:driveStraight 38
+M:strafe 3
 
 
 
@@ -164,3 +166,4 @@ R:strafe 3
 R:vLiftDown
 R:strafe 3.5
 R:driveStraight 38
+R:strafe 3
