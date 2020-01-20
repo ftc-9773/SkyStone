@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 import org.firstinspires.ftc.teamcode.Utilities.Controllers.PIDController;
 import org.firstinspires.ftc.teamcode.Utilities.json.SafeJsonReader;
@@ -26,6 +27,8 @@ public class Lifts implements Attachment {
     Servo rotateServo;
     Servo capstoneServo;
     Servo hLiftServo;
+    DigitalChannel digIn;
+
 
     //Stores the lowest position the lift should go to. (Which is the initial position of the lifts)
     public int vliftZeroPos = 0, hliftZeroPos = 0;
@@ -42,7 +45,7 @@ public class Lifts implements Attachment {
 
     double capstoneZeroPos, capstoneReleasePos, capstoneTargetPos;
 
-    double hLiftServoZeroPos, hLiftServoExtendPos, hLiftServoTargetPos;
+    double hLiftServoZeroPos, hLiftServoExtendPos, hLiftServoExtendPos_90, hLiftServoTargetPos;
 
     //Safety information, so we don't try to go too high
     int vLiftMaxPos;
@@ -74,6 +77,8 @@ public class Lifts implements Attachment {
         rotateServo = hardwareMap.get(Servo.class, "rClawServo");
         capstoneServo = hardwareMap.get(Servo.class, "capServo");
         hLiftServo = hardwareMap.get(Servo.class, "hLiftServo");
+        digIn = hardwareMap.get(DigitalChannel.class, "digIn");
+
 
         //Reset encoders
         vLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -94,7 +99,6 @@ public class Lifts implements Attachment {
 
         vLiftMaxPos = reader.getInt("vLiftMaxPos");
         blockHeightInEncoders = reader.getInt("blockHeightInEncoders");
-        vliftZeroPos = getVliftPos();
         vLiftIdlePos = reader.getInt("vLiftIdlePos");
         hLiftMaxPos = reader.getInt("hLiftMaxPos");
         //hliftZeroPos = getHLiftPos();
@@ -119,6 +123,7 @@ public class Lifts implements Attachment {
 
         hLiftServoExtendPos = reader.getDouble("hLiftServoExtend");
         hLiftServoZeroPos = reader.getDouble("hLiftServoZero");
+        hLiftServoExtendPos_90 = reader.getDouble("hLiftServoExtend_90");
 
 
         //Set up pids.
@@ -135,6 +140,17 @@ public class Lifts implements Attachment {
         rotateServo.setDirection(Servo.Direction.REVERSE);
         capstoneServo.setPosition(capstoneZeroPos);
         hLiftServo.setPosition(hLiftServoZeroPos);
+
+
+//        while (!vLiftCorrectlyPressed()) {
+//            vLiftTargetPos -= 5;
+//            update();
+//        }
+//        vLiftTargetPos = 0;
+        vliftZeroPos = getVliftPos();
+
+
+
     }
 
     //Returns both Hlift and Vlift to state to intake another block.
@@ -266,6 +282,11 @@ public class Lifts implements Attachment {
         hLiftServo.setPosition(hLiftServoTargetPos);
     }
 
+    public void extendHLift_90() {
+        hLiftServoTargetPos = hLiftServoExtendPos_90;
+        hLiftServo.setPosition(hLiftServoTargetPos);
+    }
+
     public int getIntakePos() { return vLiftIdlePos;}
 
     public void intake(){
@@ -340,5 +361,9 @@ public class Lifts implements Attachment {
             return max;
         }
         return v;
+    }
+
+    public boolean vLiftCorrectlyPressed() {
+        return digIn.getState();
     }
 }

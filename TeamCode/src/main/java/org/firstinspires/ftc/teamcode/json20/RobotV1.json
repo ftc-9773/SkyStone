@@ -24,12 +24,12 @@
   "twoBlocksHigh": 770 ,
   "threeBlocksHigh": 1060 ,
   "fourBlocksHigh": 1300,
-  "fiveBlocksHigh": 1620,
+  "fiveBlocksHigh": 1600,
   "sixBlocksHigh": 1900,
   "sevenBlocksHigh": 2160,
-  "eightBlocksHigh": 2460 ,
-  "nineBlocksHigh": 2730,
-  "tenBlocksHigh": 3005,
+  "eightBlocksHigh": 2480 ,
+  "nineBlocksHigh": 2750,
+  "tenBlocksHigh": 3010,
 
 
   "rotateServoZeroPos" : 0.98,
@@ -59,5 +59,6 @@
   "sideHookDownPos" : 0.3,
 
   "hLiftServoZero" : 0.09,
-  "hLiftServoExtend" : 0.58
+  "hLiftServoExtend" : 0.58,
+  "hLiftServoExtend_90" : 0.65
 }

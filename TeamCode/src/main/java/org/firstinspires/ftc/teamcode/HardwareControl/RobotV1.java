@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.SideHo
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumDrivebase;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.Gyro;
 import org.firstinspires.ftc.teamcode.Utilities.misc.Button;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 public class RobotV1 extends Robot {
     double x = 0, y = 0;
@@ -26,6 +27,7 @@ public class RobotV1 extends Robot {
     boolean slow = false;
     boolean intakeLoaded, invert = false, regular = true;
     boolean releaseCapstone = false;
+    boolean outtakeClosePos = false;
     double drive_direction = 1;
     Telemetry telemetry;
 
@@ -73,8 +75,8 @@ public class RobotV1 extends Robot {
             regular = false;
         }
         if (GP1X.isJustOn()) {
-              invert = true;
-              regular = false;
+            invert = true;
+            regular = false;
         }
         if (GP1B.isJustOn()) {
             regular = true;
@@ -162,14 +164,52 @@ public class RobotV1 extends Robot {
         DPU.recordNewValue(gamepad2.dpad_up);
         DPR.recordNewValue(gamepad2.dpad_right);
         GP2_DPDOWN.recordNewValue(gamepad2.dpad_down);
+        long outtakeStartTime;
         if (DPR.isJustOn()) {
-            lifts.rotateClaw90();
-        } else if (DPU.isJustOn()) {
-            lifts.rotateClaw180();
-        } else if (GP2_DPDOWN.isJustOn()) {
-            lifts.resetClawtoZero();
-            //lifts.setHLiftPos(lifts.gethLiftMaxPos());
+            if (!outtakeClosePos) {
+                outtakeStartTime = System.currentTimeMillis();
+                while (outtakeStartTime + 700 > System.currentTimeMillis()) {
+                    lifts.extendHLift();
+                    lifts.update();
+                }
+                lifts.rotateClaw90();
+                hLiftRetracted = false;
+                outtakeClosePos = true;
+            }
+            else {
+                outtakeStartTime = System.currentTimeMillis();
+                while (outtakeStartTime + 700 > System.currentTimeMillis()) {
+                    lifts.extendHLift_90();
+                    lifts.update();
+                }
+                lifts.rotateClaw90();
+                hLiftRetracted = false;
+                outtakeClosePos = false;
+            }
+
         }
+
+        else if (DPU.isJustOn()) {
+            outtakeStartTime = System.currentTimeMillis();
+            while (outtakeStartTime + 700 > System.currentTimeMillis()){
+                lifts.extendHLift();
+                lifts.update();
+            }
+            lifts.rotateClaw180();
+            hLiftRetracted = false;
+        }
+
+        else if (GP2_DPDOWN.isJustOn()) {
+            outtakeStartTime = System.currentTimeMillis();
+            while (outtakeStartTime + 700 > System.currentTimeMillis()){
+                lifts.extendHLift();
+                lifts.update();
+            }
+            lifts.resetClawtoZero();
+            hLiftRetracted = false;
+        }
+
+
 
         GP2_LStick.recordNewValue(gamepad2.left_stick_button);
         if (GP2_LStick.isJustOn()) {
@@ -185,20 +225,20 @@ public class RobotV1 extends Robot {
         //Retract all lifts
         A.recordNewValue(gamepad2.a);
         if (A.isJustOff()) {
-            long startTime = System.currentTimeMillis();
-            while (startTime + 400 > System.currentTimeMillis()){
+            long AStartTime = System.currentTimeMillis();
+            while (AStartTime + 400 > System.currentTimeMillis()){
                 lifts.releaseBlock();
                 lifts.update();
             }
 
             lifts.setvLiftPos(lifts.getVliftPos() + 400);
-            startTime = System.currentTimeMillis();
-            while (startTime + 375 > System.currentTimeMillis()){
+            AStartTime = System.currentTimeMillis();
+            while (AStartTime + 375 > System.currentTimeMillis()){
                 lifts.update();
             }
 
-            startTime = System.currentTimeMillis();
-            while (startTime + 700 > System.currentTimeMillis()){
+            AStartTime = System.currentTimeMillis();
+            while (AStartTime + 700 > System.currentTimeMillis()){
                 lifts.retractHLift();
                 lifts.update();
             }
@@ -214,10 +254,10 @@ public class RobotV1 extends Robot {
             bLastClicked = true;
             yLastClicked = false;
             bLiftHeight += 1.0;
-            if (bLiftHeight <= 9.0) {
+            if (bLiftHeight <= 10.0) {
                 lifts.setvLiftPos(bLiftHeight);
             } else {
-                bLiftHeight = 9.0;
+                bLiftHeight = 10.0;
                 lifts.setvLiftPos(bLiftHeight);
             }
         }
