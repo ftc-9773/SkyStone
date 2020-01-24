@@ -49,7 +49,7 @@ public class Gyro {
         imuLeft                         = hardwareMap.get(BNO055IMU.class, "imu");
 
         imuLeft.initialize(parameters);
-        Log.d(TAG, imuLeft.toString());
+        if (DEBUG) Log.d(TAG, imuLeft.toString());
         assert (imuLeft !=null);
         readImu();
         readImu();

@@ -11,6 +11,7 @@ import static java.lang.Math.*;
 
 
 public class RobotV1Commands extends RasiCommands{
+    private static final boolean DEBUG = false;
     RobotV1 robot;
     DriveUtil driveUtil;
 
@@ -50,21 +51,21 @@ public class RobotV1Commands extends RasiCommands{
     public void drive(double x, double y){
         double theta = atan(y / x);
         double dist = pow(x * x + y * y, 0.5);
-        Log.d("ROBOTV1COMMANDS", "Driving dist " + dist  + " at angle " + toDegrees(theta));
+        if (DEBUG) Log.d("ROBOTV1COMMANDS", "Driving dist " + dist  + " at angle " + toDegrees(theta));
         driveUtil.drive(dist, theta);
     }
 
     public void strafe(double dist){
-        Log.d("ROBOTV1COMMANDS", "Strafing dist " + dist);
+        if (DEBUG) Log.d("ROBOTV1COMMANDS", "Strafing dist " + dist);
         driveUtil.strafeStraight(dist);
     }
 
     public void driveStraight(double dist){
-        Log.d("ROBOTV1COMMANDS", "DrivingStraight dist" + dist);
+        if (DEBUG) Log.d("ROBOTV1COMMANDS", "DrivingStraight dist" + dist);
         driveUtil.driveStraight(dist, 1);
     }
     public void driveSlow(double dist, double coe){
-        Log.d("ROBOTV1COMMANDS", "DrivingStraight dist" + dist);
+        if (DEBUG) Log.d("ROBOTV1COMMANDS", "DrivingStraight dist" + dist);
         driveUtil.driveStraight(dist, 0.5);
     }
 

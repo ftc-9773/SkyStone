@@ -22,7 +22,7 @@ public class PIDController {
     private boolean useExponential;
 
     private static int maxDeltaTime = 800;
-    private static boolean DEBUG = true;
+    private static boolean DEBUG = false;
 
     public PIDController (double KP, double KE, double KI, double KD) {
         this.KP = KP;
@@ -40,10 +40,11 @@ public class PIDController {
         this.KI = KI;
         this.KD = KD;
         useExponential = false;
-        Log.i("PID", "KP: " + KP);
-        Log.i("PID", "KI: " + KI);
-        Log.i("PID", "KD: " + KD);
-
+        if (DEBUG) {
+            Log.i("PID", "KP: " + KP);
+            Log.i("PID", "KI: " + KI);
+            Log.i("PID", "KD: " + KD);
+        }
     }
 
     public double getPIDCorrection(double error) {
@@ -62,8 +63,8 @@ public class PIDController {
             // Calculate I and D errors
             integral = integral + (error * deltaTime);
             derivative = (error - prevError) / deltaTime;
-            Log.i("PID:", "I : "+ integral);
-            Log.i("PID:", "D : "+ derivative );
+            if (DEBUG) Log.i("PID:", "I : "+ integral);
+            if (DEBUG) Log.i("PID:", "D : "+ derivative );
             output = KP * error * expError + KI * integral + KD * derivative;
         }
         // Set previous values for next time

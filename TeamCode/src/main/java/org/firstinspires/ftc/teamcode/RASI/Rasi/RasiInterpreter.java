@@ -40,6 +40,7 @@ public class RasiInterpreter {
     private HashMap<String, RasiCommands> rcHashMap;
     private boolean hasArguments;
     private Method method;
+    private static final boolean DEBUG = false;
 
     private ArrayList<Method> methodQueue = new ArrayList<>();
     private ArrayList<Object[]> paramQueue = new ArrayList<>();
@@ -115,7 +116,7 @@ public class RasiInterpreter {
     public void runRasiActually() {
         command = rasiLexer.getCommand();
         while (!rasiLexer.fileEnded && !linearOpMode.isStopRequested()) {
-            Log.d(LOG_TAG, "Got command " + command);
+            if (DEBUG) Log.d(LOG_TAG, "Got command " + command);
             if (infoHashmap.get(hashMap.get(command.toLowerCase())) != null) {
                 paramsAreNull = false;
             } else {
@@ -160,9 +161,9 @@ public class RasiInterpreter {
                     RasiCommands rc = rcHashMap.get(hash);
                     appendMethod(method, finalParameters, rc);
                     method.invoke(rc, finalParameters);
-                    Log.d(LOG_TAG, "Invoked command " + method + " with params " + Arrays.toString(finalParameters));
+                    if (DEBUG) Log.d(LOG_TAG, "Invoked command " + method + " with params " + Arrays.toString(finalParameters));
                 } catch (Exception e){
-                    Log.d(LOG_TAG, "Failed on command" + command);
+                    if (DEBUG) Log.d(LOG_TAG, "Failed on command" + command);
                 }
             } else {
                 try {
@@ -172,7 +173,7 @@ public class RasiInterpreter {
                     RasiCommands rc = rcHashMap.get(hash);
                     appendMethod(method, finalParameters, rc);
                     method.invoke(rc, finalParameters);
-                    Log.d(LOG_TAG, "Invoked command " + method);
+                    if (DEBUG) Log.d(LOG_TAG, "Invoked command " + method);
                 } catch (Exception e) {
                     //Log.d(LOG_TAG, "Failed on Command " + command);
                 }
@@ -195,10 +196,10 @@ public class RasiInterpreter {
             currmethod   = methodQueue.get(0);
             param        = paramQueue.get(0);
             rasiCommands = rcQueue.get(0);
-            Log.d(LOG_TAG, "Got command " + currmethod);
+            if (DEBUG) Log.d(LOG_TAG, "Got command " + currmethod);
             try {
                 currmethod.invoke(rasiCommands, param);
-                Log.d(LOG_TAG, "Finished invoking command " + currmethod + " with params " + Arrays.toString(param) + " and rasi commands " + rasiCommands);
+                if (DEBUG) Log.d(LOG_TAG, "Finished invoking command " + currmethod + " with params " + Arrays.toString(param) + " and rasi commands " + rasiCommands);
             }catch (Exception e){
                 //Log.e(LOG_TAG, "Exception occured in Run", e);
             }

@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.Logic.Vision.SkyStoneDetector.skyPositions
  * ovverride doVision() to return false if you don't want to do vision
  * */
 public abstract class BasicRasiAuton extends LinearOpMode {
+    private static final boolean DEBUG = false;
 
     SkyStoneDetector detector;
 
@@ -73,7 +74,7 @@ public abstract class BasicRasiAuton extends LinearOpMode {
             tags[0] = Character.toString(pos.toString().charAt(0)).toUpperCase();
             rasiInterpreter.setTags(tags);
             sendTelemetry("Set tags to " + tags[0]);
-            Log.d("RasiAuto", "Set tag to " + tags[0]);
+            if (DEBUG) Log.d("RasiAuto", "Set tag to " + tags[0]);
 
         }
 

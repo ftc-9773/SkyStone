@@ -21,6 +21,7 @@ public class MecanumDrivebase {
 
     static private final double DRIVE_SCALING = 3; // Must be odd
     static private final double ROTATION_SCALING = 0.8; // 0 is none
+    private static final boolean DEBUG = false;
 
     // slowdown mode stuff
     public double slowdownScaleFactor = 0.5;
@@ -131,7 +132,7 @@ public class MecanumDrivebase {
         for (int i = 0; i<4; i++) {
             if(slowdownMode) driveMotors[i].setPower(motorPowers[i]*slowdownScaleFactor);
             else driveMotors[i].setPower(motorPowers[i]);
-            Log.d("Drivebase", "Wrote power " + motorPowers[i] + " to motor " + i);
+            if (DEBUG) Log.d("Drivebase", "Wrote power " + motorPowers[i] + " to motor " + i);
         }
     }
 
@@ -182,8 +183,10 @@ public class MecanumDrivebase {
             setMotorPowers(pow);
             speed = minus(getMotorPositions(), init) / (System.currentTimeMillis() - start);
             //start = System.currentTimeMillis();
-            Log.d("Drivebase", "Speed = " + speed);
-            Log.d("Drivebase", "Power = " + pow);
+            if (DEBUG) {
+                Log.d("Drivebase", "Speed = " + speed);
+                Log.d("Drivebase", "Power = " + pow);
+            }
             telemetry.addData("Speed", speed);
             telemetry.addData("SetPower", pow);
             telemetry.update();
@@ -220,10 +223,11 @@ public class MecanumDrivebase {
     }
 
     public void getPowersLogged(Telemetry telemetry){
-        for(int i = 0; i< 4; i++){
-            //telemetry.addData("Motor power of motor: "+ i, driveMotors[i].getPower());
-            Log.d("ftc9773_motorPowers", "motor " + i + driveMotors[i].getPowerFloat());
-
+        if (DEBUG) {
+            for(int i = 0; i< 4; i++) {
+                //telemetry.addData("Motor power of motor: "+ i, driveMotors[i].getPower());
+                Log.d("ftc9773_motorPowers", "motor " + i + driveMotors[i].getPowerFloat());
+            }
         }
     }
 

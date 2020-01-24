@@ -12,9 +12,11 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
 
 public abstract class OpenCVPipeline implements CameraBridgeViewBase.CvCameraViewListener2 {
+    public static final boolean DEBUG = false;
+
     static {
         boolean initDebug = OpenCVLoader.initDebug();
-        Log.d("OpenCVPipeline", initDebug ? " successfully init" : " failed init");
+        if (DEBUG) Log.d("OpenCVPipeline", initDebug ? " successfully init" : " failed init");
     }
     protected JavaCameraView cameraView;
     protected Context context;

@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.Logic.Curves.TangentFollower;
 
 public class CurveTesterThingOpMode extends LinearOpMode {
     String TAG = "CURVETESTING";
+    private static final boolean DEBUG = false;
 
     @Override
     public void runOpMode() {
@@ -36,8 +37,8 @@ public class CurveTesterThingOpMode extends LinearOpMode {
         double yp, xp;
         lastEncoderPos = drivebase.getPos();
         currentEncoderPos = drivebase.getPos();
-        Log.d(TAG, "CX = " + test.h + " CY = " + test.k);
-        Log.d(TAG, "r = " + test.r);
+        if (DEBUG) Log.d(TAG, "CX = " + test.h + " CY = " + test.k);
+        if (DEBUG) Log.d(TAG, "r = " + test.r);
         waitForStart();
         while(opModeIsActive()){
             if (Math.abs(x - x_) < 2 && Math.abs(y / 2- y_) < 2){
@@ -56,13 +57,13 @@ public class CurveTesterThingOpMode extends LinearOpMode {
             y -= getDistY(lastEncoderPos, currentEncoderPos);
 
             theta = ((-(x * x + y * y) + 2 * test.r * test.r) / (2 * test.r * test.r));
-            Log.d(TAG, "Theta* = " + theta);
+            if (DEBUG) Log.d(TAG, "Theta* = " + theta);
             theta = Math.acos(theta);
-            Log.d(TAG, "theta = " + theta * 180 / Math.PI);
+            if (DEBUG) Log.d(TAG, "theta = " + theta * 180 / Math.PI);
 
             lastEncoderPos = currentEncoderPos;
             currentEncoderPos = drivebase.getPos();
-            Log.d(TAG, "X = " + x + " Y = " + y + " theta = " + theta * 180 / Math.PI);
+            if (DEBUG) Log.d(TAG, "X = " + x + " Y = " + y + " theta = " + theta * 180 / Math.PI);
         }
 
     }

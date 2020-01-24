@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.RASI.RasiCommands.TestDriveBaseRasiCommand
  * */
 public abstract class TestBasicRasiAuton extends LinearOpMode {
     SkyStoneDetector detector;
+    private static final boolean DEBUG = true;
 
     public boolean doVision(){
         return true;
@@ -61,7 +62,7 @@ public abstract class TestBasicRasiAuton extends LinearOpMode {
             tags[0] = Character.toString(blackPosition.toString().charAt(0)).toUpperCase();
             rasiInterpreter.setTags(tags);
             sendTelemetry("Set tags to " + tags[0]);
-            Log.d("RasiAuto", "Set tag to " + tags[0]);
+            if (DEBUG) Log.d("RasiAuto", "Set tag to " + tags[0]);
 
         }
 

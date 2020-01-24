@@ -82,9 +82,11 @@ public class SkyStoneDetector extends OpenCVPipeline {
         width = yCbCrChan2Mat.cols();
         height = yCbCrChan2Mat.rows();
 
-        Log.d(TAG, "width " + width);
-        Log.d(TAG, "height " + height);
-        Log.d(TAG, "thresholdmatdims " + yCbCrChan2Mat.dims());
+        if (DEBUG) {
+            Log.d(TAG, "width " + width);
+            Log.d(TAG, "height " + height);
+            Log.d(TAG, "thresholdmatdims " + yCbCrChan2Mat.dims());
+        }
 
         int y = (int) (mid[1] * height);
         int midx = (int) (mid[0] * width);
@@ -95,8 +97,8 @@ public class SkyStoneDetector extends OpenCVPipeline {
         leftval =  yCbCrChan2Mat.get(y, leftx)[0];
         midval =  yCbCrChan2Mat.get(y, midx)[0];
 
-        Log.d(TAG, " len " + yCbCrChan2Mat.get(y, leftx).length);
-        Log.d(TAG, " len " + yCbCrChan2Mat.get(y, midx).length);
+        if (DEBUG) Log.d(TAG, " len " + yCbCrChan2Mat.get(y, leftx).length);
+        if (DEBUG) Log.d(TAG, " len " + yCbCrChan2Mat.get(y, midx).length);
 
         if (leftval > 100) {
             position = skyPositions.left;
@@ -105,8 +107,8 @@ public class SkyStoneDetector extends OpenCVPipeline {
         } else {
             position = skyPositions.right;
         }
-        Log.d(TAG, "left " + leftval);
-        Log.d(TAG, "mid " + midval);
+        if (DEBUG) Log.d(TAG, "left " + leftval);
+        if (DEBUG) Log.d(TAG, "mid " + midval);
 
 //        Log.d(TAG, "right " + yCbCrChan2Mat.get(rightx, y)[0]); DOESN"T WORK FOR SOME REASON!!
 
