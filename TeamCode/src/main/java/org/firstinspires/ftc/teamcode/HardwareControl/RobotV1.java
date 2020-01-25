@@ -20,6 +20,7 @@ public class RobotV1 extends Robot {
     public double yLiftHeight = 0.0, bLiftHeight = 0;
     boolean bLastClicked = false, yLastClicked = false;
     Button GP1A = new Button(), GP1X = new Button(), GP1B = new Button(), A = new Button(), B = new Button(), Y = new Button(),  RB = new Button(), LB = new Button(), GP1_DPLEFT = new Button(), GP1_DPRIGHT = new Button(), GP2X = new Button(), DPR = new Button(), GP2_LStick = new Button(), DPU = new Button(), GP2_DPDOWN = new Button(), RB2 = new Button();
+    Button GP1DPD = new Button(), GP1DPU = new Button();
     boolean hooksDown = false;
     boolean capstoneClick = true;
     boolean hLiftRetracted = true;
@@ -34,6 +35,8 @@ public class RobotV1 extends Robot {
     Lifts lifts;
     SideHook sideHook;
     double clawPos = 0;
+
+
 
     public RobotV1(MecanumDrivebase drivebase, Gyro gyro, Intake intake, Lifts lifts, BackHooks backHooks, Telemetry telemetry, SideHook sideHook){
         this.lifts = lifts;
@@ -147,6 +150,20 @@ public class RobotV1 extends Robot {
             hooksDown = !hooksDown;
         }
 
+
+        GP1DPU.recordNewValue(gamepad1.dpad_up);
+        GP1DPD.recordNewValue(gamepad1.dpad_down);
+
+//        if (GP1DPD.isOn()){
+//            lifts.disablePIDLiftControl();
+//            lifts.setvLiftPow(-0.1);
+//        } else if (GP1DPU.isOn()){
+//            lifts.disablePIDLiftControl();
+//            lifts.setvLiftPow(0.1);
+//        } else {
+//            lifts.enablePIDLiftControl();
+//        }
+
         //THE FOLLOWING IS GAMEPAD 2
 
         //Grab or release block
@@ -185,26 +202,27 @@ public class RobotV1 extends Robot {
         //Retract all lifts
         A.recordNewValue(gamepad2.a);
         if (A.isJustOff()) {
+
             long startTime = System.currentTimeMillis();
             while (startTime + 400 > System.currentTimeMillis()){
                 lifts.releaseBlock();
-                lifts.update();
+                update();
             }
 
             lifts.setvLiftPos(lifts.getVliftPos() + 400);
             startTime = System.currentTimeMillis();
             while (startTime + 375 > System.currentTimeMillis()){
-                lifts.update();
+                update();
             }
 
             startTime = System.currentTimeMillis();
             while (startTime + 700 > System.currentTimeMillis()){
                 lifts.retractHLift();
-                lifts.update();
+                update();
             }
 
             lifts.setvLiftPos(0);
-            lifts.update();
+            update();
             hLiftRetracted = true;
             bLiftHeight = 0.0;
         }
@@ -214,10 +232,10 @@ public class RobotV1 extends Robot {
             bLastClicked = true;
             yLastClicked = false;
             bLiftHeight += 1.0;
-            if (bLiftHeight <= 9.0) {
+            if (bLiftHeight <= 10.0) {
                 lifts.setvLiftPos(bLiftHeight);
             } else {
-                bLiftHeight = 9.0;
+                bLiftHeight = 10.0;
                 lifts.setvLiftPos(bLiftHeight);
             }
         }
@@ -300,7 +318,10 @@ public class RobotV1 extends Robot {
 
         if (gamepad2.left_bumper) {
             lifts.grabBlock();
+            lifts.setCorrectionFactor(0.05);
             lifts.setvLiftPos(lifts.getVliftZeroPos());
+        } else {
+            lifts.setCorrectionFactor(0);
         }
     }
 

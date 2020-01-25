@@ -26,6 +26,7 @@ public class RobotV1TeleOpFull extends LinearOpMode {
         sendTelemetry("Gyro created...");
 
         Lifts lifts = new Lifts(hardwareMap);
+        lifts.readZeroPos();
         sendTelemetry("Lifts created...");
 
         BackHooks backHooks = new BackHooks(hardwareMap);
@@ -43,6 +44,8 @@ public class RobotV1TeleOpFull extends LinearOpMode {
         // opmode start
         waitForStart();
         boolean temp = true;
+        long lastTime1 = gamepad1.timestamp;
+        long lastTime2 = gamepad2.timestamp;
         long lastTime = System.currentTimeMillis();
         while(opModeIsActive()) {
             if (temp){
@@ -54,21 +57,22 @@ public class RobotV1TeleOpFull extends LinearOpMode {
             robot.update();
             // interested in seeing cycle time
             long currTime = System.currentTimeMillis();
-            telemetry.addLine("Foundation Distance: " + intake.showFoundDist());
             telemetry.addLine("Lift Height Y: " + robot.yLiftHeight + "  B: " + robot.bLiftHeight);
             telemetry.addLine("Current V Pos: " + lifts.getVliftPos());
             telemetry.addLine("Target V Pos: " + lifts.vLiftTargetPos);
-            //telemetry.addLine("Current H Pos: "  + lifts.getHLiftPos());
-            telemetry.addLine("Target H Pos: " + lifts.hLiftTargetPos);
             telemetry.addLine("Intake Loaded  " + intake.isLoaded());
             telemetry.addData("Elapsed Time Milliseconds: ", (currTime - lastTime));
+            telemetry.addData("Gamepad 1 update timing: ", gamepad1.timestamp - lastTime1);
+            telemetry.addData("Gamepad 2 update timing: ", gamepad2.timestamp - lastTime2);
+            lastTime1 = gamepad1.timestamp;
+            lastTime2 = gamepad2.timestamp;
             lastTime = currTime;
-
             telemetry.update();
+
         }
 
     }
-    private void sendTelemetry(String msg){
+    private void sendTelemetry(String msg) {
         telemetry.addLine(msg);
         telemetry.update();
     }

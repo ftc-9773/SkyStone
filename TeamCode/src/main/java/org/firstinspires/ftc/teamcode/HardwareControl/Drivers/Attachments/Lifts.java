@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Utilities.Controllers.PIDController;
 import org.firstinspires.ftc.teamcode.Utilities.json.SafeJsonReader;
+import org.json.JSONException;
 
 public class Lifts implements Attachment {
     final String TAG = "Lifts";
@@ -18,6 +19,8 @@ public class Lifts implements Attachment {
     public static final double STUD_HEIGHT_INCHES = 1;
     public final double HEIGHT_OF_PLATFORM_INCHES = 1.25;
     public final double GEAR_RATIO = 28.0/28.0;
+
+    public boolean disablePIDLiftControl = false;
 
     //Physical interface
     DcMotor vLiftMotor;
@@ -62,6 +65,7 @@ public class Lifts implements Attachment {
     double vkp, vkd, vki, hkp, hkd, hki;
 
     int targetVLiftPos;
+    double correctionFactor = 0;
     int targetHLiftPos;
 
     public Lifts(HardwareMap hardwareMap){
@@ -76,9 +80,9 @@ public class Lifts implements Attachment {
         hLiftServo = hardwareMap.get(Servo.class, "hLiftServo");
 
         //Reset encoders
-        vLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        vLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //hLiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        vLiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        vLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //hLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //Get config values
@@ -94,7 +98,7 @@ public class Lifts implements Attachment {
 
         vLiftMaxPos = reader.getInt("vLiftMaxPos");
         blockHeightInEncoders = reader.getInt("blockHeightInEncoders");
-        vliftZeroPos = getVliftPos();
+        vliftZeroPos = getRawVlift();
         vLiftIdlePos = reader.getInt("vLiftIdlePos");
         hLiftMaxPos = reader.getInt("hLiftMaxPos");
         //hliftZeroPos = getHLiftPos();
@@ -135,6 +139,21 @@ public class Lifts implements Attachment {
         rotateServo.setDirection(Servo.Direction.REVERSE);
         capstoneServo.setPosition(capstoneZeroPos);
         hLiftServo.setPosition(hLiftServoZeroPos);
+    }
+
+    public void writeZeroToJson(){
+        try {
+        reader.jsonRoot.put("vLiftZeroPos", vliftZeroPos);
+        } catch (JSONException e){
+            Log.e(TAG, "", e);
+        }
+    }
+    public void readZeroPos(){
+        vliftZeroPos = reader.getInt("vLiftZeroPos");
+    }
+
+    public void setCorrectionFactor(double factor){
+        correctionFactor = factor;
     }
 
     //Returns both Hlift and Vlift to state to intake another block.
@@ -226,7 +245,7 @@ public class Lifts implements Attachment {
     // return -hLiftMotor.getCurrentPosition();}
 
     public int getVliftPos(){
-        return getRawVlift() + vliftZeroPos;
+        return getRawVlift() - vliftZeroPos;
     }
 
 //    public int getHLiftPos(){
@@ -283,6 +302,16 @@ public class Lifts implements Attachment {
         capstoneServo.setPosition(capstoneTargetPos);
     }
 
+    public void disablePIDLiftControl(){
+        targetVLiftPos = vliftZeroPos;
+        disablePIDLiftControl = true;
+    }
+
+    public void enablePIDLiftControl(){
+        targetVLiftPos = vliftZeroPos = getRawVlift();
+        disablePIDLiftControl = false;
+    }
+
     @Override
     public void update() {
         //double hCorrection = hpid.getPIDCorrection(hLiftTargetPos, getHLiftPos());
@@ -309,7 +338,12 @@ public class Lifts implements Attachment {
 //                vCorrection = 0;
 //            }
             Log.d(TAG, "VCOR2 " + vCorrection);
-            setVLiftPow(vCorrection);
+            if(correctionFactor != 0){
+                if (vCorrection < correctionFactor){
+                    vCorrection = correctionFactor;
+                }
+            }
+            if (!disablePIDLiftControl) setVLiftPow(vCorrection);
         }
         //hCorrection = bound(-1, 1, -hCorrection); // Correct the sign
         //setHLiftPow(bound(-1, 1, hCorrection));

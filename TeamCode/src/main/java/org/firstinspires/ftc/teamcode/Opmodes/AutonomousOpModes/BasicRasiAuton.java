@@ -40,6 +40,7 @@ public abstract class BasicRasiAuton extends LinearOpMode {
 
         sendTelemetry("Gyro created");
         Lifts lifts = new Lifts(hardwareMap);
+        lifts.writeZeroToJson();
         sendTelemetry("Lifts created");
 
         sendTelemetry("Created back hooks interface");
