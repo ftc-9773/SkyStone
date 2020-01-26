@@ -273,6 +273,8 @@ public class RobotV1 extends Robot {
                 yLiftHeight = 10.0;
                 lifts.setvLiftPos(yLiftHeight);
             }
+            backHooks.up();
+            backHooks.update();
         }
 
 

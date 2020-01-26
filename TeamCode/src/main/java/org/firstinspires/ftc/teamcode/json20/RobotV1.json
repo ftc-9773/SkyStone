@@ -13,7 +13,7 @@
   "rightClawServoReleasePow" : -0.5,
   "vLiftMaxPos" : 3020,
   "hLiftMaxPos" : 235,
-  "vLiftIdlePos" : 170,
+  "vLiftIdlePos" : 190,
   "minHeightForHLift" : 240,
   "minHorizontalToLowerVLIFT" : 0,
 
@@ -23,12 +23,12 @@
   "oneBlockHigh": 770 ,
   "twoBlocksHigh": 770 ,
   "threeBlocksHigh": 1060 ,
-  "fourBlocksHigh": 1300,
-  "fiveBlocksHigh": 1600,
-  "sixBlocksHigh": 1900,
-  "sevenBlocksHigh": 2160,
-  "eightBlocksHigh": 2480 ,
-  "nineBlocksHigh": 2750,
+  "fourBlocksHigh": 1370,
+  "fiveBlocksHigh": 1670,
+  "sixBlocksHigh": 1930,
+  "sevenBlocksHigh": 2190,
+  "eightBlocksHigh": 2510 ,
+  "nineBlocksHigh": 2780,
   "tenBlocksHigh": 3010,
 
 
@@ -45,8 +45,8 @@
   "capstoneReleasePos": 0.7,
 
   "vkp" : 0.005,
-  "vki" : 1,
-  "vkd" : 0.01,
+  "vki" : 0,
+  "vkd" : 0.3,
   "hkp" : 0.005,
   "hki" : 0,
   "hkd" : 0.0,
@@ -58,6 +58,6 @@
   "sideHookUpPos" : 0.0,
   "sideHookDownPos" : 0.3,
 
-  "hLiftServoZero" : 0.09,
-  "hLiftServoExtend" : 0.59
+  "hLiftServoZero" : 0.07,
+  "hLiftServoExtend" : 0.57
 }
