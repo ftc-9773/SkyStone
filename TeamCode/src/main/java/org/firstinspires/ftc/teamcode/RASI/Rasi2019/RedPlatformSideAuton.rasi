@@ -10,13 +10,12 @@ driveStraight 6
 
 wait 0.1
 
-turn -9
+
 driveStraight 6.5
-turn -30
-driveStraight 3.5
+driveStraight 6
 turn -90
 
-strafe -6
+strafe -9
 driveStraight -3
 
 upHooks

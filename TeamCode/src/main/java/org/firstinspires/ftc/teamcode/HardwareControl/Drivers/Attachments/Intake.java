@@ -16,7 +16,7 @@ public class Intake implements Attachment{
     public DcMotor leftMotor;
     public DcMotor rightMotor;
     public DistanceSensor touchSensor;
-    public DistanceSensor slowFoundation;
+    //public DistanceSensor slowFoundation;
 
     //Private values, keeping track of the current state
     private double pow;
@@ -38,7 +38,7 @@ public class Intake implements Attachment{
         leftMotor = hardwareMap.get(DcMotor.class, "lintakeMotor");
         rightMotor = hardwareMap.get(DcMotor.class, "rintakeMotor");
         touchSensor = hardwareMap.get(DistanceSensor.class, "intakeTouchSensor");
-        slowFoundation = hardwareMap.get(DistanceSensor.class, "slowFoundation");
+        //slowFoundation = hardwareMap.get(DistanceSensor.class, "slowFoundation");
 
         isOn = false;
         off();
@@ -76,12 +76,13 @@ public class Intake implements Attachment{
     }
 
     public boolean slowDown() {
-        slowDown = (slowFoundation.getDistance(DistanceUnit.CM) <= 25);
+        //slowDown = (slowFoundation.getDistance(DistanceUnit.CM) <= 25);
         return slowDown;
     }
 
     public double showFoundDist() {
-        return slowFoundation.getDistance(DistanceUnit.CM);
+        //return //slowFoundation.getDistance(DistanceUnit.CM);
+        return 0;
     }
 
     public void update(){

@@ -90,7 +90,6 @@ public class RobotV1 extends Robot {
             drive_direction = 1;
         }
 
-
         if (gamepad1.left_bumper) {
             slow = true;
         }
@@ -99,21 +98,9 @@ public class RobotV1 extends Robot {
 
         }
 
-//        if (invert) {
-//            if (intake.slowDown()) {
-//                slow = true;
-//            }
-//            else {
-//                if (!gamepad1.right_bumper) {
-//                    slow = false;
-//                }
-//            }
-//        }
-
-
         if (slow) { //Slow mode is 60% speed
-            xp *= 0.4;
-            yp *= 0.4;
+            xp = xp * 0.5;
+            yp *= 0.5;
             rp *= 0.65;
         }
         drivebase.drive(drive_direction * xp, drive_direction * -yp, rp, true);
