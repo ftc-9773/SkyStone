@@ -61,12 +61,13 @@ public class Lifts implements Attachment {
     int minHPosForLowerV; // Minimum distance needed to extend the horizontal lift to lower the vertical lift passed minVPosForH
     public int minPositiveHPos;
 
-    private PIDController vpid, hpid;
-    double vkp, vkd, vki, hkp, hkd, hki;
+    private PIDController vpidUp, vpidDown, hpid;
+    double vkpu, vkdu, vkiu, vkpd, vkdd, vkid;
 
     int targetVLiftPos;
     double correctionFactor = 0;
     int targetHLiftPos;
+    int error;
 
     public Lifts(HardwareMap hardwareMap){
 
@@ -126,14 +127,14 @@ public class Lifts implements Attachment {
 
 
         //Set up pids.
-        vkp = reader.getDouble("vkp");
-        vkd = reader.getDouble("vkd");
-        vki = reader.getDouble("vki");
-        vpid = new PIDController(vkp, vki, vkd);
-        hkp = reader.getDouble("hkp");
-        hkd = reader.getDouble("hkd");
-        hki = reader.getDouble("hki");
-        hpid = new PIDController(hkp, hki, hkd);
+        vkpu = reader.getDouble("vkpu");
+        vkdu = reader.getDouble("vkdu");
+        vkiu = reader.getDouble("vkiu");
+        vpidUp = new PIDController(vkpu, vkiu, vkdu);
+        vkpd = reader.getDouble("vkpd");
+        vkdd = reader.getDouble("vkdd");
+        vkid = reader.getDouble("vkid");
+        vpidDown = new PIDController(vkpd, vkid, vkdd);
 
         rotateServoTargetPos = rotateZeroPos;
         rotateServo.setDirection(Servo.Direction.REVERSE);
@@ -314,39 +315,26 @@ public class Lifts implements Attachment {
 
     @Override
     public void update() {
-        //double hCorrection = hpid.getPIDCorrection(hLiftTargetPos, getHLiftPos());
-
-        //Log.d(TAG, "hcorrection " + hCorrection);
         Log.d(TAG, "Vpos " + getVliftPos());
-        //Log.d(TAG, "Hpos " + getHLiftPos());
         Log.d(TAG, "vTarget  " + vLiftTargetPos);
         Log.d(TAG, "hTarget " + hLiftTargetPos);
 
-        if (!Double.isNaN(vLiftTargetPow) && false){
-            vLiftTargetPos = getVliftPos();
-            if (vLiftTargetPow == 0){
-                vLiftTargetPow = Double.NaN;
-                vLiftTargetPow = 0;
-            }
-            Log.d(TAG, "VPOWER " + vLiftTargetPow);
-            setVLiftPow(vLiftTargetPow);
-        } else {
-            double vCorrection = vpid.getPIDCorrection(vLiftTargetPos, getVliftPos());
-            Log.d(TAG, "VCORRECTION " + vCorrection);
-            vCorrection = bound(-1, 1, -vCorrection); //Correct the sign. According to the hardware: counterclockwise = pos, clockwise = neg. Unfortunately, this is backwards with up and down. Therefore, this correction. Same for the vertical lift.
-//            if (getVliftPos() - targetVLiftPos < 10 && getVliftPos() - targetVLiftPos > 0){
-//                vCorrection = 0;
+        error = vLiftTargetPos - getVliftPos();
+
+        double vCorrection;
+        if (error > 0) vCorrection = vpidUp.getPIDCorrection(error);
+        else vCorrection = vpidDown.getPIDCorrection(error);
+
+        Log.d(TAG, "VCORRECTION " + vCorrection);
+        vCorrection = bound(-1, 1, -vCorrection); //Correct the sign. According to the hardware: counterclockwise = pos, clockwise = neg. Unfortunately, this is backwards with up and down. Therefore, this correction. Same for the vertical lift.
+
+        Log.d(TAG, "VCOR2 " + vCorrection);
+//        if(correctionFactor != 0){
+//            if (vCorrection < correctionFactor){
+//                vCorrection = correctionFactor;
 //            }
-            Log.d(TAG, "VCOR2 " + vCorrection);
-            if(correctionFactor != 0){
-                if (vCorrection < correctionFactor){
-                    vCorrection = correctionFactor;
-                }
-            }
-            if (!disablePIDLiftControl) setVLiftPow(vCorrection);
-        }
-        //hCorrection = bound(-1, 1, -hCorrection); // Correct the sign
-        //setHLiftPow(bound(-1, 1, hCorrection));
+//        }
+        if (!disablePIDLiftControl) setVLiftPow(vCorrection);
 
         hLiftServo.setPosition(hLiftServoTargetPos);
         rightClawServo.setPower(rightServoTargetPow);
