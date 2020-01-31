@@ -5,11 +5,15 @@ import android.util.Log;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.RASI.RasiCommands.RasiCommands;
 import org.firstinspires.ftc.teamcode.Utilities.Controllers.PIDController;
 import org.firstinspires.ftc.teamcode.Utilities.json.SafeJsonReader;
+import org.firstinspires.ftc.teamcode.Utilities.misc.Timer;
 import org.json.JSONException;
 
 public class Lifts implements Attachment {
@@ -19,6 +23,7 @@ public class Lifts implements Attachment {
     public static final double STUD_HEIGHT_INCHES = 1;
     public final double HEIGHT_OF_PLATFORM_INCHES = 1.25;
     public final double GEAR_RATIO = 28.0/28.0;
+    public int RESTING_POSITION_TO_ZERO_OFFSET = 0; //Encoder ticks.
 
     public boolean disablePIDLiftControl = false;
 
@@ -29,6 +34,7 @@ public class Lifts implements Attachment {
     Servo rotateServo;
     Servo capstoneServo;
     Servo hLiftServo;
+    DigitalChannel magLimitSwitch;
 
     //Stores the lowest position the lift should go to. (Which is the initial position of the lifts)
     public int vliftZeroPos = 0, hliftZeroPos = 0;
@@ -79,6 +85,7 @@ public class Lifts implements Attachment {
         rotateServo = hardwareMap.get(Servo.class, "rClawServo");
         capstoneServo = hardwareMap.get(Servo.class, "capServo");
         hLiftServo = hardwareMap.get(Servo.class, "hLiftServo");
+        magLimitSwitch = hardwareMap.get(DigitalChannel.class, "magLimitSwitch");
 
         //Reset encoders
         vLiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -89,6 +96,7 @@ public class Lifts implements Attachment {
         //Get config values
         reader = new SafeJsonReader("RobotV1");
 
+        RESTING_POSITION_TO_ZERO_OFFSET = reader.getInt("EncoderOffset", 0);
         leftClawServoGrabPow = reader.getDouble("leftClawServoGrabPow");
         leftClawServoReleasePow = reader.getDouble("leftClawServoReleasePow");
         rightClawServoGrabPow = reader.getDouble("rightClawServoGrabPow");
@@ -97,27 +105,36 @@ public class Lifts implements Attachment {
         rotate90Pos = reader.getDouble("rotateServo90Pos");
         rotate180Pos = reader.getDouble("rotateServo180Pos");
 
-        vLiftMaxPos = reader.getInt("vLiftMaxPos");
+        vLiftMaxPos = reader.getInt("vLiftMaxPos") + RESTING_POSITION_TO_ZERO_OFFSET;
         blockHeightInEncoders = reader.getInt("blockHeightInEncoders");
-        vliftZeroPos = getRawVlift();
-        vLiftIdlePos = reader.getInt("vLiftIdlePos");
+        vLiftMotor.setPower(0.4);
+        while (readLimitSwitch()){
+            Log.d(TAG, "Limit switch reading " + readLimitSwitch());
+        }
+        vLiftMotor.setPower(0);
+        Timer timer = new Timer(0.5);
+        while (!timer.isDone()){
+            Log.d(TAG, "waiting for done");
+        }
+
+        vLiftIdlePos = reader.getInt("vLiftIdlePos") + RESTING_POSITION_TO_ZERO_OFFSET;
         hLiftMaxPos = reader.getInt("hLiftMaxPos");
         //hliftZeroPos = getHLiftPos();
-        minVPosForH = reader.getInt("minHeightForHLift");
-        minHPosForLowerV = reader.getInt("minHorizontalToLowerVLIFT");
+        minVPosForH = reader.getInt("minHeightForHLift") + RESTING_POSITION_TO_ZERO_OFFSET;
+        minHPosForLowerV = reader.getInt("minHorizontalToLowerVLIFT") + RESTING_POSITION_TO_ZERO_OFFSET;
         minPositiveHPos = minHPosForLowerV;
 
-        baseLiftHeight = reader.getInt("baseLiftHeight");
-        oneBlockHigh = reader.getInt("oneBlockHigh");
-        twoBlocksHigh = reader.getInt("twoBlocksHigh");
-        threeBlocksHigh = reader.getInt("threeBlocksHigh");
-        fourBlocksHigh = reader.getInt("fourBlocksHigh");
-        fiveBlocksHigh = reader.getInt("fiveBlocksHigh");
-        sixBlocksHigh = reader.getInt("sixBlocksHigh");
-        sevenBlocksHigh = reader.getInt("sevenBlocksHigh");
-        eightBlocksHigh = reader.getInt("eightBlocksHigh");
-        nineBlocksHigh = reader.getInt("nineBlocksHigh");
-        tenBlocksHigh = reader.getInt("tenBlocksHigh");
+        baseLiftHeight = reader.getInt("baseLiftHeight") + RESTING_POSITION_TO_ZERO_OFFSET;
+        oneBlockHigh = reader.getInt("oneBlockHigh") + RESTING_POSITION_TO_ZERO_OFFSET;
+        twoBlocksHigh = reader.getInt("twoBlocksHigh") + RESTING_POSITION_TO_ZERO_OFFSET;
+        threeBlocksHigh = reader.getInt("threeBlocksHigh") + RESTING_POSITION_TO_ZERO_OFFSET;
+        fourBlocksHigh = reader.getInt("fourBlocksHigh") + RESTING_POSITION_TO_ZERO_OFFSET;
+        fiveBlocksHigh = reader.getInt("fiveBlocksHigh") + RESTING_POSITION_TO_ZERO_OFFSET;
+        sixBlocksHigh = reader.getInt("sixBlocksHigh") + RESTING_POSITION_TO_ZERO_OFFSET;
+        sevenBlocksHigh = reader.getInt("sevenBlocksHigh") + RESTING_POSITION_TO_ZERO_OFFSET;
+        eightBlocksHigh = reader.getInt("eightBlocksHigh") + RESTING_POSITION_TO_ZERO_OFFSET;
+        nineBlocksHigh = reader.getInt("nineBlocksHigh") + RESTING_POSITION_TO_ZERO_OFFSET;
+        tenBlocksHigh = reader.getInt("tenBlocksHigh") + RESTING_POSITION_TO_ZERO_OFFSET;
 
         capstoneZeroPos = reader.getDouble("capstoneZeroPos");
         capstoneReleasePos = reader.getDouble("capstoneReleasePos");
@@ -136,10 +153,15 @@ public class Lifts implements Attachment {
         vkid = reader.getDouble("vkid");
         vpidDown = new PIDController(vkpd, vkid, vkdd);
 
+        vliftZeroPos = getRawVlift();
         rotateServoTargetPos = rotateZeroPos;
         rotateServo.setDirection(Servo.Direction.REVERSE);
         capstoneServo.setPosition(capstoneZeroPos);
         hLiftServo.setPosition(hLiftServoZeroPos);
+    }
+
+    public boolean readLimitSwitch(){
+        return magLimitSwitch.getState();
     }
 
     public void writeZeroToJson(){
@@ -333,7 +355,10 @@ public class Lifts implements Attachment {
 //            if (vCorrection < correctionFactor){
 //                vCorrection = correctionFactor;
 //            }
-//        }
+////        }
+        if (vLiftTargetPos == 0 && getVliftPos() < 20){
+            vCorrection = 0;
+        }
         if (!disablePIDLiftControl) setVLiftPow(vCorrection);
 
         hLiftServo.setPosition(hLiftServoTargetPos);

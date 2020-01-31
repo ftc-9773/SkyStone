@@ -7,10 +7,16 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Utilities.json.SafeJsonReader;
+import org.firstinspires.ftc.teamcode.Utilities.misc.Timer;
 
 import java.sql.Driver;
+import java.sql.Time;
+
+import android.util.Log;
+
 
 public class Intake implements Attachment{
     public DcMotor leftMotor;
@@ -23,17 +29,20 @@ public class Intake implements Attachment{
     private double minPow;
     public boolean isOn;
     public boolean loaded = false, slowDown = false;
+    public boolean autoOff = false;
 
     //config values
     private SafeJsonReader reader;
 
-    public double onPow;
+    public double onPow, revPow;
+    public Timer stopTimer = null;
 
 
     public Intake(HardwareMap hardwareMap){
         reader = new SafeJsonReader("RobotV1");
         minPow = reader.getDouble("minIntakePow", 0.05);
         onPow = reader.getDouble("onIntakePow", 1.0);
+        revPow = reader.getDouble("revIntakePow", 0.6);
 
         leftMotor = hardwareMap.get(DcMotor.class, "lintakeMotor");
         rightMotor = hardwareMap.get(DcMotor.class, "rintakeMotor");
@@ -56,7 +65,7 @@ public class Intake implements Attachment{
     }
 
     public void onReverse(){
-        this.pow = -onPow;
+        this.pow = -revPow;
         this.isOn = true;
     }
 
@@ -64,14 +73,15 @@ public class Intake implements Attachment{
      * For manually setting the power, if you want to do that for some reason.
      * */
     public void on(double inPow){
-        if ((1 >= inPow) && (inPow > minPow)){
+        if ((1 >= Math.abs(inPow)) && (Math.abs(inPow) > minPow)){
             this.pow = inPow;
             this.isOn = true;
         }
     }
 
     public boolean isLoaded(){
-        loaded = touchSensor.getDistance(DistanceUnit.CM) <= 3;
+        loaded = touchSensor.getDistance(DistanceUnit.CM) <= 26;
+        Log.d("INTAKE", "dist " + touchSensor.getDistance(DistanceUnit.CM));
         return loaded;
     }
 
@@ -85,7 +95,20 @@ public class Intake implements Attachment{
         return 0;
     }
 
+    public void setStopTimer(Timer timer){
+        stopTimer = timer;
+    }
+
     public void update(){
+        if (autoOff && isLoaded() && pow > 0){
+            off();
+        }
+        if (stopTimer != null){
+            if (stopTimer.isDone()){
+                stopTimer = null;
+                off();
+            }
+        }
         this.leftMotor.setPower(-pow);
         this.rightMotor.setPower(pow);
     }

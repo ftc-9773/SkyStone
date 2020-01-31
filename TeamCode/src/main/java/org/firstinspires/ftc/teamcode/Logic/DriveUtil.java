@@ -47,7 +47,7 @@ public class DriveUtil {
 
     // pid coeffs
     final double minDistPow, minExitDist;
-    final double maxTurnPower;
+    double maxTurnPower;
     double distTol;
     static double[] rotPidCoeffs = new double[3];
     double rotTol, rotExitSpeed;
@@ -284,6 +284,13 @@ public class DriveUtil {
          }
      }
 
+     public void turnToAngleHighPower(double goalHeading, double maxpower){
+         double oldMaxPower = maxTurnPower;
+         maxTurnPower = maxpower;
+         turnToAngle(goalHeading);
+         maxTurnPower = oldMaxPower;
+     }
+
     /**
      * A function that turns the robot to a certain field centric position
      *  runs a loop while it can, and exits once at the correct position
@@ -399,6 +406,7 @@ public class DriveUtil {
         double direction = -90; //Whether to go left or right
         if (DEBUG) Log.d(TAG, "Strafing with MP " + dist);
         double distSign = Math.signum(dist);
+        double heading = gyro.getHeading();
         //direction *= distSign;
         dist = dist * distSign;
         drivebase.stop();
@@ -436,7 +444,7 @@ public class DriveUtil {
             } else {
                 pow = distSign * Math.max(-1, pow);
             }
-            driveHoldHeading(pow, direction, gyro.getHeading());
+            driveHoldHeading(pow, direction, heading);
             if (DEBUG) Log.d(TAG, "Wrote power " + pow);
         }
         driveHoldHeading(0, direction, gyro.getHeading());
@@ -451,6 +459,7 @@ public class DriveUtil {
         dist = dist * distSign;
         drivebase.stop();
         drivebase.update();
+        double heading = gyro.getHeading();
         s = 0;
         double pow;
         double sign;
@@ -481,7 +490,7 @@ public class DriveUtil {
             } else {
                 pow = distSign * Math.max(-1 * maxVCoeffecient, pow);
             }
-            driveHoldHeading(pow, 0, gyro.getHeading());
+            driveHoldHeading(pow, 0, heading);
             if (DEBUG) Log.d(TAG, "Wrote power " + pow);
         }
         driveHoldHeading(0, 0, gyro.getHeading());

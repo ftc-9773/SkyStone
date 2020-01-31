@@ -4,8 +4,10 @@
   "rClawServoOpen" : 0,
   "lClawServoOpen" : 1.0,
 
+  "EncoderOffset": 100,
   "minIntakePow" : 0.05,
-  "onIntakePow"   : 0.7,
+  "onIntakePow"   : 0.6,
+  "revIntakePow"  : 0.5,
 
   "leftClawServoGrabPow" : -0.5,
   "leftClawServoReleasePow" : 0.5,
@@ -47,7 +49,7 @@
   "vkpu" : 0.006,
   "vkiu" : 0,
   "vkdu" : 0.1,
-  "vkpd" : 0.005,
+  "vkpd" : 0.0025,
   "vkid" : 10,
   "vkdd" : 0.7,
   "vLiftMinPow": -1,

@@ -26,7 +26,7 @@ public class RobotV1TeleOpFull extends LinearOpMode {
         sendTelemetry("Gyro created...");
 
         Lifts lifts = new Lifts(hardwareMap);
-        lifts.readZeroPos();
+        //lifts.readZeroPos();
         sendTelemetry("Lifts created...");
 
         BackHooks backHooks = new BackHooks(hardwareMap);

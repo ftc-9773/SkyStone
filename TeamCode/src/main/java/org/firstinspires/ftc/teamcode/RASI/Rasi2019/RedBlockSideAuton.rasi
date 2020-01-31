@@ -57,58 +57,75 @@ L:strafe 3
 
 MID: driveStraight 0
 
-M:drive 2
+M:piddrive 2
 M:vLiftIntakePos
-M:wait 0.2
-M:strafe -9
-M:wait 0.3
-M:driveStraight 42
-M:turn -86
 M:wait 0.1
-M:intakeOn
-M:strafe 5
-M:driveStraight 4
-M:wait 0.4
-
-M:strafe 17
+M:strafe 9.5
+M:wait 0.1
+M:turn 88
+M:wait 0.1
+M:strafe 36
+M:turn 88
+M:wait 1
+M:grabBlock 2.5
 M:intakeOff
 M:wait 0.1
+
+M:strafe -17
+M:absintakeOn
+M:wait 0.1
+M:grabWTime
+M:turn 90
+M:wait 0.1
+M:intakeOff
 M:retractHLift
 M:vLiftDown
 M:wait 0.1
 M:retractHLift
 M:vLiftDown
-M:grabWTime
 M:wait 0.1
-M:driveFast 1.38 -0.8 -5
-M:grabWTime
+M:driveFast 1.38 -0.8 -7
+M:wait 0.1
+M:vLiftIntakePos
 
 M:dropHooks
-M:turn -180
-M:intakeOff
-M:driveStraight -6
-M:grabWTime
-M:vLiftRaise 1.0
 M:wait 0.1
-M:driveFast2 0.75 0.8 8
+M:turn -180
+M:wait 0.1
 M:retractHLift
-M:driveStraight -2
-M:turn -90
+M:vLiftDown
+M:driveStraight -8
+M:wait 0.1
+M:driveFast2 0.75 0.8 10
+M:wait 0.1
+M:driveStraight -1
+M:wait 0.05
+M:turn 110
+M:wait 0.1
+M:driveStraight -3
+M:retractHLift
+M:wait 0.05
 M:retractHLift
 M:driveStraight -4
+M:vLiftDown
+M:wait 0.1
+M:grabWTime
+M:vLiftRaise 1.0
+M:wait 0.3
+M:extendHLift
+M:release
+M:wait 0.5
+M:retractHLift
+M:wait 0.3
+M:vLiftDown
 M:upHooks
 
-M:extendHLift
-M:wait 1
-M:release
-M:wait 0.35
-M:retractHLift
 M:wait 0.1
-M:strafe -3
 M:vLiftDown
-M:strafe -3.5
+M:strafe 12
+COMMENT:THE ABOVE IS FOR ALLIANCE PARKS NEXT TO WALL. CHANGE IF YOU PARK NEXT TO WALL
 M:driveStraight 38
-M:strafe -3
+M:strafe 3
 
 
 

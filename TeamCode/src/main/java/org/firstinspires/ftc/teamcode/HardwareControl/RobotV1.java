@@ -30,7 +30,7 @@ public class RobotV1 extends Robot {
     double drive_direction = 1;
     Telemetry telemetry;
 
-    Intake intake;
+    public Intake intake;
     BackHooks backHooks;
     Lifts lifts;
     SideHook sideHook;
@@ -208,7 +208,7 @@ public class RobotV1 extends Robot {
                 update();
             }
 
-            lifts.setvLiftPos(0);
+            lifts.setvLiftPos(15);
             update();
             hLiftRetracted = true;
             bLiftHeight = 0.0;

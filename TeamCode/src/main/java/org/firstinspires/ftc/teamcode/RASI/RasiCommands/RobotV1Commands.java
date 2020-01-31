@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumDrivebase;
 import org.firstinspires.ftc.teamcode.HardwareControl.RobotV1;
 import org.firstinspires.ftc.teamcode.Logic.DriveUtil;
+import org.firstinspires.ftc.teamcode.Utilities.misc.Timer;
+
 import static java.lang.Math.*;
 
 
@@ -93,18 +95,36 @@ public class RobotV1Commands extends RasiCommands{
         }
     }
 
+    public void absIntakeOn(){
+        robot.setIntake(true);
+    }
+
     public void intakeOn(){
         robot.setIntake(true);
+        robot.intake.autoOff = true;
     }
 
     public void reverseIntakeOn() {
         robot.setReverseIntake(true);
+        robot.update();
 
+    }
+
+    //Intake and then grab a block, then outtake to make sure there aren't two blocks.
+    public void grabBlock(double dist){
+        vLiftIntakePos();
+        wait(0.05);
+        intakeOn();
+        driveStraight(dist);
+        retractHLift();
+        wait(0.01);
+        intakeOff();
     }
 
     public void intakeOff(){
         robot.setIntake(false);
         robot.setReverseIntake(false);
+        robot.intake.autoOff = false;
     }
 
     public void sideHookDown() {
@@ -145,6 +165,10 @@ public class RobotV1Commands extends RasiCommands{
         robot.update();
     }
 
+    public void highpowerturn(double ang, double pow){
+        driveUtil.turnToAngleHighPower(ang, pow);
+    }
+
     public void grabWNoTime(){
         long startTime3 = System.currentTimeMillis();
         while (startTime3 + 0.5 * 1000 > System.currentTimeMillis() && !opMode.isStopRequested()) {
@@ -156,6 +180,7 @@ public class RobotV1Commands extends RasiCommands{
     }
 
     public void grabWTime() {
+        vLiftDown();
         robot.grab();
         wait(0.5);
         robot.clawOff();

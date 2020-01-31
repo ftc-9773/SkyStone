@@ -1,6 +1,6 @@
 {
   "distTol" : 0.5,
-  "minDistPow": 0.4,
+  "minDistPow": 0.45,
   "minExitDist": 0.05,
 
   "rotKp": 0.6,
