@@ -57,7 +57,7 @@ L:strafe 3
 
 MID: driveStraight 0
 
-M:driveStraight 2
+M:drive 2
 M:vLiftIntakePos
 M:wait 0.2
 M:strafe -9

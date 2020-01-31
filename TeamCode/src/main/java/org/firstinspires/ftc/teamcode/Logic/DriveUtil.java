@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumDrivebase;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.Gyro;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.VoltSensor;
@@ -36,7 +37,7 @@ public class DriveUtil {
     LinearOpMode opMode;
     MecanumDrivebase drivebase;
     Gyro gyro;
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
 
     // information
     double ticksPerInch;
@@ -54,6 +55,8 @@ public class DriveUtil {
     PIDController rotPid;
     static double[] headingPidCoeffs = new double[3];
     PIDController headingPid;
+    double forwardKp, forwardKi, forwardKd;
+    PIDController forwardPid;
 
     InnerFollower innerFollower;
 
@@ -108,8 +111,70 @@ public class DriveUtil {
         headingPid = new PIDController(headingPidCoeffs[0],headingPidCoeffs[1], headingPidCoeffs[2]);
         if (DEBUG) Log.d(TAG, "created heading PID controller pid coeff array: " + Arrays.toString(headingPidCoeffs));
 
+        forwardKp = json.getDouble("forwardKp", 0.5);
+        forwardKi = json.getDouble("forwardKi", 0);
+        forwardKd = json.getDouble("forwardKd", 0);
+        forwardPid = new PIDController(forwardKp, forwardKi, forwardKd);
+
         drivebase.runWithoutEncoders();
 
+    }
+
+    public void PIDdriveForward(double dist, double power){
+        double initialHeading = gyro.getHeading();
+        forwardPid.resetPID();
+        long[] initialEncoderDists = drivebase.getMotorPositions();
+
+        long lastCheckTime = System.currentTimeMillis();
+        double lastDist = 0;
+
+        drivebase.runWithEncoders();
+
+        while (!opMode.isStopRequested()) {
+            double error = dist - avgDistElapsedInchesForward(initialEncoderDists);
+            Log.d("encoder", "" + initialEncoderDists[0]);
+            double correction = forwardPid.getPIDCorrection(error);
+            Log.d(TAG,"error:" + error);
+            Log.d(TAG, "correction" +correction);
+            // might change this
+            if(scalingClip) {
+                // scales continuously
+                correction = Range.clip(correction, -1, 1);
+                correction*= power;
+            } else {
+                // otherwise just clip
+                correction = Range.clip(correction, -power, power);
+            }
+            if(Math.abs(correction) < minDistPow){
+                correction = Math.signum(correction)*Math.abs(minDistPow);
+            }
+            //logs
+            Log.d(TAG+" error", Double.toString(error));
+            Log.d(TAG+" pow", Double.toString(correction));
+
+
+            driveHoldHeading(correction, 0, initialHeading);
+            double distTraveled = Math.abs(avgDistElapsedInchesForward(initialEncoderDists));
+            Log.d(TAG, "at position: " + distTraveled);
+
+            if( Math.signum(dist) * (distTraveled - dist) > distTol)
+                break;
+
+            if (System.currentTimeMillis() - lastCheckTime > 300) {
+                double currentDist = avgDistElapsedInchesForward(initialEncoderDists);
+                if (Math.abs(lastDist - currentDist) < minExitDist)
+                    break;
+
+                lastDist = currentDist;
+                lastCheckTime = System.currentTimeMillis();
+            }
+
+
+        }
+        drivebase.stop();
+    }
+    private double dist(double x1, double y1, double x2, double y2){
+        return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
     }
 
     //General motion profile drive
@@ -267,12 +332,11 @@ public class DriveUtil {
                  rotation = -maxTurnPower;
 
 
-             if (DEBUG) Log.d(TAG,"writingToDrive: Error: "+ error + " Correction: " + rotation );
+             if (DEBUG) Log.d(TAG,"writingToDrive: Error: "+ error + " Correction: " + rotation);
+             if (DEBUG) Log.d(TAG, "error in radians: " + error);
              if (DEBUG) Log.d(TAG, "error in degrees: "+ Math.toDegrees(error));
              drivebase.drive(0.0, 0, -rotation, false);
-             drivebase.update();
-
-
+             robot.update();
 
              // Check to see if it's time to exit
              // Calculate speed
@@ -283,15 +347,12 @@ public class DriveUtil {
                  speed = Math.abs(error - lastError) / (currentTime - lastTime);
              }
              lastError = error;
-
+             if (DEBUG) Log.d(TAG, "Speed: " + speed);
              if ( Math.abs(error) < Math.abs(rotTol) && speed < rotExitSpeed) {
                  if (DEBUG) Log.i(TAG, "ending rotation, should be at heading");
                  break;
              }
              firstTime = false;
-             // update robot
-             robot.update();
-             // temporary
          }
          drivebase.stop();
         rotPid.resetPID();

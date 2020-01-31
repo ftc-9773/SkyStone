@@ -33,7 +33,7 @@
 
 
   "rotateServoZeroPos" : 0.98,
-  "rotateServo90Pos" : 0.56,
+  "rotateServo90Pos" : 0.58,
   "rotateServo180Pos" : 0.20,
 
   "leftBackHookDownPos" : 0.43,
@@ -44,12 +44,12 @@
   "capstoneZeroPos" : 0.25,
   "capstoneReleasePos": 0.7,
 
-  "vkpu" : 0.005,
+  "vkpu" : 0.006,
   "vkiu" : 0,
-  "vkdu" : 0.3,
+  "vkdu" : 0.1,
   "vkpd" : 0.005,
-  "vkid" : 0,
-  "vkdd" : 0.3,
+  "vkid" : 10,
+  "vkdd" : 0.7,
   "vLiftMinPow": -1,
   "vLiftMaxVelocity" : 0,
   "hLiftMinPow" : -1,

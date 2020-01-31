@@ -33,7 +33,9 @@ public class RobotV1Commands extends RasiCommands{
         robot.update();
     }
 
-
+    public void piddrive(double dist){
+        driveUtil.PIDdriveForward(dist, 1);
+    }
 
 
     public void driveFast2(double time, double speed, double afterDistance) {

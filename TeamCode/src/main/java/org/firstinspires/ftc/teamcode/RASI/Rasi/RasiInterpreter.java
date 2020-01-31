@@ -40,7 +40,7 @@ public class RasiInterpreter {
     private HashMap<String, RasiCommands> rcHashMap;
     private boolean hasArguments;
     private Method method;
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
 
     private ArrayList<Method> methodQueue = new ArrayList<>();
     private ArrayList<Object[]> paramQueue = new ArrayList<>();

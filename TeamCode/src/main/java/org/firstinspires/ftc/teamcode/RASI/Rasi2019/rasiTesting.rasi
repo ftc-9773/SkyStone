@@ -1,11 +1,24 @@
-turn -90
+turn 90
 
 wait 1
 
-turn -45
+turn 60
+
+wait 1
+
+turn 45
+
+wait 1
+
+turn 30
+
+wait 1
+
+turn 45
 
 wait 1
 
 turn 0
 
-wait 2
+COMMENT:piddrive 10
+wait 1
