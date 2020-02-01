@@ -34,6 +34,7 @@ public abstract class BasicRasiAuton extends LinearOpMode {
         MecanumDrivebase drivebase = new MecanumDrivebase(hardwareMap, telemetry);
         sendTelemetry("Drivebase created");
         Intake intake = new Intake(hardwareMap);
+        intake.setBlockDetection(intake.getBlockDetectionAuto());
 
         sendTelemetry("CubeLift created");
         Gyro gyro = new Gyro(hardwareMap);
@@ -68,6 +69,7 @@ public abstract class BasicRasiAuton extends LinearOpMode {
             while (!isStopRequested() && !isStarted()) {
                 pos = detector.getPosition();
                 telemetry.addData("VisionReading", pos.toString());
+                telemetry.addLine("Block Dist: " + intake.getBlockDetection());
                 telemetry.update();
             }
             // pass tags to RASI
@@ -78,6 +80,7 @@ public abstract class BasicRasiAuton extends LinearOpMode {
             if (DEBUG) Log.d("RasiAuto", "Set tag to " + tags[0]);
 
         }
+
 
         //rasiInterpreter.runRasiActually();
         sendTelemetry("Waiting for start");

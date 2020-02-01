@@ -60,9 +60,9 @@ MID: driveStraight 0
 M:piddrive 2
 M:vLiftIntakePos
 M:wait 0.1
-M:strafe 9.5
-M:wait 0.1
-M:turn 88
+M:strafe 12
+M:wait 0.3
+M:turn 89
 M:wait 0.1
 M:strafe 36
 M:turn 88
@@ -74,7 +74,6 @@ M:wait 0.1
 M:strafe -17
 M:absintakeOn
 M:wait 0.1
-M:grabWTime
 M:turn 90
 M:wait 0.1
 M:intakeOff
@@ -82,8 +81,10 @@ M:retractHLift
 M:vLiftDown
 M:wait 0.1
 M:retractHLift
+M:wait 0.2
+M:grabWTime
 M:vLiftDown
-M:wait 0.1
+M:wait 1
 M:driveFast 1.38 -0.8 -7
 M:wait 0.1
 M:vLiftIntakePos
@@ -96,11 +97,11 @@ M:retractHLift
 M:vLiftDown
 M:driveStraight -8
 M:wait 0.1
-M:driveFast2 0.75 0.8 10
+M:driveFast2 0.75 0.8 12
 M:wait 0.1
 M:driveStraight -1
 M:wait 0.05
-M:turn 110
+M:turn 80
 M:wait 0.1
 M:driveStraight -3
 M:retractHLift

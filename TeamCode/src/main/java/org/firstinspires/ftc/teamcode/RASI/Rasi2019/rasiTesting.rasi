@@ -1,3 +1,5 @@
-vLiftDown
 
+vLiftRaise 1.0
+wait 1
+vLiftDown
 wait 5

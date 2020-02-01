@@ -52,6 +52,7 @@ public class RobotV1 extends Robot {
     public void runGamepadCommands(Gamepad gamepad1, Gamepad gamepad2) {
         //THE FOLLOWING IS GAMEPAD 1
 
+
         xp = gamepad1.left_stick_x * 0.9;
         yp = gamepad1.left_stick_y * 0.9;
         rp = gamepad1.right_stick_x * 0.9;
@@ -208,7 +209,7 @@ public class RobotV1 extends Robot {
                 update();
             }
 
-            lifts.setvLiftPos(15);
+            lifts.setvLiftPos(5);
             update();
             hLiftRetracted = true;
             bLiftHeight = 0.0;

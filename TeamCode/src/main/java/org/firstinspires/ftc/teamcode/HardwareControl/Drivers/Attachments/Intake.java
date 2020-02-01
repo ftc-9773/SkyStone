@@ -26,6 +26,7 @@ public class Intake implements Attachment{
 
     //Private values, keeping track of the current state
     private double pow;
+    public int blockDetection, blockDetectionAuto, blockDetectionTeleOp;
     private double minPow;
     public boolean isOn;
     public boolean loaded = false, slowDown = false;
@@ -43,10 +44,13 @@ public class Intake implements Attachment{
         minPow = reader.getDouble("minIntakePow", 0.05);
         onPow = reader.getDouble("onIntakePow", 1.0);
         revPow = reader.getDouble("revIntakePow", 0.6);
+        blockDetectionAuto = reader.getInt("blockAuto");
+        blockDetectionTeleOp = reader.getInt("blockTele");
 
         leftMotor = hardwareMap.get(DcMotor.class, "lintakeMotor");
         rightMotor = hardwareMap.get(DcMotor.class, "rintakeMotor");
         touchSensor = hardwareMap.get(DistanceSensor.class, "intakeTouchSensor");
+
         //slowFoundation = hardwareMap.get(DistanceSensor.class, "slowFoundation");
 
         isOn = false;
@@ -80,9 +84,25 @@ public class Intake implements Attachment{
     }
 
     public boolean isLoaded(){
-        loaded = touchSensor.getDistance(DistanceUnit.CM) <= 26;
+        loaded = touchSensor.getDistance(DistanceUnit.CM) <= getBlockDetection();
         Log.d("INTAKE", "dist " + touchSensor.getDistance(DistanceUnit.CM));
         return loaded;
+    }
+
+    public int getBlockDetection() {
+        return blockDetection;
+    }
+
+    public void setBlockDetection(int newDist) {
+        blockDetection = newDist;
+    }
+
+    public int getBlockDetectionAuto() {
+        return blockDetectionAuto;
+    }
+
+    public int getBlockDetectionTeleOp() {
+        return blockDetectionTeleOp;
     }
 
     public boolean slowDown() {

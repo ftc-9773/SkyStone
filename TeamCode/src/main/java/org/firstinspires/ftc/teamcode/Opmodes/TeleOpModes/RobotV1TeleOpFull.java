@@ -20,6 +20,7 @@ public class RobotV1TeleOpFull extends LinearOpMode {
         sendTelemetry("Drivebase created...");
 
         Intake intake = new Intake(hardwareMap);
+        intake.setBlockDetection(intake.getBlockDetectionTeleOp());
         sendTelemetry("Intake created...");
 
         Gyro gyro = new Gyro(hardwareMap);
@@ -40,6 +41,8 @@ public class RobotV1TeleOpFull extends LinearOpMode {
 
         sendTelemetry("Waiting for start...");
         robot.drivebase.runWithoutEncoders();
+
+
 
         // opmode start
         waitForStart();
@@ -64,6 +67,8 @@ public class RobotV1TeleOpFull extends LinearOpMode {
             telemetry.addData("Elapsed Time Milliseconds: ", (currTime - lastTime));
             telemetry.addData("Gamepad 1 update timing: ", gamepad1.timestamp - lastTime1);
             telemetry.addData("Gamepad 2 update timing: ", gamepad2.timestamp - lastTime2);
+            telemetry.addLine("Intake Block Dist: " + intake.getBlockDetection());
+
             lastTime1 = gamepad1.timestamp;
             lastTime2 = gamepad2.timestamp;
             lastTime = currTime;
