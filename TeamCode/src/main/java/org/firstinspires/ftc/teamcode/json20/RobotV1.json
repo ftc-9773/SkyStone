@@ -4,7 +4,7 @@
   "rClawServoOpen" : 0,
   "lClawServoOpen" : 1.0,
 
-  "EncoderOffset": 100,
+  "EncoderOffset": 200,
   "minIntakePow" : 0.05,
   "onIntakePow"   : 0.6,
   "revIntakePow"  : 0.5,
@@ -63,7 +63,7 @@
   "hLiftServoZero" : 0.07,
   "hLiftServoExtend" : 0.56,
 
-  "blockAuto": 40,
+  "blockAuto": 27,
   "blockTele": 5
 
 

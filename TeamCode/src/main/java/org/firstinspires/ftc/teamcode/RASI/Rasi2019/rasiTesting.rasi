@@ -1,5 +1,13 @@
 
 vLiftRaise 1.0
 wait 1
+absintakeOn
+wait 3
+intakeOff
+wait 1
 vLiftDown
+wait 1
+grabWTime
+wait 1
+vLiftRaise 1.0
 wait 5

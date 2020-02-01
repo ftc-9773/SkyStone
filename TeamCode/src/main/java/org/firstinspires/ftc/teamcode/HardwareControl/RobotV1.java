@@ -257,6 +257,7 @@ public class RobotV1 extends Robot {
             yLiftHeight += 1.0;
             if (yLiftHeight <= 10.0) {
                 lifts.setvLiftPos(yLiftHeight);
+                lifts.grabBlock();
             } else {
                 yLiftHeight = 10.0;
                 lifts.setvLiftPos(yLiftHeight);
@@ -308,10 +309,7 @@ public class RobotV1 extends Robot {
 
         if (gamepad2.left_bumper) {
             lifts.grabBlock();
-            lifts.setCorrectionFactor(0.05);
-            lifts.setvLiftPos(lifts.getVliftZeroPos());
-        } else {
-            lifts.setCorrectionFactor(0);
+            lifts.setvLiftPos(0);
         }
     }
 

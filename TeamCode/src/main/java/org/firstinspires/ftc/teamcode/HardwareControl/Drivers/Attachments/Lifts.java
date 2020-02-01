@@ -96,7 +96,8 @@ public class Lifts implements Attachment {
         //Get config values
         reader = new SafeJsonReader("RobotV1");
 
-        RESTING_POSITION_TO_ZERO_OFFSET = reader.getInt("EncoderOffset", 0);
+        int RESTING_POSITION_TO_ZERO_OFFSET_;
+        RESTING_POSITION_TO_ZERO_OFFSET = reader.getInt("EncoderOffset");
         leftClawServoGrabPow = reader.getDouble("leftClawServoGrabPow");
         leftClawServoReleasePow = reader.getDouble("leftClawServoReleasePow");
         rightClawServoGrabPow = reader.getDouble("rightClawServoGrabPow");
@@ -107,6 +108,7 @@ public class Lifts implements Attachment {
 
         vLiftMaxPos = reader.getInt("vLiftMaxPos") + RESTING_POSITION_TO_ZERO_OFFSET;
         blockHeightInEncoders = reader.getInt("blockHeightInEncoders");
+        retractHLift();
         vLiftMotor.setPower(0.4);
         while (readLimitSwitch()){
             Log.d(TAG, "Limit switch reading " + readLimitSwitch());
@@ -153,11 +155,12 @@ public class Lifts implements Attachment {
         vkid = reader.getDouble("vkid");
         vpidDown = new PIDController(vkpd, vkid, vkdd);
 
-        vliftZeroPos = getRawVlift();
+        vliftZeroPos = getRawVlift() - RESTING_POSITION_TO_ZERO_OFFSET;
         rotateServoTargetPos = rotateZeroPos;
         rotateServo.setDirection(Servo.Direction.REVERSE);
         capstoneServo.setPosition(capstoneZeroPos);
         hLiftServo.setPosition(hLiftServoZeroPos);
+        retractHLift();
     }
 
     public boolean readLimitSwitch(){
@@ -361,6 +364,12 @@ public class Lifts implements Attachment {
         }
         if (!disablePIDLiftControl) setVLiftPow(vCorrection);
 
+        if (hLiftServoTargetPos == hLiftServoZeroPos) {
+            retractHLift();
+        }
+        else {
+            extendHLift();
+        }
         hLiftServo.setPosition(hLiftServoTargetPos);
         rightClawServo.setPower(rightServoTargetPow);
         leftClawServo.setPower(leftServoTargetPow);

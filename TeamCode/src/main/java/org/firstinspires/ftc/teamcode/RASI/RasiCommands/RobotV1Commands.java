@@ -180,9 +180,19 @@ public class RobotV1Commands extends RasiCommands{
     }
 
     public void grabWTime() {
+        retractHLift();
         vLiftDown();
+        retractHLift();
         robot.grab();
         wait(0.5);
+        robot.clawOff();
+    }
+
+    public void turnClawOn(){
+        robot.grab();
+    }
+
+    public void turnClawOff(){
         robot.clawOff();
     }
 
