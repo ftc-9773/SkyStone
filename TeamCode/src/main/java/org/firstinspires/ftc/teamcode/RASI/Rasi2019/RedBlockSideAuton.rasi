@@ -3,9 +3,10 @@ RIGHT: driveStraight 0
 L:driveStraight 1.8
 L:wait 0.2
 L:vLiftIntakePos
-L:strafe 3.4
+L:strafe 3.5
 L:wait 0.3
-L:driveStraight 26.0
+L:turn 90
+L:strafe 35.0
 L:wait 0.1
 L:turn 90
 L:grabBlock 2
@@ -22,7 +23,7 @@ L:intakeOff
 L:grabWTime
 L:wait 0.1
 L:turn 90
-L:driveFast 1.525 -0.8 -7
+L:driveFast 1.525 -0.8 -6
 
 L:dropHooks
 L:turn 180

@@ -1,19 +1,22 @@
 RIGHT: driveStraight 0
 
-R:driveStraight 1.8
+R:driveStraight 2
 R:wait 0.2
 R:vLiftIntakePos
-R:strafe -3.75
+R:strafe -3.8
 R:wait 0.3
-R:driveStraight 26.0
+R:turn -87
+R:strafe -35.0
 R:wait 0.1
 R:turn -90
-R:grabBlock 2.5
+R:grabBlock 1.9
 R:intakeOff
 R:wait 0.4
 
 R:strafe 15.5
 R:absintakeOn
+R:reverseIntake
+R:wait 0.5
 R:retractHLift
 R:wait 0.1
 R:vLiftDown
@@ -21,7 +24,7 @@ R:wait 0.3
 R:intakeOff
 R:grabWTime
 R:wait 0.25
-R:driveFast 1.5 -0.8 -8
+R:driveFast 1.4 -0.8 -8
 
 R:dropHooks
 R:turn -180
@@ -63,7 +66,7 @@ M:retractHLift
 M:wait 0.1
 M:strafe -12
 M:wait 0.05
-M:turn -89
+M:turn -88
 M:wait 0.1
 M:strafe -36
 M:turn -88

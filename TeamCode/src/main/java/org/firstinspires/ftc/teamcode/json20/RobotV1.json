@@ -61,7 +61,7 @@
   "sideHookDownPos" : 0.3,
 
   "hLiftServoZero" : 0.07,
-  "hLiftServoExtend" : 0.56,
+  "hLiftServoExtend" : 0.555,
 
   "blockAuto": 27,
   "blockTele": 5
