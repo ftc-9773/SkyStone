@@ -91,7 +91,7 @@ public class RobotV1 extends Robot {
             drive_direction = 1;
         }
 
-        if (gamepad1.left_bumper) {
+        if (gamepad1.right_bumper) {
             slow = true;
         }
         else {
@@ -100,9 +100,19 @@ public class RobotV1 extends Robot {
         }
 
         if (slow) { //Slow mode is 60% speed
-            xp = xp * 0.5;
-            yp *= 0.5;
             rp *= 0.65;
+            if (Math.abs(xp) < 0.001) {
+                xp *= 600;
+            }
+            else {
+                xp *= 0.575;
+            }
+            if (Math.abs(yp) < 0.001) {
+                yp *= 600;
+            }
+            else {
+                yp *= 0.575;
+            }
         }
         drivebase.drive(drive_direction * xp, drive_direction * -yp, rp, true);
 
@@ -126,17 +136,15 @@ public class RobotV1 extends Robot {
         }
 
         //Toggle hooks
-        RB.recordNewValue(gamepad1.right_bumper);
-        if (RB.isJustOff()) {
-            if (hooksDown) {
-                backHooks.up();
-                backHooks.update();
-            } else {
-                backHooks.down();
-                backHooks.update();
-            }
-            hooksDown = !hooksDown;
+        if (gamepad1.left_bumper) {
+            backHooks.down();
+            backHooks.update();
+        } else {
+            backHooks.up();
+            backHooks.update();
         }
+        hooksDown = !hooksDown;
+
 
 
         GP1DPU.recordNewValue(gamepad1.dpad_up);
