@@ -13,7 +13,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 //import org.firstinspires.ftc.teamcode.Utilities.json.SafeJsonReader;
 
 /**
- * @author ???
  * Class for interacting with the imu built into the RevHub
  * */
 public class Gyro {

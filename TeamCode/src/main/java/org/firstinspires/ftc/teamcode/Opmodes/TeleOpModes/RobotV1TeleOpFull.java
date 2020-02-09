@@ -23,7 +23,7 @@ public class RobotV1TeleOpFull extends LinearOpMode {
         intake.setBlockDetection(intake.getBlockDetectionTeleOp());
         sendTelemetry("Intake created...");
 
-        Gyro gyro = new Gyro(hardwareMap);
+        //Gyro gyro = new Gyro(hardwareMap);
         sendTelemetry("Gyro created...");
 
         Lifts lifts = new Lifts(hardwareMap);
@@ -35,7 +35,7 @@ public class RobotV1TeleOpFull extends LinearOpMode {
 
         SideHook sideHook = new SideHook(hardwareMap);
 
-        RobotV1 robot = new RobotV1(drivebase, gyro, intake, lifts, backHooks, telemetry, sideHook);
+        RobotV1 robot = new RobotV1(drivebase, null, intake, lifts, backHooks, telemetry, sideHook);
         sendTelemetry("Robot created...");
 
 

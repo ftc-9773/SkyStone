@@ -34,7 +34,10 @@ public class Robot {
     }
 
     public double getHeading(){
-        return gyro.getHeading();
+        if (gyro != null){
+         return gyro.getHeading();
+        }
+        return -10000000; //Negative infinity
     }
 
     public double[] getDistSensorReadings(){

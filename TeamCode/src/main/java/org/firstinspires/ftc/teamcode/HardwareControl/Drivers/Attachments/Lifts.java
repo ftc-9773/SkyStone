@@ -75,6 +75,31 @@ public class Lifts implements Attachment {
     int targetHLiftPos;
     int error;
 
+    public class LiftLowerer{
+        int lastPos;
+        long lastTime;
+        double speed;
+        public boolean done = false;
+        public LiftLowerer(){
+            lastPos = vLiftMotor.getCurrentPosition();
+            lastTime = System.currentTimeMillis();
+            setVLiftPow(0.1);
+        }
+        public void update(){
+            if (done){
+                return;
+            }
+            setVLiftPow(0.1);
+            speed = (vLiftMotor.getCurrentPosition()- lastPos) / (System.currentTimeMillis() - lastTime);
+            if (readLimitSwitch() || speed < 0.01){
+                stop();
+            }
+        }
+        public void stop(){
+            done = true;
+        }
+    }
+
     public Lifts(HardwareMap hardwareMap){
 
         //Intialise hardware
