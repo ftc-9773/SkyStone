@@ -309,7 +309,7 @@ public class DriveUtil {
 
          double lastTime;
          double currentTime = System.currentTimeMillis();
-         double lastError =0.0;
+         double lastError = 0.0;
 
          // For turning PID
          double error;
@@ -327,10 +327,13 @@ public class DriveUtil {
              double rotation = rotPid.getPIDCorrection(error);
 
              // may add this in if dt is too weak
-             if (rotation > 0 && rotation < rotMinPow) {
-                 rotation = rotMinPow;
-             } else if (rotation < 0 && Math.abs(rotation) < rotMinPow) {
-                 rotation = -rotMinPow;
+             if (rotation > 0.005) {
+                 rotation += rotMinPow;
+             } else if (rotation < -0.05) {
+                 rotation -= rotMinPow;
+             } else {
+                 rotation = 0;
+                 return;
              }
 
              if (rotation > maxTurnPower)

@@ -10,6 +10,9 @@ import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.SideHo
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumDrivebase;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.Gyro;
 import org.firstinspires.ftc.teamcode.Utilities.misc.Button;
+import org.firstinspires.ftc.teamcode.Utilities.misc.Timer;
+
+import android.util.Log;
 
 public class RobotV1 extends Robot {
     double x = 0, y = 0;
@@ -36,7 +39,7 @@ public class RobotV1 extends Robot {
     SideHook sideHook;
     double clawPos = 0;
 
-
+    static boolean DEBUG = true;
 
     public RobotV1(MecanumDrivebase drivebase, Gyro gyro, Intake intake, Lifts lifts, BackHooks backHooks, Telemetry telemetry, SideHook sideHook){
         this.lifts = lifts;
@@ -404,12 +407,25 @@ public class RobotV1 extends Robot {
     }
 
     public void update() {
+        Timer t = new Timer(0);
         drivebase.update();
+        if (DEBUG) Log.d("RobotV1", "drivebase update time millis: " + t.timeElapsedSeconds() * 1000);
+        t = new Timer(0);
         intake.update();
+        if (DEBUG) Log.d("RobotV1", "intake update time millis: " + t.timeElapsedSeconds() * 1000);
+        t = new Timer(0);
         heading = getHeading();
+        if (DEBUG) Log.d("RobotV1", "getheading() update time millis: " + t.timeElapsedSeconds() * 1000);
+        t = new Timer(0);
         lifts.update();
+        if (DEBUG) Log.d("RobotV1", "lifts update time millis: " + t.timeElapsedSeconds() * 1000);
+        t = new Timer(0);
         backHooks.update();
+        if (DEBUG) Log.d("RobotV1", "backhooks update time millis: " + t.timeElapsedSeconds() * 1000);
+        t = new Timer(0);
         sideHook.update();
+        if (DEBUG) Log.d("RobotV1", "sideHook update time millis: " + t.timeElapsedSeconds() * 1000);
+
     }
 }
 
