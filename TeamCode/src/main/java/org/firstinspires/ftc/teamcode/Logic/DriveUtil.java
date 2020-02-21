@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumDrivebase;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.Gyro;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.VoltSensor;
@@ -36,6 +37,7 @@ public class DriveUtil {
     LinearOpMode opMode;
     MecanumDrivebase drivebase;
     Gyro gyro;
+    private static final boolean DEBUG = true;
 
     // information
     double ticksPerInch;
@@ -44,8 +46,8 @@ public class DriveUtil {
     SafeJsonReader json;
 
     // pid coeffs
-    final double minDistPow, minExitDist;
-    final double maxTurnPower;
+    public final double minDistPow, minExitDist;
+    double maxTurnPower;
     double distTol;
     static double[] rotPidCoeffs = new double[3];
     double rotTol, rotExitSpeed;
@@ -53,6 +55,8 @@ public class DriveUtil {
     PIDController rotPid;
     static double[] headingPidCoeffs = new double[3];
     PIDController headingPid;
+    double forwardKp, forwardKi, forwardKd;
+    PIDController forwardPid;
 
     InnerFollower innerFollower;
 
@@ -66,6 +70,8 @@ public class DriveUtil {
     double v = 0; //
     final double a = (1) / 39.37 / 4 * 560; // meters / s^2 in parenthesis  "????????????" —Future (now past) Cadence
     double s;
+
+    double acceleration_distance = 10; //10 inches. Accelerate to full power over this time.
 
     /**
      * Constructor for the PID drive Util class.
@@ -95,7 +101,7 @@ public class DriveUtil {
         rotPidCoeffs[1] = json.getDouble("rotKi", 0);
         rotPidCoeffs[2] = json.getDouble("rotKd", 0.15);
         rotPid = new PIDController(rotPidCoeffs[0],rotPidCoeffs[1], rotPidCoeffs[2]);
-        Log.d(TAG, "created rotation PID controller pid coeff array: " + Arrays.toString(rotPidCoeffs));
+        if (DEBUG) Log.d(TAG, "created rotation PID controller pid coeff array: " + Arrays.toString(rotPidCoeffs));
 
         rotTol = json.getDouble("rotTol", 0.0174533);// currently 1 degree
         rotExitSpeed = json.getDouble("rotExitSpeed", 0.2); // currently 5º/sec
@@ -105,15 +111,92 @@ public class DriveUtil {
         headingPidCoeffs[1] = json.getDouble("headingKi", 0);
         headingPidCoeffs[2] = json.getDouble("headingKd", 0);
         headingPid = new PIDController(headingPidCoeffs[0],headingPidCoeffs[1], headingPidCoeffs[2]);
-        Log.d(TAG, "created heading PID controller pid coeff array: " + Arrays.toString(headingPidCoeffs));
+        if (DEBUG) Log.d(TAG, "created heading PID controller pid coeff array: " + Arrays.toString(headingPidCoeffs));
+
+        forwardKp = json.getDouble("forwardKp", 0.5);
+        forwardKi = json.getDouble("forwardKi", 0);
+        forwardKd = json.getDouble("forwardKd", 0);
+        forwardPid = new PIDController(forwardKp, forwardKi, forwardKd);
 
         drivebase.runWithoutEncoders();
 
     }
 
+    public void PIDdriveForward(double dist, double power){
+        PIDdriveForward(dist, power, 0); //Straight
+    }
+
+    /**
+     * @param dist in inches
+     * @param power [-1, 1]: caps the power.
+     * */
+    public void PIDdriveForward(double dist, double power, double angle){
+        Log.d(TAG, "Using PID to drive " + dist + " at angle "+angle + " and max power "+ power);
+        double initialHeading = gyro.getHeading();
+        double init_x = robot.x;
+        double init_y = robot.y;
+        forwardPid.resetPID();
+
+        angle = Math.toRadians(90 - angle); //Y = 0 degrees, counterclockwise is ...
+
+        long lastCheckTime = System.currentTimeMillis();
+        double lastDist = 0;
+
+        drivebase.runWithoutEncoders();
+        double maxPow = power;
+        double minPow = -power;
+        double distLeft;
+        while (!opMode.isStopRequested()) {
+            double distTraveled = dist(init_x, init_y, robot.x, robot.y);
+            double error = dist - distTraveled;
+            double correction = forwardPid.getPIDCorrection(error);
+            Log.d(TAG,"error:" + error);
+            Log.d(TAG, "correction " +correction);
+
+
+            if (distTraveled < acceleration_distance){
+                maxPow = power * (1 - (acceleration_distance - distTraveled) / acceleration_distance); //Accelerate to full power
+                minPow = -maxPow;
+            } else if (error < acceleration_distance){
+                maxPow = power * (1 - (acceleration_distance - error) / acceleration_distance); //Decelerate to min power
+                minPow = -maxPow;
+            }
+
+            correction = Range.clip(correction, minPow, maxPow);
+
+            if(correction > 0.005){
+                correction += minDistPow;
+            } else if (correction < -0.005){
+                correction -= minDistPow;
+            } else {
+                correction = 0;
+                //break; // No power = robot is supposed to be stationary -> we're done here. THIS IS NOT ACTUALLY TRUE
+            }
+            Log.d(TAG, "Real correction " +correction);
+
+            //logs
+            //Log.d(TAG+" error", Double.toString(error));
+            //Log.d(TAG+" pow", Double.toString(correction));
+
+            driveHoldHeading(correction, angle, initialHeading);
+            Log.d(TAG, "at position: " + distTraveled);
+
+            if( Math.abs(distTraveled - dist) < distTol)
+                break;
+
+            drivebase.update();
+            robot.update();
+        }
+        drivebase.stop();
+        drivebase.update();
+    }
+    private double dist(double x1, double y1, double x2, double y2){
+        return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+    }
+
     //General motion profile drive
     public void drive(double dist, double angle){
-        Log.d(TAG, "Driving with MP " + dist);
+        if (DEBUG) Log.d(TAG, "Driving with MP " + dist);
         double distSign = Math.signum(dist);
         dist = dist * distSign;
         drivebase.stop();
@@ -124,11 +207,13 @@ public class DriveUtil {
         double accelerating = 1;
         v = minDistPow;
         long[] inits = drivebase.getMotorPositions();
-        Log.d(TAG, "Got inits " + inits);
+        if (DEBUG) Log.d(TAG, "Got inits " + inits);
         driveHoldHeading(v, 0, robot.getHeading());
         while((dist - s) > distTol &&  !opMode.isStopRequested()){
-            Log.d(TAG, "dsError:" + (dist - s));
-            Log.d(TAG, "Velocity: " + v);
+            if (DEBUG) {
+                Log.d(TAG, "dsError:" + (dist - s));
+                Log.d(TAG, "Velocity: " + v);
+            }
             if (dist - s > dist / 2){
                 v = (2 * a * s);
                 accelerating = 1;
@@ -156,7 +241,6 @@ public class DriveUtil {
         drivebase.update();
     }
 
-
     /**
      * a semi-internal function used to keep the robot pointed in a certian direction while driving.
      * @param magnitude driving function magnitude in motor power (i.e. on range -1.0 to 0.0 to 1.0)
@@ -166,7 +250,7 @@ public class DriveUtil {
      public void driveHoldHeading (double magnitude, double angle, double heading){
          double currHeading = gyro.getHeading();
          double error = heading - currHeading;
-         Log.d(TAG, "Error: " + error);
+         //Log.d(TAG, "Error: " + error);
          double correction = headingPid.getPIDCorrection(error);
 
          angle = Math.toRadians(angle + 90);
@@ -175,12 +259,11 @@ public class DriveUtil {
          double x = Math.cos(angle)*magnitude;
          double y = Math.sin(angle)*magnitude;
 
-         Log.d(TAG, "Wrote to drive. correction was" + correction +" x was " + x + " y was " + y);
+         if (DEBUG) Log.d(TAG, "Wrote to drive. correction was" + correction +" x was " + x + " y was " + y);
 
          drivebase.drive(x, y, -correction, false);
          robot.update();
      }
-
 
      public void TankCurve(double x, double y, double theta){
          innerFollower = new InnerFollower(0,0, x, y, theta);
@@ -195,8 +278,8 @@ public class DriveUtil {
          double temp[];
          double xp;
          double yp;
-         Log.d(TAG, "Curving");
-         Log.d(TAG, "params x " + x_ + " and y " + y_ );
+         if (DEBUG) Log.d(TAG, "Curving");
+         if (DEBUG) Log.d(TAG, "params x " + x_ + " and y " + y_ );
          while((Math.abs(x - x_) > distTol && Math.abs(y - y_) > distTol) && !opMode.isStopRequested()){
 
              //theta = Math.acos(1 - Math.sqrt(x * x + y * y) / 2 / test.r / test.r);
@@ -212,9 +295,15 @@ public class DriveUtil {
              yp = temp[0];
              drivebase.drive(xp, yp, 0, false);
              robot.update();
-             Log.d(TAG, "Wrote power x " + 0 + " y " + yp + " t " + Math.acos(xp));
-
+             if (DEBUG) Log.d(TAG, "Wrote power x " + 0 + " y " + yp + " t " + Math.acos(xp));
          }
+     }
+
+     public void turnToAngleHighPower(double goalHeading, double maxpower){
+         double oldMaxPower = maxTurnPower;
+         maxTurnPower = maxpower;
+         turnToAngle(goalHeading);
+         maxTurnPower = oldMaxPower;
      }
 
     /**
@@ -223,19 +312,19 @@ public class DriveUtil {
      * @param goalHeading the intended feild centric heading in degrees.
      */
      public void turnToAngle(double goalHeading) {
-         Log.d(TAG,"startingTurnToAnlge: " + goalHeading);
+         if (DEBUG) Log.d(TAG,"startingTurnToAnlge: " + goalHeading);
 
          final double targetAngleRad = Math.toRadians(goalHeading);
 
          // For calculating rotational speed:
          double lastHeading;
          double currentHeading = gyro.getHeading();
-         Log.d(TAG,"startingHeading: " + currentHeading );
+         if (DEBUG) Log.d(TAG,"startingHeading: " + currentHeading );
 
 
          double lastTime;
          double currentTime = System.currentTimeMillis();
-         double lastError =0.0;
+         double lastError = 0.0;
 
          // For turning PID
          double error;
@@ -253,10 +342,13 @@ public class DriveUtil {
              double rotation = rotPid.getPIDCorrection(error);
 
              // may add this in if dt is too weak
-             if (rotation > 0 && rotation < rotMinPow) {
-                 rotation = rotMinPow;
-             } else if (rotation < 0 && Math.abs(rotation) < rotMinPow) {
-                 rotation = -rotMinPow;
+             if (rotation > 0.005) {
+                 rotation += rotMinPow;
+             } else if (rotation < -0.05) {
+                 rotation -= rotMinPow;
+             } else {
+                 rotation = 0;
+                 return;
              }
 
              if (rotation > maxTurnPower)
@@ -265,12 +357,11 @@ public class DriveUtil {
                  rotation = -maxTurnPower;
 
 
-             Log.d(TAG,"writingToDrive: Error: "+ error + " Correction: " + rotation );
-             Log.d(TAG, "error in degrees: "+ Math.toDegrees(error));
+             if (DEBUG) Log.d(TAG,"writingToDrive: Error: "+ error + " Correction: " + rotation);
+             if (DEBUG) Log.d(TAG, "error in radians: " + error);
+             if (DEBUG) Log.d(TAG, "error in degrees: "+ Math.toDegrees(error));
              drivebase.drive(0.0, 0, -rotation, false);
-             drivebase.update();
-
-
+             robot.update();
 
              // Check to see if it's time to exit
              // Calculate speed
@@ -281,15 +372,12 @@ public class DriveUtil {
                  speed = Math.abs(error - lastError) / (currentTime - lastTime);
              }
              lastError = error;
-
+             if (DEBUG) Log.d(TAG, "Speed: " + speed);
              if ( Math.abs(error) < Math.abs(rotTol) && speed < rotExitSpeed) {
-                 Log.i(TAG, "ending rotation, should be at heading");
+                 if (DEBUG) Log.i(TAG, "ending rotation, should be at heading");
                  break;
              }
              firstTime = false;
-             // update robot
-             robot.update();
-             // temporary
          }
          drivebase.stop();
         rotPid.resetPID();
@@ -321,21 +409,13 @@ public class DriveUtil {
         return Math.sqrt(dy * dy + dx * dx);
     }
 
-    public void align(){
-        double tol = 0.2;
-        double[] readings = robot.getDistSensorReadings();
-        while (Math.abs(-readings[0] + readings[1]) > tol){
-            turnToAngle(robot.heading + Math.toDegrees(Math.atan(readings[1] - readings[0]) / 2));
-            readings = robot.getDistSensorReadings();
-        }
-    }
-
     // Strafe Motion Profiling
     @Deprecated
     public void strafeStraight(double dist){
         double direction = -90; //Whether to go left or right
-        Log.d(TAG, "Strafing with MP " + dist);
+        if (DEBUG) Log.d(TAG, "Strafing with MP " + dist);
         double distSign = Math.signum(dist);
+        double heading = gyro.getHeading();
         //direction *= distSign;
         dist = dist * distSign;
         drivebase.stop();
@@ -348,12 +428,12 @@ public class DriveUtil {
         long[] inits = drivebase.getMotorPositions();
         inits[1] *= -1;
         inits[2] *= -1;
-        Log.d(TAG, "Got inits " + inits);
+        if (DEBUG) Log.d(TAG, "Got inits " + inits);
         driveHoldHeading(v, direction, gyro.getHeading());
         drivebase.update();
         while((dist - s) > distTol &&  !opMode.isStopRequested()){
-            Log.d(TAG, "dsError:" + (dist - s));
-            Log.d(TAG, "Velocity: " + v);
+            if (DEBUG) Log.d(TAG, "dsError:" + (dist - s));
+            if (DEBUG) Log.d(TAG, "Velocity: " + v);
             if (dist - s > dist / 2){
                 v = (2 * a * s);
                 accelerating = 1;
@@ -362,7 +442,7 @@ public class DriveUtil {
                 accelerating = -1;
             }
             sign = Math.signum(v);
-            Log.d(TAG, "V^2: " + v);
+            if (DEBUG) Log.d(TAG, "V^2: " + v);
             v = Math.sqrt(v);
             omega = sign * v * (1 / 560) * 60; //Magic equation
             pow =  (accelerating * a * m * rw * OMEGA / km + omega * ke + tf * OMEGA/ km) / 12.7; // More magical equations
@@ -373,8 +453,8 @@ public class DriveUtil {
             } else {
                 pow = distSign * Math.max(-1, pow);
             }
-            driveHoldHeading(pow, direction, gyro.getHeading());
-            Log.d(TAG, "Wrote power " + pow);
+            driveHoldHeading(pow, direction, heading);
+            if (DEBUG) Log.d(TAG, "Wrote power " + pow);
         }
         driveHoldHeading(0, direction, gyro.getHeading());
         drivebase.stop();
@@ -383,22 +463,23 @@ public class DriveUtil {
 
     @Deprecated
     public void driveStraight(double dist, double maxVCoeffecient){
-        Log.d(TAG, "Driving with MP " + dist);
+        if (DEBUG) Log.d(TAG, "Driving with MP " + dist);
         double distSign = Math.signum(dist);
         dist = dist * distSign;
         drivebase.stop();
         drivebase.update();
+        double heading = gyro.getHeading();
         s = 0;
         double pow;
         double sign;
         double accelerating = 1;
         v = minDistPow;
         long[] inits = drivebase.getMotorPositions();
-        Log.d(TAG, "Got inits " + inits);
+        if (DEBUG) Log.d(TAG, "Got inits " + inits);
         driveHoldHeading(v, 0, gyro.getHeading());
         while((dist - s) > distTol &&  !opMode.isStopRequested()){
-            Log.d(TAG, "dsError:" + (dist - s));
-            Log.d(TAG, "Velocity: " + v);
+            if (DEBUG) Log.d(TAG, "dsError:" + (dist - s));
+            if (DEBUG) Log.d(TAG, "Velocity: " + v);
             if (dist - s > dist / 2){
                 v = (2 * a * s);
                 accelerating = 1;
@@ -407,7 +488,7 @@ public class DriveUtil {
                 accelerating = -1;
             }
             sign = Math.signum(v);
-            Log.d(TAG, "V^2: " + v);
+            if (DEBUG) Log.d(TAG, "V^2: " + v);
             v = Math.sqrt(v);
             omega = sign * v * (1 / 560) * 60; //Magic equation
             pow =  (accelerating * a * m * rw * OMEGA / km + omega * ke + tf * OMEGA/ km) / 12.7; // More magical equations
@@ -418,8 +499,8 @@ public class DriveUtil {
             } else {
                 pow = distSign * Math.max(-1 * maxVCoeffecient, pow);
             }
-            driveHoldHeading(pow, 0, gyro.getHeading());
-            Log.d(TAG, "Wrote power " + pow);
+            driveHoldHeading(pow, 0, heading);
+            if (DEBUG) Log.d(TAG, "Wrote power " + pow);
         }
         driveHoldHeading(0, 0, gyro.getHeading());
         drivebase.stop();
@@ -438,7 +519,7 @@ public class DriveUtil {
         }
         sum /=4;
         sum /= drivebase.COUNTS_PER_INCH;;
-        Log.d(TAG, "INCHES " + sum);
+        if (DEBUG) Log.d(TAG, "INCHES " + sum);
         return sum ;
     }
 
@@ -456,7 +537,7 @@ public class DriveUtil {
         }
         sum /=4;
         sum /= drivebase.COUNTS_PER_INCH;;
-        Log.d(TAG, "STRAFE INCHES " + sum);
+        if (DEBUG) Log.d(TAG, "STRAFE INCHES " + sum);
         return sum ;
     }
 }

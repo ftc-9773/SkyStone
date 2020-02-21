@@ -16,4 +16,5 @@ apply from: '../build.common.gradle'
 
 dependencies {
     implementation 'com.quickbirdstudios:opencv:3.4.1'
+    implementation files('Jama-1.0.3.jar')
 }

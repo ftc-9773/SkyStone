@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.Logic.Vision.SkyStoneDetector.skyPositions
  * ovverride doVision() to return false if you don't want to do vision
  * */
 public abstract class BasicRasiAuton extends LinearOpMode {
+    private static final boolean DEBUG = false;
 
     SkyStoneDetector detector;
 
@@ -33,12 +34,14 @@ public abstract class BasicRasiAuton extends LinearOpMode {
         MecanumDrivebase drivebase = new MecanumDrivebase(hardwareMap, telemetry);
         sendTelemetry("Drivebase created");
         Intake intake = new Intake(hardwareMap);
+        intake.setBlockDetection(intake.getBlockDetectionAuto());
 
         sendTelemetry("CubeLift created");
         Gyro gyro = new Gyro(hardwareMap);
 
         sendTelemetry("Gyro created");
         Lifts lifts = new Lifts(hardwareMap);
+
         sendTelemetry("Lifts created");
 
         sendTelemetry("Created back hooks interface");
@@ -66,6 +69,7 @@ public abstract class BasicRasiAuton extends LinearOpMode {
             while (!isStopRequested() && !isStarted()) {
                 pos = detector.getPosition();
                 telemetry.addData("VisionReading", pos.toString());
+                telemetry.addLine("Block Dist: " + intake.getBlockDetection());
                 telemetry.update();
             }
             // pass tags to RASI
@@ -73,9 +77,10 @@ public abstract class BasicRasiAuton extends LinearOpMode {
             tags[0] = Character.toString(pos.toString().charAt(0)).toUpperCase();
             rasiInterpreter.setTags(tags);
             sendTelemetry("Set tags to " + tags[0]);
-            Log.d("RasiAuto", "Set tag to " + tags[0]);
+            if (DEBUG) Log.d("RasiAuto", "Set tag to " + tags[0]);
 
         }
+
 
         //rasiInterpreter.runRasiActually();
         sendTelemetry("Waiting for start");

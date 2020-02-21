@@ -11,6 +11,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Logic.Geometry.Vector;
 import org.firstinspires.ftc.teamcode.Utilities.json.SafeJsonReader;
 
+import Jama.test.TestMatrix;
+
 public class MecanumDrivebase {
 
     static private final double     COUNTS_PER_MOTOR_REV    = 560;    //
@@ -21,6 +23,7 @@ public class MecanumDrivebase {
 
     static private final double DRIVE_SCALING = 3; // Must be odd
     static private final double ROTATION_SCALING = 0.8; // 0 is none
+    private static final boolean DEBUG = false;
 
     // slowdown mode stuff
     public double slowdownScaleFactor = 0.5;
@@ -29,8 +32,9 @@ public class MecanumDrivebase {
     static final double MAX_TRANSLATIONAL_SPEED = 1.0;
     static final double MAX_ROTATIONAL_SPEED = 1.0;
 
-
-
+    public double[] wheelRotVels = new double[4];
+    public long lastPos[] = new long[4], curPos[] = new long[4];
+    public long lastReadTime;
 
     public DcMotor[] driveMotors;
 
@@ -49,9 +53,8 @@ public class MecanumDrivebase {
         driveMotors[3] = hwMap.get(DcMotor.class, "brdrive");
         //pid coeffs for different motion stuff.
 
-
-
-
+        lastPos = getMotorPositions();
+        lastReadTime = System.currentTimeMillis();
         for (DcMotor motor:driveMotors) {
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             //motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -127,13 +130,7 @@ public class MecanumDrivebase {
     }
 
 
-    public void update() {
-        for (int i = 0; i<4; i++) {
-            if(slowdownMode) driveMotors[i].setPower(motorPowers[i]*slowdownScaleFactor);
-            else driveMotors[i].setPower(motorPowers[i]);
-            Log.d("Drivebase", "Wrote power " + motorPowers[i] + " to motor " + i);
-        }
-    }
+
 
     public void stop() {
         for (int i=0; i<4; i++) {motorPowers[i] = 0;}
@@ -182,8 +179,10 @@ public class MecanumDrivebase {
             setMotorPowers(pow);
             speed = minus(getMotorPositions(), init) / (System.currentTimeMillis() - start);
             //start = System.currentTimeMillis();
-            Log.d("Drivebase", "Speed = " + speed);
-            Log.d("Drivebase", "Power = " + pow);
+            if (DEBUG) {
+                Log.d("Drivebase", "Speed = " + speed);
+                Log.d("Drivebase", "Power = " + pow);
+            }
             telemetry.addData("Speed", speed);
             telemetry.addData("SetPower", pow);
             telemetry.update();
@@ -208,6 +207,11 @@ public class MecanumDrivebase {
         }
     }
 
+    //Ensure that 'pows' is a valid list of motor powers.
+    public void setAllMotorPowers(double[] pows){
+        motorPowers = pows;
+    }
+
     private double minus(long[] a, long[] y){
         double sum = 0;
         if (a.length != y.length){
@@ -220,10 +224,11 @@ public class MecanumDrivebase {
     }
 
     public void getPowersLogged(Telemetry telemetry){
-        for(int i = 0; i< 4; i++){
-            //telemetry.addData("Motor power of motor: "+ i, driveMotors[i].getPower());
-            Log.d("ftc9773_motorPowers", "motor " + i + driveMotors[i].getPowerFloat());
-
+        if (DEBUG) {
+            for(int i = 0; i< 4; i++) {
+                //telemetry.addData("Motor power of motor: "+ i, driveMotors[i].getPower());
+                Log.d("ftc9773_motorPowers", "motor " + i + driveMotors[i].getPowerFloat());
+            }
         }
     }
 
@@ -233,5 +238,22 @@ public class MecanumDrivebase {
         motorPowers[1] = p2;
         motorPowers[3] = p2;
 
+    }
+
+    public void update() {
+        for (int i = 0; i<4; i++) {
+            if(slowdownMode) driveMotors[i].setPower(motorPowers[i]*slowdownScaleFactor);
+            else driveMotors[i].setPower(motorPowers[i]);
+            if (DEBUG) Log.d("Drivebase", "Wrote power " + motorPowers[i] + " to motor " + i);
+        }
+        curPos = getMotorPositions();
+        for (int i = 0; i < 4; i++) {
+            //measure wheel velocities, for model-based controller
+            wheelRotVels[i] = (curPos[i] - lastPos[i]) / (System.currentTimeMillis() - lastReadTime);
+            //convert to rad/s from encoderticks / millis
+            wheelRotVels[i] = wheelRotVels[i] * 1000 / COUNTS_PER_MOTOR_REV;
+        }
+        lastPos = curPos;
+        lastReadTime = System.currentTimeMillis();
     }
 }

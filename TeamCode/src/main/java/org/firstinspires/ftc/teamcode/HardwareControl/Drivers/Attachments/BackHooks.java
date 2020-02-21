@@ -11,6 +11,7 @@ public class BackHooks implements Attachment {
     private Servo leftHook, rightHook;
     double leftTargetPos, rightTargetPos;
     double leftDownPos, leftUpPos, rightDownPos, rightUpPos;
+    private static final boolean DEBUG = false;
 
     SafeJsonReader reader;
 
@@ -44,7 +45,7 @@ public class BackHooks implements Attachment {
 
     @Override
     public void update() {
-        Log.d("HOOKS","Set positions " + leftTargetPos + " " + rightHook);
+        if (DEBUG) Log.d("HOOKS","Set positions " + leftTargetPos + " " + rightHook);
         leftHook.setPosition(leftTargetPos);
         rightHook.setPosition(rightTargetPos);
     }

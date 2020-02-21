@@ -13,7 +13,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 //import org.firstinspires.ftc.teamcode.Utilities.json.SafeJsonReader;
 
 /**
- * @author ???
  * Class for interacting with the imu built into the RevHub
  * */
 public class Gyro {
@@ -49,7 +48,7 @@ public class Gyro {
         imuLeft                         = hardwareMap.get(BNO055IMU.class, "imu");
 
         imuLeft.initialize(parameters);
-        Log.d(TAG, imuLeft.toString());
+        if (DEBUG) Log.d(TAG, imuLeft.toString());
         assert (imuLeft !=null);
         readImu();
         readImu();

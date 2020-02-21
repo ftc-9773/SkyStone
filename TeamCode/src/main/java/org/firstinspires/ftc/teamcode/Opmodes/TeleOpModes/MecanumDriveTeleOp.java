@@ -21,7 +21,7 @@ public class MecanumDriveTeleOp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         MecanumDrivebase drivebase = new MecanumDrivebase(hardwareMap, telemetry);
         Gyro gyro = new Gyro(hardwareMap);
-        Robot robot = new Robot(drivebase, gyro, hardwareMap);
+        Robot robot = new Robot(drivebase, gyro);
 
         double lastEncoderPos[];
         double currentEncoderPos[];
@@ -63,11 +63,6 @@ public class MecanumDriveTeleOp extends LinearOpMode {
             }
             drivebase.drive(xp, yp, gamepad1.right_stick_x, true);
             drivebase.update();
-
-            readings = robot.getDistSensorReadings();
-            r = readings[0];
-            l = readings[1];
-            telemetry.addLine("R: " + r + " L: " + l);
 
             currentEncoderPos = drivebase.getPos();
             x += getDistX(lastEncoderPos, currentEncoderPos);

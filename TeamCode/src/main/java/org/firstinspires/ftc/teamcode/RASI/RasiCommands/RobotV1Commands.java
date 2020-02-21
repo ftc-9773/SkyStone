@@ -7,10 +7,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumDrivebase;
 import org.firstinspires.ftc.teamcode.HardwareControl.RobotV1;
 import org.firstinspires.ftc.teamcode.Logic.DriveUtil;
+import org.firstinspires.ftc.teamcode.Utilities.misc.Timer;
+
 import static java.lang.Math.*;
 
 
 public class RobotV1Commands extends RasiCommands{
+    private static final boolean DEBUG = false;
     RobotV1 robot;
     DriveUtil driveUtil;
 
@@ -32,9 +35,17 @@ public class RobotV1Commands extends RasiCommands{
         robot.update();
     }
 
+    public void piddrive(double dist){
+        driveUtil.PIDdriveForward(dist, 1);
+    }
 
+    public void drive(double x, double y){
+        double theta = atan(y / x);
+        double dist = pow(x * x + y * y, 0.5);
+        driveUtil.PIDdriveForward(dist, 1, theta);
+    }
 
-
+    //Time based driving
     public void driveFast2(double time, double speed, double afterDistance) {
         long initialTime = System.currentTimeMillis();
         while(initialTime + time*1000 > System.currentTimeMillis()) {
@@ -47,28 +58,28 @@ public class RobotV1Commands extends RasiCommands{
         robot.update();
     }
 
-    public void drive(double x, double y){
-        double theta = atan(y / x);
-        double dist = pow(x * x + y * y, 0.5);
-        Log.d("ROBOTV1COMMANDS", "Driving dist " + dist  + " at angle " + toDegrees(theta));
-        driveUtil.drive(dist, theta);
-    }
-
     public void strafe(double dist){
-        Log.d("ROBOTV1COMMANDS", "Strafing dist " + dist);
+        if (DEBUG) Log.d("ROBOTV1COMMANDS", "Strafing dist " + dist);
         driveUtil.strafeStraight(dist);
     }
 
+    public void driveHoldHeading(){
+        double heading = robot.getHeading();
+        Timer a = new Timer(10);
+        while(!a.isDone()){
+            driveUtil.driveHoldHeading(0, 0, heading);
+            robot.update();
+        }
+    }
+
     public void driveStraight(double dist){
-        Log.d("ROBOTV1COMMANDS", "DrivingStraight dist" + dist);
+        if (DEBUG) Log.d("ROBOTV1COMMANDS", "DrivingStraight dist" + dist);
         driveUtil.driveStraight(dist, 1);
     }
     public void driveSlow(double dist, double coe){
-        Log.d("ROBOTV1COMMANDS", "DrivingStraight dist" + dist);
+        if (DEBUG) Log.d("ROBOTV1COMMANDS", "DrivingStraight dist" + dist);
         driveUtil.driveStraight(dist, 0.5);
     }
-
-
 
     public void dropHooks(){
         robot.dropHooks();
@@ -90,18 +101,36 @@ public class RobotV1Commands extends RasiCommands{
         }
     }
 
+    public void absIntakeOn(){
+        robot.setIntake(true);
+    }
+
     public void intakeOn(){
         robot.setIntake(true);
+        robot.intake.autoOff = true;
     }
 
     public void reverseIntakeOn() {
         robot.setReverseIntake(true);
+        robot.update();
 
+    }
+
+    //Intake and then grab a block, then outtake to make sure there aren't two blocks.
+    public void grabBlock(double dist){
+        vLiftIntakePos();
+        wait(0.05);
+        intakeOn();
+        driveStraight(dist);
+        retractHLift();
+        wait(0.01);
+        intakeOff();
     }
 
     public void intakeOff(){
         robot.setIntake(false);
         robot.setReverseIntake(false);
+        robot.intake.autoOff = false;
     }
 
     public void sideHookDown() {
@@ -142,6 +171,10 @@ public class RobotV1Commands extends RasiCommands{
         robot.update();
     }
 
+    public void highpowerturn(double ang, double pow){
+        driveUtil.turnToAngleHighPower(ang, pow);
+    }
+
     public void grabWNoTime(){
         long startTime3 = System.currentTimeMillis();
         while (startTime3 + 0.5 * 1000 > System.currentTimeMillis() && !opMode.isStopRequested()) {
@@ -153,8 +186,19 @@ public class RobotV1Commands extends RasiCommands{
     }
 
     public void grabWTime() {
+        retractHLift();
+        vLiftDown();
+        retractHLift();
         robot.grab();
         wait(0.5);
+        robot.clawOff();
+    }
+
+    public void turnClawOn(){
+        robot.grab();
+    }
+
+    public void turnClawOff(){
         robot.clawOff();
     }
 
