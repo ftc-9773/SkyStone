@@ -71,7 +71,10 @@ public class DriveUtil {
     final double a = (1) / 39.37 / 4 * 560; // meters / s^2 in parenthesis  "????????????" —Future (now past) Cadence
     double s;
 
-    double acceleration_distance = 10; //10 inches. Accelerate to full power over this time.
+    double acceleration_distance = 8; //1 second. Accelerate to full power over this time.
+    double decelleration_time = 3; //Two seconds
+    double deceleration_distance;
+    boolean thingamajig = true;
 
     /**
      * Constructor for the PID drive Util class.
@@ -133,9 +136,13 @@ public class DriveUtil {
     public void PIDdriveForward(double dist, double power, double angle){
         Log.d(TAG, "Using PID to drive " + dist + " at angle "+angle + " and max power "+ power);
         double initialHeading = gyro.getHeading();
+        long[] initialEncoders = drivebase.getMotorPositions();
         double init_x = robot.x;
         double init_y = robot.y;
         forwardPid.resetPID();
+        double speed;
+        double lastTIme = System.currentTimeMillis();
+        long lastLoopTiming;
 
         angle = Math.toRadians(90 - angle); //Y = 0 degrees, counterclockwise is ...
 
@@ -146,23 +153,25 @@ public class DriveUtil {
         double maxPow = power;
         double minPow = -power;
         double distLeft;
+        lastLoopTiming = System.currentTimeMillis();
+        long tempTimeTracking;
         while (!opMode.isStopRequested()) {
-            double distTraveled = dist(init_x, init_y, robot.x, robot.y);
+            double distTraveled = dist(robot.x, robot.y, init_x, init_y);
+            speed = distTraveled / (System.currentTimeMillis() - lastTIme) * 1000;
             double error = dist - distTraveled;
             double correction = forwardPid.getPIDCorrection(error);
             Log.d(TAG,"error:" + error);
             Log.d(TAG, "correction " +correction);
 
-
-            if (distTraveled < acceleration_distance){
-                maxPow = power * (1 - (acceleration_distance - distTraveled) / acceleration_distance); //Accelerate to full power
-                minPow = -maxPow;
-            } else if (error < acceleration_distance){
-                maxPow = power * (1 - (acceleration_distance - error) / acceleration_distance); //Decelerate to min power
-                minPow = -maxPow;
-            }
-
-            correction = Range.clip(correction, minPow, maxPow);
+//            if (distTraveled < acceleration_distance){
+//                maxPow = power * (10 + 90 * (acceleration_distance - distTraveled) / acceleration_distance) / 100; //Accelerate to full power
+//                minPow = -maxPow;
+//            } else if (error < acceleration_distance){
+//                maxPow = power * (10 + 90 * (acceleration_distance - distTraveled) / acceleration_distance) / 100; //Decelerate to min power
+//                minPow = -maxPow;
+//            }
+            maxPow = Math.min(power, accelerationCurve(distTraveled, dist, speed));
+            minPow = Math.max(-power, -accelerationCurve(distTraveled, dist, speed));
 
             if(correction > 0.005){
                 correction += minDistPow;
@@ -172,8 +181,15 @@ public class DriveUtil {
                 correction = 0;
                 //break; // No power = robot is supposed to be stationary -> we're done here. THIS IS NOT ACTUALLY TRUE
             }
-            Log.d(TAG, "Real correction " +correction);
+            if (correction > maxPow){
+                correction = maxPow;
+            } else if (correction < minPow){
+                correction = minPow;
+            }
 
+            Log.d(TAG, "Real correction " +correction);
+            Log.d(TAG, "Timing Getting correction " + (System.currentTimeMillis() - lastLoopTiming));
+            tempTimeTracking = System.currentTimeMillis();
             //logs
             //Log.d(TAG+" error", Double.toString(error));
             //Log.d(TAG+" pow", Double.toString(correction));
@@ -183,12 +199,36 @@ public class DriveUtil {
 
             if( Math.abs(distTraveled - dist) < distTol)
                 break;
-
-            drivebase.update();
+            Log.d(TAG, "Timing drive hold heading " + (System.currentTimeMillis() - tempTimeTracking));
+            tempTimeTracking = System.currentTimeMillis();
+            //drivebase.update();
             robot.update();
+            Log.d(TAG, "Timing updates " + (System.currentTimeMillis() -tempTimeTracking));
+            Log.d(TAG, "Timing Loop time " +(System.currentTimeMillis()- lastLoopTiming));
+            lastLoopTiming = System.currentTimeMillis();
         }
         drivebase.stop();
         drivebase.update();
+    }
+    private double accelerationCurve(double cur, double end, double speed){
+        double factor;
+        double error = Math.abs(cur - end);
+        Log.d(TAG, "acc Error " + error + " speed " + speed + " distance " + speed * decelleration_time);
+        if (error < decelleration_time * speed && thingamajig){
+            deceleration_distance = error;
+            thingamajig = false;
+            Log.d(TAG, "Decceleration distance is " + deceleration_distance);
+        } else if (thingamajig){
+            deceleration_distance = 0;
+        }
+        if (cur < acceleration_distance) {
+            factor = .15 + cur * (0.9) / acceleration_distance;
+        } else if (error < deceleration_distance){
+            factor = .1 + 0.9 * error / deceleration_distance;
+        } else {
+            factor = 1;
+        }
+        return factor;
     }
     private double dist(double x1, double y1, double x2, double y2){
         return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
@@ -262,7 +302,6 @@ public class DriveUtil {
          if (DEBUG) Log.d(TAG, "Wrote to drive. correction was" + correction +" x was " + x + " y was " + y);
 
          drivebase.drive(x, y, -correction, false);
-         robot.update();
      }
 
      public void TankCurve(double x, double y, double theta){

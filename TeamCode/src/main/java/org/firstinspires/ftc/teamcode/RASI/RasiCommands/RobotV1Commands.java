@@ -40,7 +40,7 @@ public class RobotV1Commands extends RasiCommands{
     }
 
     public void drive(double x, double y){
-        double theta = atan(y / x);
+        double theta = atan2(y , x);
         double dist = pow(x * x + y * y, 0.5);
         driveUtil.PIDdriveForward(dist, 1, theta);
     }

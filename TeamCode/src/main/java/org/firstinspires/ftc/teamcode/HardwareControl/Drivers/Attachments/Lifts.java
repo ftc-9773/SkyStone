@@ -135,7 +135,7 @@ public class Lifts implements Attachment {
         //Get config values
         reader = new SafeJsonReader("RobotV1");
         positionTracker = new SafeJsonReader("LiftPositionTracker");
-
+        vLiftIdlePos = reader.getInt("vLiftIdlePos");
         int RESTING_POSITION_TO_ZERO_OFFSET_;
         RESTING_POSITION_TO_ZERO_OFFSET = reader.getInt("EncoderOffset");
         leftClawServoGrabPow = reader.getDouble("leftClawServoGrabPow");
@@ -181,7 +181,6 @@ public class Lifts implements Attachment {
 
         hLiftServoExtendPos = reader.getDouble("hLiftServoExtend");
         hLiftServoZeroPos = reader.getDouble("hLiftServoZero");
-        hLiftServoExtendPos_90 = reader.getDouble("hLiftServoExtend_90");
 
 
         //Set up pids.
@@ -339,6 +338,8 @@ public class Lifts implements Attachment {
     public void grabBlock(){
             leftServoTargetPow = leftClawServoGrabPow;
             rightServoTargetPow = rightClawServoGrabPow;
+            leftClawServo.setPower(leftServoTargetPow);
+            rightClawServo.setPower(rightServoTargetPow);
             //resetLifts();
     }
 
@@ -504,7 +505,4 @@ public class Lifts implements Attachment {
         return v;
     }
 
-    public boolean vLiftCorrectlyPressed() {
-        return digIn.getState();
-    }
 }

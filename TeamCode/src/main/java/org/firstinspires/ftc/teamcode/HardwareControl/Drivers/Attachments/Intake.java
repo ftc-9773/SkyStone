@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments;
 
+import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -22,7 +24,7 @@ import android.util.Log;
 public class Intake implements Attachment{
     public DcMotor leftMotor;
     public DcMotor rightMotor;
-    public TouchSensor touchSensor;
+    public DigitalChannel touchSensor; //Make sure to configure as the higher numbered port.
     //public DistanceSensor slowFoundation;
 
     //Private values, keeping track of the current state
@@ -50,7 +52,7 @@ public class Intake implements Attachment{
 
         leftMotor = hardwareMap.get(DcMotor.class, "lintakeMotor");
         rightMotor = hardwareMap.get(DcMotor.class, "rintakeMotor");
-        touchSensor = hardwareMap.get(TouchSensor.class, "intakeTouchSensor");
+        touchSensor = hardwareMap.get(DigitalChannel.class, "intakeTouchSensor");
 
         //slowFoundation = hardwareMap.get(DistanceSensor.class, "slowFoundation");
 
@@ -85,8 +87,8 @@ public class Intake implements Attachment{
     }
 
     public boolean isLoaded(){
-        loaded = touchSensor.isPressed();
-        //Log.d("INTAKE", "dist " + touchSensor.getDistance(DistanceUnit.CM));
+        loaded = !touchSensor.getState();
+        Log.d("INTAKE", "isPressed " + loaded);
         return loaded;
     }
 

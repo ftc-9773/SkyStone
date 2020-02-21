@@ -1,5 +1,5 @@
 {
-  "distTol" : 0.25,
+  "distTol" : 0.5,
   "minDistPow": 0.08,
   "minExitDist": 0.05,
 
@@ -16,7 +16,7 @@
   "headingKi": 0,
   "headingKd": 0.0,
 
-  "forwardKp" : 0.04,
+  "forwardKp" : 0.014,
   "forwardKi" : 0.0,
   "forwardKd" : 0.0
 }

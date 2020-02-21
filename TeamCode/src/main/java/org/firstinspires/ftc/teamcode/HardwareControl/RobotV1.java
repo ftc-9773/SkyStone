@@ -232,12 +232,6 @@ public class RobotV1 extends Robot {
 
             }
 
-            AStartTime = System.currentTimeMillis();
-            while (AStartTime + 700 > System.currentTimeMillis()){
-                lifts.retractHLift();
-                update();
-            }
-
             lifts.setvLiftPos(5);
             update();
             hLiftRetracted = true;
@@ -406,6 +400,7 @@ public class RobotV1 extends Robot {
     }
 
     public void update() {
+        long startTime = System.currentTimeMillis();
         double lastTime = System.currentTimeMillis();
         double thisTime;
         drivebase.update();
@@ -432,7 +427,7 @@ public class RobotV1 extends Robot {
         sideHook.update();
         thisTime = System.currentTimeMillis();
         //if (DEBUG) Log.d("RobotV1", "sideHook update time millis: " + (thisTime - lastTime));
-
+        Log.d("RobotV1", "Update Timing " + (System.currentTimeMillis() - startTime));
     }
 }
 
