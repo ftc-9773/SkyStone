@@ -46,7 +46,7 @@ public class DriveUtil {
     SafeJsonReader json;
 
     // pid coeffs
-    final double minDistPow, minExitDist;
+    public final double minDistPow, minExitDist;
     double maxTurnPower;
     double distTol;
     static double[] rotPidCoeffs = new double[3];
@@ -70,6 +70,8 @@ public class DriveUtil {
     double v = 0; //
     final double a = (1) / 39.37 / 4 * 560; // meters / s^2 in parenthesis  "????????????" —Future (now past) Cadence
     double s;
+
+    double acceleration_distance = 10; //10 inches. Accelerate to full power over this time.
 
     /**
      * Constructor for the PID drive Util class.
@@ -121,57 +123,72 @@ public class DriveUtil {
     }
 
     public void PIDdriveForward(double dist, double power){
+        PIDdriveForward(dist, power, 0); //Straight
+    }
+
+    /**
+     * @param dist in inches
+     * @param power [-1, 1]: caps the power.
+     * */
+    public void PIDdriveForward(double dist, double power, double angle){
+        Log.d(TAG, "Using PID to drive " + dist + " at angle "+angle + " and max power "+ power);
         double initialHeading = gyro.getHeading();
+        double init_x = robot.x;
+        double init_y = robot.y;
         forwardPid.resetPID();
-        long[] initialEncoderDists = drivebase.getMotorPositions();
+
+        angle = Math.toRadians(90 - angle); //Y = 0 degrees, counterclockwise is ...
 
         long lastCheckTime = System.currentTimeMillis();
         double lastDist = 0;
 
-        drivebase.runWithEncoders();
-
+        drivebase.runWithoutEncoders();
+        double maxPow = power;
+        double minPow = -power;
+        double distLeft;
         while (!opMode.isStopRequested()) {
-            double error = dist - avgDistElapsedInchesForward(initialEncoderDists);
-            Log.d("encoder", "" + initialEncoderDists[0]);
+            double distTraveled = dist(init_x, init_y, robot.x, robot.y);
+            double error = dist - distTraveled;
             double correction = forwardPid.getPIDCorrection(error);
             Log.d(TAG,"error:" + error);
-            Log.d(TAG, "correction" +correction);
-            // might change this
-            if(scalingClip) {
-                // scales continuously
-                correction = Range.clip(correction, -1, 1);
-                correction*= power;
+            Log.d(TAG, "correction " +correction);
+
+
+            if (distTraveled < acceleration_distance){
+                maxPow = power * (1 - (acceleration_distance - distTraveled) / acceleration_distance); //Accelerate to full power
+                minPow = -maxPow;
+            } else if (error < acceleration_distance){
+                maxPow = power * (1 - (acceleration_distance - error) / acceleration_distance); //Decelerate to min power
+                minPow = -maxPow;
+            }
+
+            correction = Range.clip(correction, minPow, maxPow);
+
+            if(correction > 0.005){
+                correction += minDistPow;
+            } else if (correction < -0.005){
+                correction -= minDistPow;
             } else {
-                // otherwise just clip
-                correction = Range.clip(correction, -power, power);
+                correction = 0;
+                //break; // No power = robot is supposed to be stationary -> we're done here. THIS IS NOT ACTUALLY TRUE
             }
-            if(Math.abs(correction) < minDistPow){
-                correction = Math.signum(correction)*Math.abs(minDistPow);
-            }
+            Log.d(TAG, "Real correction " +correction);
+
             //logs
-            Log.d(TAG+" error", Double.toString(error));
-            Log.d(TAG+" pow", Double.toString(correction));
+            //Log.d(TAG+" error", Double.toString(error));
+            //Log.d(TAG+" pow", Double.toString(correction));
 
-
-            driveHoldHeading(correction, 0, initialHeading);
-            double distTraveled = Math.abs(avgDistElapsedInchesForward(initialEncoderDists));
+            driveHoldHeading(correction, angle, initialHeading);
             Log.d(TAG, "at position: " + distTraveled);
 
-            if( Math.signum(dist) * (distTraveled - dist) > distTol)
+            if( Math.abs(distTraveled - dist) < distTol)
                 break;
 
-            if (System.currentTimeMillis() - lastCheckTime > 300) {
-                double currentDist = avgDistElapsedInchesForward(initialEncoderDists);
-                if (Math.abs(lastDist - currentDist) < minExitDist)
-                    break;
-
-                lastDist = currentDist;
-                lastCheckTime = System.currentTimeMillis();
-            }
-
-
+            drivebase.update();
+            robot.update();
         }
         drivebase.stop();
+        drivebase.update();
     }
     private double dist(double x1, double y1, double x2, double y2){
         return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
@@ -224,7 +241,6 @@ public class DriveUtil {
         drivebase.update();
     }
 
-
     /**
      * a semi-internal function used to keep the robot pointed in a certian direction while driving.
      * @param magnitude driving function magnitude in motor power (i.e. on range -1.0 to 0.0 to 1.0)
@@ -234,7 +250,7 @@ public class DriveUtil {
      public void driveHoldHeading (double magnitude, double angle, double heading){
          double currHeading = gyro.getHeading();
          double error = heading - currHeading;
-         Log.d(TAG, "Error: " + error);
+         //Log.d(TAG, "Error: " + error);
          double correction = headingPid.getPIDCorrection(error);
 
          angle = Math.toRadians(angle + 90);
@@ -248,7 +264,6 @@ public class DriveUtil {
          drivebase.drive(x, y, -correction, false);
          robot.update();
      }
-
 
      public void TankCurve(double x, double y, double theta){
          innerFollower = new InnerFollower(0,0, x, y, theta);
@@ -392,15 +407,6 @@ public class DriveUtil {
         dy = ((cur[0] - last[0]) - (cur[1] - last[1])) / 2;
         dy /= MecanumDrivebase.COUNTS_PER_INCH;
         return Math.sqrt(dy * dy + dx * dx);
-    }
-
-    public void align(){
-        double tol = 0.2;
-        double[] readings = robot.getDistSensorReadings();
-        while (Math.abs(-readings[0] + readings[1]) > tol){
-            turnToAngle(robot.heading + Math.toDegrees(Math.atan(readings[1] - readings[0]) / 2));
-            readings = robot.getDistSensorReadings();
-        }
     }
 
     // Strafe Motion Profiling

@@ -39,7 +39,13 @@ public class RobotV1Commands extends RasiCommands{
         driveUtil.PIDdriveForward(dist, 1);
     }
 
+    public void drive(double x, double y){
+        double theta = atan(y / x);
+        double dist = pow(x * x + y * y, 0.5);
+        driveUtil.PIDdriveForward(dist, 1, theta);
+    }
 
+    //Time based driving
     public void driveFast2(double time, double speed, double afterDistance) {
         long initialTime = System.currentTimeMillis();
         while(initialTime + time*1000 > System.currentTimeMillis()) {
@@ -52,16 +58,18 @@ public class RobotV1Commands extends RasiCommands{
         robot.update();
     }
 
-    public void drive(double x, double y){
-        double theta = atan(y / x);
-        double dist = pow(x * x + y * y, 0.5);
-        if (DEBUG) Log.d("ROBOTV1COMMANDS", "Driving dist " + dist  + " at angle " + toDegrees(theta));
-        driveUtil.drive(dist, theta);
-    }
-
     public void strafe(double dist){
         if (DEBUG) Log.d("ROBOTV1COMMANDS", "Strafing dist " + dist);
         driveUtil.strafeStraight(dist);
+    }
+
+    public void driveHoldHeading(){
+        double heading = robot.getHeading();
+        Timer a = new Timer(10);
+        while(!a.isDone()){
+            driveUtil.driveHoldHeading(0, 0, heading);
+            robot.update();
+        }
     }
 
     public void driveStraight(double dist){
@@ -72,8 +80,6 @@ public class RobotV1Commands extends RasiCommands{
         if (DEBUG) Log.d("ROBOTV1COMMANDS", "DrivingStraight dist" + dist);
         driveUtil.driveStraight(dist, 0.5);
     }
-
-
 
     public void dropHooks(){
         robot.dropHooks();

@@ -15,13 +15,14 @@ import org.firstinspires.ftc.teamcode.Utilities.misc.Timer;
 import java.sql.Driver;
 import java.sql.Time;
 
+import android.text.method.Touch;
 import android.util.Log;
 
 
 public class Intake implements Attachment{
     public DcMotor leftMotor;
     public DcMotor rightMotor;
-    public DistanceSensor touchSensor;
+    public TouchSensor touchSensor;
     //public DistanceSensor slowFoundation;
 
     //Private values, keeping track of the current state
@@ -49,7 +50,7 @@ public class Intake implements Attachment{
 
         leftMotor = hardwareMap.get(DcMotor.class, "lintakeMotor");
         rightMotor = hardwareMap.get(DcMotor.class, "rintakeMotor");
-        touchSensor = hardwareMap.get(DistanceSensor.class, "intakeTouchSensor");
+        touchSensor = hardwareMap.get(TouchSensor.class, "intakeTouchSensor");
 
         //slowFoundation = hardwareMap.get(DistanceSensor.class, "slowFoundation");
 
@@ -84,8 +85,8 @@ public class Intake implements Attachment{
     }
 
     public boolean isLoaded(){
-        loaded = touchSensor.getDistance(DistanceUnit.CM) <= getBlockDetection();
-        Log.d("INTAKE", "dist " + touchSensor.getDistance(DistanceUnit.CM));
+        loaded = touchSensor.isPressed();
+        //Log.d("INTAKE", "dist " + touchSensor.getDistance(DistanceUnit.CM));
         return loaded;
     }
 

@@ -1,6 +1,6 @@
 {
-  "distTol" : 0.5,
-  "minDistPow": 0.45,
+  "distTol" : 0.25,
+  "minDistPow": 0.08,
   "minExitDist": 0.05,
 
   "rotKp": 0.6,
@@ -12,11 +12,11 @@
   "rotMinSpeed": 0.18,
   "maxTurnPow": 0.6,
 
-  "headingKp":0.1,
+  "headingKp":1.1,
   "headingKi": 0,
   "headingKd": 0.0,
 
-  "forwardKp" : 0.1,
+  "forwardKp" : 0.04,
   "forwardKi" : 0.0,
   "forwardKd" : 0.0
 }

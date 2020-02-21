@@ -32,7 +32,7 @@ public class MecanumDrivebase {
     static final double MAX_TRANSLATIONAL_SPEED = 1.0;
     static final double MAX_ROTATIONAL_SPEED = 1.0;
 
-    public double[] wheelRotVels;
+    public double[] wheelRotVels = new double[4];
     public long lastPos[] = new long[4], curPos[] = new long[4];
     public long lastReadTime;
 

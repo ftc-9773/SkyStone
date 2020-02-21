@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Opmodes.TeleOpModes;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.BackHooks;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.Intake;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.Lifts;
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.SideHo
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumDrivebase;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.Gyro;
 import org.firstinspires.ftc.teamcode.HardwareControl.RobotV1;
+import android.util.Log;
 
 @TeleOp(name = "RobotTeleOPFull")
 public class RobotV1TeleOpFull extends LinearOpMode {
@@ -26,7 +28,7 @@ public class RobotV1TeleOpFull extends LinearOpMode {
         //Gyro gyro = new Gyro(hardwareMap);
         sendTelemetry("Gyro created...");
 
-        Lifts lifts = new Lifts(hardwareMap);
+        Lifts lifts = new Lifts(hardwareMap, true);
         //lifts.readZeroPos();
         sendTelemetry("Lifts created...");
 
@@ -60,19 +62,21 @@ public class RobotV1TeleOpFull extends LinearOpMode {
             robot.update();
             // interested in seeing cycle time
             long currTime = System.currentTimeMillis();
-            telemetry.addLine("Lift Height Y: " + robot.yLiftHeight + "  B: " + robot.bLiftHeight);
-            telemetry.addLine("Current V Pos: " + lifts.getVliftPos());
-            telemetry.addLine("Target V Pos: " + lifts.vLiftTargetPos);
-            telemetry.addLine("Intake Loaded  " + intake.isLoaded());
-            telemetry.addData("Elapsed Time Milliseconds: ", (currTime - lastTime));
-            telemetry.addData("Gamepad 1 update timing: ", gamepad1.timestamp - lastTime1);
-            telemetry.addData("Gamepad 2 update timing: ", gamepad2.timestamp - lastTime2);
-            telemetry.addLine("Intake Block Dist: " + intake.getBlockDetection());
-
-            lastTime1 = gamepad1.timestamp;
-            lastTime2 = gamepad2.timestamp;
+//            telemetry.addLine("Lift Height Y: " + robot.yLiftHeight + "  B: " + robot.bLiftHeight);
+//            telemetry.addLine("Current V Pos: " + lifts.getVliftPos());
+//            telemetry.addLine("Target V Pos: " + lifts.vLiftTargetPos);
+//            telemetry.addLine("Intake Loaded  " + intake.isLoaded());
+//            telemetry.addData("Elapsed Time Milliseconds: ", (currTime - lastTime));
+//            telemetry.addData("Gamepad 1 update timing: ", gamepad1.timestamp - lastTime1);
+//            telemetry.addData("Gamepad 2 update timing: ", gamepad2.timestamp - lastTime2);
+//            telemetry.addLine("Intake Block Dist: " + intake.getBlockDetection());
+//            lastTime1 = gamepad1.timestamp;
+//            lastTime2 = gamepad2.timestamp;
+//            telemetry.update();
+            Log.d("RobotV1", "Telemetry Timing " + (System.currentTimeMillis() - currTime));
+            currTime = System.currentTimeMillis();
+            Log.d("RobotV1", "Whole Loop Timing " + (currTime - lastTime));
             lastTime = currTime;
-            telemetry.update();
 
         }
 

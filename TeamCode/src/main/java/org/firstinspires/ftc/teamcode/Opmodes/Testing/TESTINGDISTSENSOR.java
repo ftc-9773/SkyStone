@@ -5,17 +5,18 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.Intake;
+import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.Lifts;
 
-@TeleOp(name = "distsensethingy")
+@TeleOp(name = "testingMagLimitSwitch")
 public class TESTINGDISTSENSOR extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Intake intake = new Intake(hardwareMap);
-
+        Lifts intake = new Lifts(hardwareMap);
+        intake.disablePIDLiftControl = true;
         waitForStart();
         while (opModeIsActive()){
-            telemetry.addLine("dist: " + intake.touchSensor.getDistance(DistanceUnit.CM));
+            telemetry.addLine("dist: " +intake.readLimitSwitch());
             telemetry.update();
         }
     }

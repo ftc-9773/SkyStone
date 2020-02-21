@@ -18,7 +18,7 @@ public class Robot {
 
     private long lastx[], lasty[];
 
-    DistSensorArray distSensorArray;
+    //DistSensorArray distSensorArray;
 
     long[] lastpos;
 
@@ -26,25 +26,18 @@ public class Robot {
     //Default constructer
     public Robot(){}
 
-    public Robot(MecanumDrivebase drivebase, Gyro gyro, HardwareMap hardwareMap){
+    public Robot(MecanumDrivebase drivebase, Gyro gyro){
         this.drivebase = drivebase;
         this.gyro = gyro;
-        distSensorArray = new DistSensorArray(hardwareMap);
+        //distSensorArray = new DistSensorArray(hardwareMap);
         lastpos = drivebase.getMotorPositions();
     }
 
-    public double getHeading(){
-        if (gyro != null){
-         return gyro.getHeading();
+    public double getHeading() {
+        if (gyro != null) {
+            return gyro.getHeading();
         }
         return -10000000; //Negative infinity
-    }
-
-    public double[] getDistSensorReadings(){
-        double[] out = new double[2];
-        out[0] = distSensorArray.rReading();
-        out[1] = distSensorArray.lReading();
-        return out;
     }
 
     public void update(){
@@ -53,7 +46,7 @@ public class Robot {
         updateposition();
     }
 
-    private void updateposition(){
+    protected void updateposition(){
         long[] cur = drivebase.getMotorPositions();
         double dx = 0;
         dx += ((cur[0] - lastpos[0]) + (cur[1] - lastpos[1])) / 2;
@@ -62,6 +55,7 @@ public class Robot {
         double dy = 0;
         dy += ((cur[0] - lastpos[0]) - (cur[1] - lastpos[1])) / 2;
         y += dy / MecanumDrivebase.COUNTS_PER_INCH;
+        lastpos = cur;
     }
 
 }

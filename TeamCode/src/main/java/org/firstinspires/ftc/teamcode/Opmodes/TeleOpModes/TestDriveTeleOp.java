@@ -25,7 +25,7 @@ public class TestDriveTeleOp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         MecanumDrivebase drivebase = new MecanumDrivebase(hardwareMap, telemetry);
         Gyro gyro = new Gyro(hardwareMap);
-        Robot robot = new Robot(drivebase, gyro, hardwareMap);
+        Robot robot = new Robot(drivebase, gyro);
         DistanceSensor sensorRange;
 
         Servo servoTester;
@@ -129,12 +129,6 @@ public class TestDriveTeleOp extends LinearOpMode {
             telemetry.addData("deviceName",sensorRange.getDeviceName());
             telemetry.addData("range", String.format("%.01f in", sensorRange.getDistance(DistanceUnit.INCH)));
             telemetry.update();
-
-
-            readings = robot.getDistSensorReadings();
-            r = readings[0];
-            l = readings[1];
-            telemetry.addLine("R: " + r + " L: " + l);
 
             currentEncoderPos = drivebase.getPos();
             x += getDistX(lastEncoderPos, currentEncoderPos);

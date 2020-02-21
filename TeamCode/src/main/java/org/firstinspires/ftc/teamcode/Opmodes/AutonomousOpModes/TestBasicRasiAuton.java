@@ -33,7 +33,7 @@ public abstract class TestBasicRasiAuton extends LinearOpMode {
 
         sendTelemetry("Gyro created");
 
-        Robot robot = new Robot(drivebase,gyro, hardwareMap);
+        Robot robot = new Robot(drivebase,gyro);
         sendTelemetry("Robot created");
 
         //sendTelemetry("starting vision...");

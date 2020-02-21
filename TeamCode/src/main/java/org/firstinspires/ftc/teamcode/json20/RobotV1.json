@@ -34,9 +34,9 @@
   "tenBlocksHigh": 3010,
 
 
-  "rotateServoZeroPos" : 0.98,
-  "rotateServo90Pos" : 0.58,
-  "rotateServo180Pos" : 0.20,
+  "rotateServoZeroPos" : 0.49,
+  "rotateServoLeftBoundryPos" : 0.99,
+  "rotateServoRightBoundryPos" : 0.0,
 
   "leftBackHookDownPos" : 0.43,
   "rightBackHookDownPos" : 0.43,
@@ -52,16 +52,19 @@
   "vkpd" : 0.0025,
   "vkid" : 10,
   "vkdd" : 0.7,
-  "vLiftMinPow": -1,
+  "vLiftMinPow": 0.05,
   "vLiftMaxVelocity" : 0,
   "hLiftMinPow" : -1,
   "hLiftMaxVelocity": 0,
 
-  "sideHookUpPos" : 0.0,
-  "sideHookDownPos" : 0.3,
+  "sideArmUpPos" : 0.81,
+  "sideArmDownPos" : 0.48,
+  "sideHookOpenPos": 0.0,
+  "sideHookClosePos" : 0.35,
+  "sideArmDepositPos" : 68,
 
   "hLiftServoZero" : 0.07,
-  "hLiftServoExtend" : 0.555,
+  "hLiftServoExtend" : 0.581,
 
   "blockAuto": 27,
   "blockTele": 5

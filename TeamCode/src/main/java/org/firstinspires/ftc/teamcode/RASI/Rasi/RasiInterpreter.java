@@ -164,6 +164,7 @@ public class RasiInterpreter {
                     if (DEBUG) Log.d(LOG_TAG, "Invoked command " + method + " with params " + Arrays.toString(finalParameters));
                 } catch (Exception e){
                     if (DEBUG) Log.d(LOG_TAG, "Failed on command" + command);
+                    Log.e(LOG_TAG, "Exception raised", e);
                 }
             } else {
                 try {

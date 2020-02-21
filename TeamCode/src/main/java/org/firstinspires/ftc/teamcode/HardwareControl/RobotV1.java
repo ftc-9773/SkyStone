@@ -10,7 +10,6 @@ import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Attachments.SideHo
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Drivebase.MecanumDrivebase;
 import org.firstinspires.ftc.teamcode.HardwareControl.Drivers.Sensors.Gyro;
 import org.firstinspires.ftc.teamcode.Utilities.misc.Button;
-import org.firstinspires.ftc.teamcode.Utilities.misc.Timer;
 
 import android.util.Log;
 
@@ -22,7 +21,7 @@ public class RobotV1 extends Robot {
     double xp, yp, rp;
     public double yLiftHeight = 0.0, bLiftHeight = 0;
     boolean bLastClicked = false, yLastClicked = false;
-    Button GP1A = new Button(), GP1X = new Button(), GP1B = new Button(), A = new Button(), B = new Button(), Y = new Button(),  RB = new Button(), LB = new Button(), GP1_DPLEFT = new Button(), GP1_DPRIGHT = new Button(), GP2X = new Button(), DPR = new Button(), GP2_LStick = new Button(), DPU = new Button(), GP2_DPDOWN = new Button(), RB2 = new Button();
+    Button GP1A = new Button(), GP1X = new Button(), GP1B = new Button(), GP2A = new Button(), GP2B = new Button(), GP2Y = new Button(),  RB = new Button(), LB = new Button(), GP1_DPLEFT = new Button(), GP1_DPRIGHT = new Button(), GP2X = new Button(), GP2DPR = new Button(), GP2_LStick = new Button(), GP2DPU = new Button(), GP2DPD = new Button(), GP2RB = new Button();
     Button GP1DPD = new Button(), GP1DPU = new Button();
     boolean hooksDown = false;
     boolean capstoneClick = true;
@@ -42,6 +41,7 @@ public class RobotV1 extends Robot {
     static boolean DEBUG = true;
 
     public RobotV1(MecanumDrivebase drivebase, Gyro gyro, Intake intake, Lifts lifts, BackHooks backHooks, Telemetry telemetry, SideHook sideHook){
+        super(drivebase, gyro);
         this.lifts = lifts;
         this.intake = intake;
         this.gyro = gyro;
@@ -49,16 +49,38 @@ public class RobotV1 extends Robot {
         this.backHooks = backHooks;
         this.telemetry = telemetry;
         this.sideHook = sideHook;
+        sideHook.up();
+        lifts.resetClawtoZero();
     }
 
 
     public void runGamepadCommands(Gamepad gamepad1, Gamepad gamepad2) {
         //THE FOLLOWING IS GAMEPAD 1
-
-
+        double lastTime = System.currentTimeMillis();
+        double timetracking = lastTime;
         xp = gamepad1.left_stick_x * 0.9;
         yp = gamepad1.left_stick_y * 0.9;
         rp = gamepad1.right_stick_x * 0.9;
+
+        GP1X.recordNewValue(gamepad1.x);
+        GP1B.recordNewValue(gamepad1.b);
+        GP1_DPLEFT.recordNewValue(gamepad1.left_bumper);
+        GP1_DPRIGHT.recordNewValue(gamepad1.dpad_right);
+        GP1A.recordNewValue(gamepad1.a);
+        GP1DPU.recordNewValue(gamepad1.dpad_up);
+        GP1DPD.recordNewValue(gamepad1.dpad_down);
+        GP2DPU.recordNewValue(gamepad2.dpad_up);
+        GP2DPR.recordNewValue(gamepad2.dpad_right);
+        GP2DPD.recordNewValue(gamepad2.dpad_down);
+        GP2_LStick.recordNewValue(gamepad2.left_stick_button);
+        GP2A.recordNewValue(gamepad2.a);
+        GP2B.recordNewValue(gamepad2.b);
+        GP2X.recordNewValue(gamepad2.x);
+        GP2Y.recordNewValue(gamepad2.y);
+        GP2RB.recordNewValue(gamepad2.right_bumper);
+        timetracking = System.currentTimeMillis();
+        Log.d("RobotV1", "GamepadReading " + (timetracking - lastTime));
+
 
         if (Math.abs(xp) < 0.0001) {
             xp = 0;
@@ -70,15 +92,13 @@ public class RobotV1 extends Robot {
             rp = 0;
         }
 
-        GP1X.recordNewValue(gamepad1.x);
-        GP1B.recordNewValue(gamepad1.b);
-        GP1_DPLEFT.recordNewValue(gamepad1.left_bumper);
-        GP1_DPRIGHT.recordNewValue(gamepad1.dpad_right);
-
+        long magic = System.currentTimeMillis();
         if (intake.isLoaded()) {
             invert = true;
             regular = false;
         }
+        Log.d("RobotV1", "IsLoaded " + (System.currentTimeMillis()- magic));
+
         if (GP1X.isJustOn()) {
               invert = true;
               regular = false;
@@ -117,15 +137,15 @@ public class RobotV1 extends Robot {
                 yp *= 0.575;
             }
         }
-        drivebase.drive(drive_direction * xp, drive_direction * -yp, rp, true);
+        Log.d("RobotV1", "DrivingCode " + (System.currentTimeMillis() - timetracking));
+        timetracking = System.currentTimeMillis();
 
-        GP1A.recordNewValue(gamepad1.a);
-        if (GP1A.isJustOff()) {
-            sideHook.up();
-        }
-        else {
-            sideHook.down();
-        }
+
+        drivebase.drive(drive_direction * xp, drive_direction * -yp, rp, true);
+        Log.d("RobotV1", "DrivebaseWriting " + (System.currentTimeMillis() - timetracking));
+        timetracking = System.currentTimeMillis();
+
+        //Make a control for the side claw
 
 
         if (gamepad1.left_trigger > 0.05) {
@@ -148,11 +168,6 @@ public class RobotV1 extends Robot {
         }
         hooksDown = !hooksDown;
 
-
-
-        GP1DPU.recordNewValue(gamepad1.dpad_up);
-        GP1DPD.recordNewValue(gamepad1.dpad_down);
-
 //        if (GP1DPD.isOn()){
 //            lifts.disablePIDLiftControl();
 //            lifts.setvLiftPow(-0.1);
@@ -162,6 +177,8 @@ public class RobotV1 extends Robot {
 //        } else {
 //            lifts.enablePIDLiftControl();
 //        }
+        Log.d("RobotV1", "Intake + Hooks " + (System.currentTimeMillis() - timetracking));
+        timetracking = System.currentTimeMillis();
 
         //THE FOLLOWING IS GAMEPAD 2
 
@@ -175,19 +192,12 @@ public class RobotV1 extends Robot {
         }
 
         //Rotate claw
-        DPU.recordNewValue(gamepad2.dpad_up);
-        DPR.recordNewValue(gamepad2.dpad_right);
-        GP2_DPDOWN.recordNewValue(gamepad2.dpad_down);
-        if (DPR.isJustOn()) {
-            lifts.rotateClaw90();
-        } else if (DPU.isJustOn()) {
-            lifts.rotateClaw180();
-        } else if (GP2_DPDOWN.isJustOn()) {
+        if (GP2DPD.isJustOn()) {
             lifts.resetClawtoZero();
-            //lifts.setHLiftPos(lifts.gethLiftMaxPos());
+        } else if (Math.abs(gamepad2.right_stick_x) > 0.1){
+            lifts.adjustRotateServo(gamepad2.right_stick_x);
         }
 
-        GP2_LStick.recordNewValue(gamepad2.left_stick_button);
         if (GP2_LStick.isJustOn()) {
             if (capstoneClick) {
                 lifts.releaseCapstone();
@@ -197,11 +207,13 @@ public class RobotV1 extends Robot {
                 capstoneClick = true;
             }
         }
+        Log.d("RobotV1", "ClawCode " + (System.currentTimeMillis() - timetracking));
+        timetracking = System.currentTimeMillis();
+
 
         //Retract all lifts
-        A.recordNewValue(gamepad2.a);
-        if (A.isJustOff()) {
-
+        if (GP2A.isJustOff()) {
+            lifts.resetClawtoZero();
             long startTime = System.currentTimeMillis();
             while (startTime + 400 > System.currentTimeMillis()){
                 lifts.releaseBlock();
@@ -226,8 +238,7 @@ public class RobotV1 extends Robot {
             bLiftHeight = 0.0;
         }
 
-        B.recordNewValue(gamepad2.b);
-        if (B.isJustOff()) {
+        if (GP2B.isJustOff()) {
             bLastClicked = true;
             yLastClicked = false;
             bLiftHeight += 1.0;
@@ -239,7 +250,6 @@ public class RobotV1 extends Robot {
             }
         }
 
-        GP2X.recordNewValue(gamepad2.x);
         if (GP2X.isJustOff()) {
             if (bLastClicked) {
                 bLiftHeight -= 1.0;
@@ -261,8 +271,7 @@ public class RobotV1 extends Robot {
             }
         }
 
-        Y.recordNewValue(gamepad2.y);
-        if (Y.isJustOff()) {
+        if (GP2Y.isJustOff()) {
             bLastClicked = false;
             yLastClicked = true;
             yLiftHeight += 1.0;
@@ -277,23 +286,7 @@ public class RobotV1 extends Robot {
             backHooks.update();
         }
 
-
-//        if (Math.abs(gamepad2.left_stick_y) > 0.05) {
-//            //lifts.adjustHLift(gamepad2.left_stick_y);
-//            lifts.setHLiftPow(0.5 * gamepad2.left_stick_y);
-//        } else {
-//            lifts.setHLiftPow(0);
-//        }
-
-//        if (gamepad2.left_stick_y > 0.05) {
-//            lifts.extendHLift();
-//        }
-//
-//        if (gamepad2.left_stick_y < -0.05) {
-//            lifts.retractHLift();
-//        }
-
-        if (Math.abs(gamepad2.right_stick_y) > 0.05) {
+        if (Math.abs(gamepad2.right_stick_y) > 0.07) {
             lifts.adjustVLift(-gamepad2.right_stick_y);
             //lifts.setvLiftPow(gamepad2.right_stick_y);
         } else {
@@ -307,8 +300,7 @@ public class RobotV1 extends Robot {
             lifts.extendHLift();
         }
 
-        RB2.recordNewValue(gamepad2.right_bumper);
-        if (RB2.isJustOff()) {
+        if (GP2RB.isJustOff()) {
             if (hLiftRetracted) {
                 lifts.extendHLift();
             }
@@ -322,6 +314,7 @@ public class RobotV1 extends Robot {
             lifts.grabBlock();
             lifts.setvLiftPos(0);
         }
+        Log.d("RobotV1", "GamepadLoopTime " + (System.currentTimeMillis() - lastTime));
     }
 
     public void driveFast(double speed) {
@@ -407,24 +400,32 @@ public class RobotV1 extends Robot {
     }
 
     public void update() {
-        Timer t = new Timer(0);
+        double lastTime = System.currentTimeMillis();
+        double thisTime;
         drivebase.update();
-        if (DEBUG) Log.d("RobotV1", "drivebase update time millis: " + t.timeElapsedSeconds() * 1000);
-        t = new Timer(0);
+        thisTime = System.currentTimeMillis();
+        //if (DEBUG) Log.d("RobotV1", "drivebase update time millis: " + (thisTime - lastTime));
+        lastTime = thisTime;
         intake.update();
-        if (DEBUG) Log.d("RobotV1", "intake update time millis: " + t.timeElapsedSeconds() * 1000);
-        t = new Timer(0);
+        thisTime = System.currentTimeMillis();
+        //if (DEBUG) Log.d("RobotV1", "intake update time millis: " + (thisTime - lastTime));
+        lastTime = thisTime;
         heading = getHeading();
-        if (DEBUG) Log.d("RobotV1", "getheading() update time millis: " + t.timeElapsedSeconds() * 1000);
-        t = new Timer(0);
+        updateposition();
+        thisTime = System.currentTimeMillis();
+        //if (DEBUG) Log.d("RobotV1", "getheading() update time millis: " + (thisTime - lastTime));
+        lastTime = thisTime;
         lifts.update();
-        if (DEBUG) Log.d("RobotV1", "lifts update time millis: " + t.timeElapsedSeconds() * 1000);
-        t = new Timer(0);
+        thisTime = System.currentTimeMillis();
+        //if (DEBUG) Log.d("RobotV1", "lifts update time millis: " + (thisTime - lastTime));
+        lastTime = thisTime;
         backHooks.update();
-        if (DEBUG) Log.d("RobotV1", "backhooks update time millis: " + t.timeElapsedSeconds() * 1000);
-        t = new Timer(0);
+        thisTime = System.currentTimeMillis();
+        //if (DEBUG) Log.d("RobotV1", "backhooks update time millis: " + (thisTime - lastTime));
+        lastTime = thisTime;
         sideHook.update();
-        if (DEBUG) Log.d("RobotV1", "sideHook update time millis: " + t.timeElapsedSeconds() * 1000);
+        thisTime = System.currentTimeMillis();
+        //if (DEBUG) Log.d("RobotV1", "sideHook update time millis: " + (thisTime - lastTime));
 
     }
 }

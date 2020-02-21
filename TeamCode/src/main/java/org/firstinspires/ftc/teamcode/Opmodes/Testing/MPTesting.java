@@ -20,7 +20,7 @@ public class MPTesting extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         MecanumDrivebase drivebase = new MecanumDrivebase(hardwareMap, telemetry);
         Gyro gyro = new Gyro(hardwareMap);
-        Robot robot = new Robot(drivebase,gyro, hardwareMap);
+        Robot robot = new Robot(drivebase,gyro);
         DriveUtil driveUtil = new DriveUtil(robot, this);
 
         waitForStart();
