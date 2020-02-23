@@ -1,3 +1,51 @@
-drive 10 0
+drivePower 0.1 0.25
+turn -80
+strafePower 0.6 0.1
+wait 2
 
+strafe -20
+
+dropClaw
+drivePower 0.2 0.5
+wait 0.05
+strafe -10
+grabClaw
+wait 0.4
+clawUp
+strafe 9.5
+wait 0.01
+
+
+drive 86
+wait 0.01
+strafe -8.5
+wait 0.01
+dropClaw
+wait 0.01
+strafe 9.5
+fullretractclaw
+wait 0.01
+drive -108
+dropClaw
+
+wait 0.05
+strafe -9.5
+grabClaw
+wait 0.3
+strafe 7.5
+clawUp
+drive 110
+wait 0.05
+strafe -7.5
+wait 0.01
+dropClaw
+wait 0.05
+grabplatform
+wait 0.3
+
+strafe 50
 wait 1
+
+
+
+

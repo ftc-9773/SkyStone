@@ -11,7 +11,8 @@ import java.sql.Time;
 public class SideHook {
     Servo hook, arm;
     SafeJsonReader reader;
-    double upPosA, downPosA, targetPosH, openPosH, cloasePosH, targetPosA, depositPosA;
+    double upPosA, downPosA, targetPosH, openPosH, cloasePosH, targetPosA, depositPosA, fullRetractedPosA, fullRetractedPosH;
+    double sideArmPlatformGrabPos;
 
     Timer downTimer = null;
     Timer upTimer = null;
@@ -25,6 +26,9 @@ public class SideHook {
         openPosH = reader.getDouble("sideHookOpenPos");
         cloasePosH = reader.getDouble("sideHookClosePos");
         depositPosA = reader.getDouble("sideArmDepositPos");
+        fullRetractedPosA = reader.getDouble("sideArmFullInPos");
+        fullRetractedPosH = reader.getDouble("sideHookFullInPos");
+        sideArmPlatformGrabPos = reader.getDouble("sideArmPlatformPos");
         targetPosH = cloasePosH;
         targetPosA = upPosA;
         update();
@@ -41,9 +45,23 @@ public class SideHook {
         arm.setPosition(targetPosA);
     }
 
+    public void fullRetract(){
+        targetPosH = fullRetractedPosH;
+        hook.setPosition(targetPosH);
+        targetPosA = fullRetractedPosA;
+        arm.setPosition(targetPosA);
+    }
+
     public void up(){
         targetPosA = upPosA;
         targetPosH = cloasePosH;
+        arm.setPosition(targetPosA);
+        hook.setPosition(targetPosH);
+    }
+
+    public void hookPlatform(){
+        targetPosA = sideArmPlatformGrabPos;
+        targetPosH = openPosH;
         arm.setPosition(targetPosA);
         hook.setPosition(targetPosH);
     }

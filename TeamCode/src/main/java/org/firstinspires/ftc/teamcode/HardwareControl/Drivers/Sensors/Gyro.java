@@ -20,6 +20,7 @@ public class Gyro {
     BNO055IMU imuLeft;
     //BNO055IMU imuRight;
 
+    public boolean disabled = false;
     private double zeroPosition = 0;
     //private SafeJsonReader jsonZero;
 
@@ -58,9 +59,16 @@ public class Gyro {
     private double getImuAngle() { return imuLeft.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;  }
     private double getImuAngularVelocity() { return imuLeft.getAngularVelocity().zRotationRate; }
 
+    public void disable() {
+        close();
+        imuLeft = null;
+    }
+
     // Reads the IMU and updates 3rd degree taylor series modeling
     private void readImu() {
-
+        if (disabled){
+            return;
+        }
         // Read Angle
         lastImuAngle = getImuAngle();
 

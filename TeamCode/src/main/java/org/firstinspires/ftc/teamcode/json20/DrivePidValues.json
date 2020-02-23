@@ -1,16 +1,17 @@
 {
-  "distTol" : 0.5,
-  "minDistPow": 0.08,
-  "minExitDist": 0.05,
+  "distTol" : 0.665,
+  "minDistPow": 0.11,
+  "minExitDist": 0.15,
+  "minHorPow" : 0.35,
 
   "rotKp": 0.6,
   "rotKi": 0.0,
-  "rotKd": 4.0,
-  "rotTol": 0.025,
+  "rotKd": 12.0,
+  "rotTol": 0.1,
   "Comment" : "rotTol used to be 0.074533",
   "rotExitSpeed": 0.005,
-  "rotMinSpeed": 0.18,
-  "maxTurnPow": 0.6,
+  "rotMinSpeed": 0.17,
+  "maxTurnPow": 0.5,
 
   "headingKp":1.1,
   "headingKi": 0,
@@ -18,5 +19,9 @@
 
   "forwardKp" : 0.014,
   "forwardKi" : 0.0,
-  "forwardKd" : 0.0
+  "forwardKd" : 30.0,
+
+  "strafeKp" : 0.015,
+  "strafeKi" : 0,
+  "strafeKd" : 20
 }

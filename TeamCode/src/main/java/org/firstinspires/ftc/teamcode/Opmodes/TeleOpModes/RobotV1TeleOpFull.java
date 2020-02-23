@@ -43,7 +43,7 @@ public class RobotV1TeleOpFull extends LinearOpMode {
 
         sendTelemetry("Waiting for start...");
         robot.drivebase.runWithoutEncoders();
-
+        //robot.disableIMU();
 
 
         // opmode start

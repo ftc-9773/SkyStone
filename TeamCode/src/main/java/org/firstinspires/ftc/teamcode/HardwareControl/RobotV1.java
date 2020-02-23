@@ -15,7 +15,6 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import android.util.Log;
 
 public class RobotV1 extends Robot {
-    double x = 0, y = 0;
 
 
     //TeleOP variables
@@ -37,7 +36,7 @@ public class RobotV1 extends Robot {
     public Intake intake;
     BackHooks backHooks;
     Lifts lifts;
-    SideHook sideHook;
+    public SideHook sideHook;
     double clawPos = 0;
 
     static boolean DEBUG = true;
@@ -55,6 +54,9 @@ public class RobotV1 extends Robot {
         lifts.resetClawtoZero();
     }
 
+    public void disableIMU(){
+        gyro.disable();
+    }
 
     public void runGamepadCommands(Gamepad gamepad1, Gamepad gamepad2) {
         //THE FOLLOWING IS GAMEPAD 1
@@ -116,7 +118,7 @@ public class RobotV1 extends Robot {
             drive_direction = 1;
         }
 
-        if (gamepad1.right_bumper) {
+        if (gamepad1.right_trigger > 0.25) {
             slow = true;
         }
         else {
@@ -126,18 +128,8 @@ public class RobotV1 extends Robot {
 
         if (slow) { //Slow mode is 60% speed
             rp *= 0.65;
-            if (Math.abs(xp) < 0.001) {
-                xp *= 600;
-            }
-            else {
-                xp *= 0.575;
-            }
-            if (Math.abs(yp) < 0.001) {
-                yp *= 600;
-            }
-            else {
-                yp *= 0.575;
-            }
+            xp *= 0.5;
+            yp *= 0.5;
         }
         Log.d("RobotV1", "DrivingCode " + (System.currentTimeMillis() - timetracking));
         timetracking = System.currentTimeMillis();
@@ -152,12 +144,11 @@ public class RobotV1 extends Robot {
 
         if (gamepad1.left_trigger > 0.05) {
             lifts.intake();
+            if (gamepad1.y){
+                intake.onReverse();
+            } else {
             intake.on();
-        } else if (gamepad1.right_trigger > 0.05) {
-            lifts.intake();
-            intake.onReverse();
-        } else {
-            intake.off();
+            }
         }
 
         //Toggle hooks
@@ -197,8 +188,8 @@ public class RobotV1 extends Robot {
 
         if (GP2DPD.isJustOn()) {
             lifts.resetClawtoZero();
-        } else if (Math.abs(gamepad2.right_stick_x) > 0.1){
-            lifts.adjustRotateServo(gamepad2.right_stick_x);
+        } else if (Math.abs(gamepad2.left_stick_y) > 0.1){
+            lifts.adjustRotateServo(gamepad2.left_stick_y);
         }
         if (GP2_LStick.isJustOn()) {
             if (capstoneClick) {
@@ -216,20 +207,22 @@ public class RobotV1 extends Robot {
         //Retract all lifts
 
         if (GP2A.isJustOff()) {
-            lifts.resetClawtoZero();
             long startTime = System.currentTimeMillis();
-            while (startTime + 400 > System.currentTimeMillis()){
-
+            while (startTime + 200 > System.currentTimeMillis()){
                 lifts.releaseBlock();
                 update();
             }
 
-            lifts.setvLiftPos(lifts.getVliftPos() + 400);
-
+            lifts.setvLiftPos(lifts.getVliftPos() + 700);
+            lifts.resetClawtoZero();
             startTime = System.currentTimeMillis();
-            while (startTime + 375 > System.currentTimeMillis()){
+            while (startTime + 600 > System.currentTimeMillis()){
                 update();
 
+            }
+            retractHLift();
+            while(startTime + 1100 > System.currentTimeMillis()){
+                update();
             }
 
             lifts.setvLiftPos(5);
@@ -295,6 +288,7 @@ public class RobotV1 extends Robot {
 
         if (hLiftRetracted) {
             lifts.retractHLift();
+            lifts.resetClawtoZero();
         }
         else {
             lifts.extendHLift();

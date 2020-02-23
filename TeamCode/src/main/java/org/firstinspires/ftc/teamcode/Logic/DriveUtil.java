@@ -46,7 +46,7 @@ public class DriveUtil {
     SafeJsonReader json;
 
     // pid coeffs
-    public final double minDistPow, minExitDist;
+    public final double minDistPow, minExitDist, minHorPow;
     double maxTurnPower;
     double distTol;
     static double[] rotPidCoeffs = new double[3];
@@ -71,8 +71,8 @@ public class DriveUtil {
     final double a = (1) / 39.37 / 4 * 560; // meters / s^2 in parenthesis  "????????????" —Future (now past) Cadence
     double s;
 
-    double acceleration_distance = 8; //1 second. Accelerate to full power over this time.
-    double decelleration_time = 3; //Two seconds
+    double acceleration_distance = 5; //1 second. Accelerate to full power over this time.
+    double decelleration_time = 3.5; //Two seconds
     double deceleration_distance;
     boolean thingamajig = true;
 
@@ -98,6 +98,7 @@ public class DriveUtil {
         minDistPow = json.getDouble("minDistPow", 0.02);
         minExitDist = json.getDouble("minExitDist", 0.02);
         maxTurnPower = json.getDouble("maxTurnPow", 0.6);
+        minHorPow = json.getDouble("minHorPow");
 
         //  rotPid
         rotPidCoeffs[0] = json.getDouble("rotKp",0.11);
@@ -121,21 +122,19 @@ public class DriveUtil {
         forwardKd = json.getDouble("forwardKd", 0);
         forwardPid = new PIDController(forwardKp, forwardKi, forwardKd);
 
-        drivebase.runWithoutEncoders();
+        drivebase.runWithEncoders();
 
-    }
-
-    public void PIDdriveForward(double dist, double power){
-        PIDdriveForward(dist, power, 0); //Straight
     }
 
     /**
      * @param dist in inches
      * @param power [-1, 1]: caps the power.
      * */
-    public void PIDdriveForward(double dist, double power, double angle){
-        Log.d(TAG, "Using PID to drive " + dist + " at angle "+angle + " and max power "+ power);
+    public void PIDdriveForward(double dist, double power){
+        Log.d(TAG, "Using PID to drive " + dist + " and max power "+ power);
         double initialHeading = gyro.getHeading();
+        double distSign = Math.signum(dist);
+        dist = dist * distSign;
         long[] initialEncoders = drivebase.getMotorPositions();
         double init_x = robot.x;
         double init_y = robot.y;
@@ -144,7 +143,6 @@ public class DriveUtil {
         double lastTIme = System.currentTimeMillis();
         long lastLoopTiming;
 
-        angle = Math.toRadians(90 - angle); //Y = 0 degrees, counterclockwise is ...
 
         long lastCheckTime = System.currentTimeMillis();
         double lastDist = 0;
@@ -170,12 +168,13 @@ public class DriveUtil {
 //                maxPow = power * (10 + 90 * (acceleration_distance - distTraveled) / acceleration_distance) / 100; //Decelerate to min power
 //                minPow = -maxPow;
 //            }
-            maxPow = Math.min(power, accelerationCurve(distTraveled, dist, speed));
-            minPow = Math.max(-power, -accelerationCurve(distTraveled, dist, speed));
-
-            if(correction > 0.005){
+            if(dist > 10) {
+                maxPow = Math.min(power, accelerationCurve(distTraveled, dist, speed));
+                minPow = Math.max(-power, -accelerationCurve(distTraveled, dist, speed));
+            }
+            if(correction > 0.0000005){
                 correction += minDistPow;
-            } else if (correction < -0.005){
+            } else if (correction < -0.0000005){
                 correction -= minDistPow;
             } else {
                 correction = 0;
@@ -194,10 +193,88 @@ public class DriveUtil {
             //Log.d(TAG+" error", Double.toString(error));
             //Log.d(TAG+" pow", Double.toString(correction));
 
-            driveHoldHeading(correction, angle, initialHeading);
+            driveHoldHeading(distSign * correction, 0, initialHeading);
             Log.d(TAG, "at position: " + distTraveled);
 
             if( Math.abs(distTraveled - dist) < distTol)
+                break;
+            Log.d(TAG, "Timing drive hold heading " + (System.currentTimeMillis() - tempTimeTracking));
+            tempTimeTracking = System.currentTimeMillis();
+            //drivebase.update();
+            robot.update();
+            Log.d(TAG, "Timing updates " + (System.currentTimeMillis() -tempTimeTracking));
+            Log.d(TAG, "Timing Loop time " +(System.currentTimeMillis()- lastLoopTiming));
+            lastLoopTiming = System.currentTimeMillis();
+        }
+        drivebase.stop();
+        drivebase.update();
+    }
+
+    public void PIDdriveStrafe(double dist, double power){
+        Log.d(TAG, "Using PID to drive " + dist  + " and max power "+ power);
+        double initialHeading = gyro.getHeading();
+        double distSign = Math.signum(dist);
+        dist = dist * distSign;
+        long[] initialEncoders = drivebase.getMotorPositions();
+        double init_x = robot.x;
+        double init_y = robot.y;
+        forwardPid.resetPID();
+        double speed;
+        double lastTIme = System.currentTimeMillis();
+        long lastLoopTiming;
+
+        long lastCheckTime = System.currentTimeMillis();
+        double lastDist = 0;
+
+        drivebase.runWithoutEncoders();
+        double maxPow = power;
+        double minPow = -power;
+        double distLeft;
+        lastLoopTiming = System.currentTimeMillis();
+        long tempTimeTracking;
+        while (!opMode.isStopRequested()) {
+            double distTraveled = dist(robot.x, robot.y, init_x, init_y);
+            speed = distTraveled / (System.currentTimeMillis() - lastTIme) * 1000;
+            double error = dist - distTraveled;
+            double correction = forwardPid.getPIDCorrection(error);
+            Log.d(TAG,"error:" + error);
+            Log.d(TAG, "correction " +correction);
+
+//            if (distTraveled < acceleration_distance){
+//                maxPow = power * (10 + 90 * (acceleration_distance - distTraveled) / acceleration_distance) / 100; //Accelerate to full power
+//                minPow = -maxPow;
+//            } else if (error < acceleration_distance){
+//                maxPow = power * (10 + 90 * (acceleration_distance - distTraveled) / acceleration_distance) / 100; //Decelerate to min power
+//                minPow = -maxPow;
+//            }
+//            maxPow = Math.min(power, accelerationCurve(distTraveled, dist, speed));
+//            minPow = Math.max(-power, -accelerationCurve(distTraveled, dist, speed));
+
+            if(correction > 0.0000005){
+                correction += minHorPow;
+            } else if (correction < -0.0000005){
+                correction -= minHorPow;
+            } else {
+                correction = 0;
+                //break; // No power = robot is supposed to be stationary -> we're done here. THIS IS NOT ACTUALLY TRUE
+            }
+            if (correction > maxPow){
+                correction = maxPow;
+            } else if (correction < minPow){
+                correction = minPow;
+            }
+
+            Log.d(TAG, "Real correction " +correction);
+            Log.d(TAG, "Timing Getting correction " + (System.currentTimeMillis() - lastLoopTiming));
+            tempTimeTracking = System.currentTimeMillis();
+            //logs
+            //Log.d(TAG+" error", Double.toString(error));
+            //Log.d(TAG+" pow", Double.toString(correction));
+
+            driveHoldHeading(distSign * correction, 90, initialHeading);
+            Log.d(TAG, "at position: " + distTraveled);
+
+            if( (dist - distTraveled) < distTol)
                 break;
             Log.d(TAG, "Timing drive hold heading " + (System.currentTimeMillis() - tempTimeTracking));
             tempTimeTracking = System.currentTimeMillis();
@@ -230,7 +307,7 @@ public class DriveUtil {
         }
         return factor;
     }
-    private double dist(double x1, double y1, double x2, double y2){
+    public double dist(double x1, double y1, double x2, double y2){
         return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
     }
 
@@ -293,7 +370,7 @@ public class DriveUtil {
          //Log.d(TAG, "Error: " + error);
          double correction = headingPid.getPIDCorrection(error);
 
-         angle = Math.toRadians(angle + 90);
+         angle = Math.toRadians(90 - angle);
          //angle = currHeading - angle;
 
          double x = Math.cos(angle)*magnitude;
@@ -369,10 +446,12 @@ public class DriveUtil {
          double error;
 
          boolean firstTime = true;
+         boolean forceNewReading = true;
          while (!opMode.isStopRequested()) {
 
              // update time and headings:
-             currentHeading = gyro.getHeading();
+             currentHeading = gyro.getHeading(forceNewReading);
+             forceNewReading = !forceNewReading;
 
              lastTime = currentTime;
              currentTime = System.currentTimeMillis();
@@ -381,13 +460,13 @@ public class DriveUtil {
              double rotation = rotPid.getPIDCorrection(error);
 
              // may add this in if dt is too weak
-             if (rotation > 0.005) {
+             if (rotation > 0.0005) {
                  rotation += rotMinPow;
-             } else if (rotation < -0.05) {
+             } else if (rotation < -0.0005) {
                  rotation -= rotMinPow;
              } else {
                  rotation = 0;
-                 return;
+                 //return;
              }
 
              if (rotation > maxTurnPower)

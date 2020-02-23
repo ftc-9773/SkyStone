@@ -227,19 +227,21 @@ public class Lifts implements Attachment {
     }
 
     public void writePosToJson(){
-        if (vLiftTargetPos == lastPosWrote && System.currentTimeMillis() - lastTimeWrote <5000){
+        double posRelZero = getRawVlift() - vliftZeroPos;
+        if (posRelZero == lastPosWrote && System.currentTimeMillis() - lastTimeWrote <5000){
             return; //No need to write more than once every 5 seconds, if nothing is changing.
         }
         if (System.currentTimeMillis() - lastTimeWrote < 200){
             return; //Don't want to take too much time writing positions, 5 times a second should be fine. (Around 6 loops between writes)
         }
-        positionTracker.modifyInt("Position", targetVLiftPos);
+        positionTracker.modifyInt("Position", getRawVlift() - vliftZeroPos);
         positionTracker.modifyString("Timestamp", "" + System.currentTimeMillis());
         positionTracker.updateFile();
+        lastPosWrote = getRawVlift() - vliftZeroPos;
 
     }
 
-    public void readZeroPos(boolean resetLiftsIfFailed){
+    public boolean readZeroPos(boolean resetLiftsIfFailed){
         String timestamp_string = positionTracker.getString("Timestamp");
         double timestamp = new Long(timestamp_string);
         Log.d(TAG, "It has been " + ((System.currentTimeMillis() - timestamp) / 1000 / 60) + " minutes since file was written to");
@@ -249,11 +251,14 @@ public class Lifts implements Attachment {
             vliftZeroPos = getRawVlift() - savedPos;
             Log.d(TAG, "Read position " +  savedPos + " from file");
             Log.d(TAG, "Set zero position to " + vliftZeroPos);
+            return true;
         } else if (resetLiftsIfFailed){
             zeroLifts();
+            return false;
         } else {
             //Failure state, probably do nothing. Set zero position to whereever we are.
             vliftZeroPos = getRawVlift();
+            return false;
         }
 
     }
@@ -331,7 +336,7 @@ public class Lifts implements Attachment {
     }
 
     public void adjustRotateServo(double speed){
-        rotateServoTargetPos = bound(rotateRightBoundryPos, rotateLeftBoundryPos, rotateServoTargetPos + speed / 20);
+        rotateServoTargetPos = bound(rotateRightBoundryPos, rotateLeftBoundryPos, rotateServoTargetPos - speed / 10);
         rotateServo.setPosition(rotateServoTargetPos);
     }
 
