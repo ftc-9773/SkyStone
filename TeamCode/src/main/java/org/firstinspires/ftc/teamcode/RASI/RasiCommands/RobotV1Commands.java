@@ -41,6 +41,7 @@ public class RobotV1Commands extends RasiCommands{
 
     public void drivePower(double power, double time){
         robot.drivebase.drive(0, power, 0, false);
+        robot.drivebase.update();
         wait(time);
         robot.drivebase.stop();
         robot.update();

@@ -1,5 +1,5 @@
 {
-  "distTol" : 0.665,
+  "distTol" : 0.75,
   "minDistPow": 0.11,
   "minExitDist": 0.15,
   "minHorPow" : 0.35,

@@ -1,7 +1,9 @@
-drivePower 0.1 0.25
-turn -80
+drivePower 0.38 0.2
+
+turn -70
+wait 0.05
 strafePower 0.6 0.1
-wait 2
+wait 0.1
 
 strafe -20
 
@@ -25,7 +27,7 @@ wait 0.01
 strafe 9.5
 fullretractclaw
 wait 0.01
-drive -108
+drive -109
 dropClaw
 
 wait 0.05

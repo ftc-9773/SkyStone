@@ -50,8 +50,9 @@ public class RobotV1 extends Robot {
         this.backHooks = backHooks;
         this.telemetry = telemetry;
         this.sideHook = sideHook;
-        sideHook.up();
+        sideHook.fullRetract();
         lifts.resetClawtoZero();
+
     }
 
     public void disableIMU(){
@@ -149,6 +150,8 @@ public class RobotV1 extends Robot {
             } else {
             intake.on();
             }
+        } else {
+            intake.off();
         }
 
         //Toggle hooks
