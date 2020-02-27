@@ -12,6 +12,6 @@
 apply from: '../build.common.gradle'
 
 dependencies {
-    implementation files('C:/Users/caden/Documents/GitHub/SkyStone/libs/Jama-1.0.3.jar')
+    implementation files('../libs/Jama-1.0.3.jar')
     implementation 'com.quickbirdstudios:opencv:3.4.1'
 }
