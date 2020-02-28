@@ -21,6 +21,7 @@ public class RobotV1Commands extends RasiCommands{
         super(opMode);
         this.robot = robot;
         this.driveUtil = new DriveUtil(robot, opMode);
+        driveUtil.careAboutOverShoot = false;
     }
 
     public void driveFast(double time, double speed, double afterDistance) {
@@ -146,6 +147,13 @@ public class RobotV1Commands extends RasiCommands{
         while(startTime + time*1000 > System.currentTimeMillis() && !opMode.isStopRequested()){
             robot.update();
         }
+    }
+
+    public void unsafeDriving(double x, double y, double rot, double time){
+        robot.drivebase.drive(x, y, rot, false);
+        wait(time);
+        robot.drivebase.stop();
+        robot.drivebase.update();
     }
 
     public void absIntakeOn(){

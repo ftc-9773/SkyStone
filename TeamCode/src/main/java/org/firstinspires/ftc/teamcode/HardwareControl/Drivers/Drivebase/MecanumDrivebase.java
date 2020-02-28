@@ -248,10 +248,14 @@ public class MecanumDrivebase {
         }
         curPos = getMotorPositions();
         for (int i = 0; i < 4; i++) {
+            try {
             //measure wheel velocities, for model-based controller
             wheelRotVels[i] = (curPos[i] - lastPos[i]) / (System.currentTimeMillis() - lastReadTime);
             //convert to rad/s from encoderticks / millis
             wheelRotVels[i] = wheelRotVels[i] * 1000 / COUNTS_PER_MOTOR_REV;
+            } catch (ArithmeticException e){
+                //Oh dear
+            }
         }
         lastPos = curPos;
         lastReadTime = System.currentTimeMillis();

@@ -38,6 +38,7 @@ public class DriveUtil {
     MecanumDrivebase drivebase;
     Gyro gyro;
     private static final boolean DEBUG = true;
+    public boolean careAboutOverShoot = true;
 
     // information
     double ticksPerInch;
@@ -196,8 +197,11 @@ public class DriveUtil {
             driveHoldHeading(distSign * correction, 0, initialHeading);
             Log.d(TAG, "at position: " + distTraveled);
 
-            if( Math.abs(distTraveled - dist) < distTol)
+            if( Math.abs(distTraveled - dist) < distTol && careAboutOverShoot)
                 break;
+            else if ((dist - distTraveled) < distTol && !careAboutOverShoot)
+                break;
+
             Log.d(TAG, "Timing drive hold heading " + (System.currentTimeMillis() - tempTimeTracking));
             tempTimeTracking = System.currentTimeMillis();
             //drivebase.update();
@@ -359,6 +363,21 @@ public class DriveUtil {
     }
 
     /**
+     * @param ang: In radians
+     * */
+    public double getClosestRightAnge(double ang){
+        double[] list = { - Math.PI / 2 * 3, -Math.PI / 2, 0, Math.PI / 2, Math.PI, Math.PI * 3 / 2};
+        double num = ang, dist = 1000000000; //INF
+        for (int i = 0; i < list.length; i++ ){
+            if (Math.abs(list[i] - ang) < dist){
+                num = list[i];
+                dist = Math.abs(list[i] - ang);
+            }
+        }
+        return num;
+    }
+
+    /**
      * a semi-internal function used to keep the robot pointed in a certian direction while driving.
      * @param magnitude driving function magnitude in motor power (i.e. on range -1.0 to 0.0 to 1.0)
      * @param angle the angle at which the robot is desired to drive in radians.
@@ -366,8 +385,10 @@ public class DriveUtil {
      */
      public void driveHoldHeading (double magnitude, double angle, double heading){
          double currHeading = gyro.getHeading();
+         heading = getClosestRightAnge(heading); //We're always driving at right angles anyway for now. Yeah, it didn't work. Maybe try again later.
          double error = heading - currHeading;
          //Log.d(TAG, "Error: " + error);
+         Log.d(TAG, "Target Heading: " + heading);
          double correction = headingPid.getPIDCorrection(error);
 
          angle = Math.toRadians(90 - angle);
@@ -498,6 +519,7 @@ public class DriveUtil {
              firstTime = false;
          }
          drivebase.stop();
+         drivebase.update();
         rotPid.resetPID();
      }
 

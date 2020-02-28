@@ -15,7 +15,7 @@
 
   "headingKp":1.1,
   "headingKi": 0,
-  "headingKd": 0.0,
+  "headingKd": 2.0,
 
   "forwardKp" : 0.014,
   "forwardKi" : 0.0,
