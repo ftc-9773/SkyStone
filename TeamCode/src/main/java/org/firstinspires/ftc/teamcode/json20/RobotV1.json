@@ -58,7 +58,7 @@
   "hLiftMaxVelocity": 0,
 
   "sideArmUpPos" : 0.81,
-  "sideArmDownPos" : 0.48,
+  "sideArmDownPos" : 0.46,
   "sideHookOpenPos": 0.0,
   "sideHookClosePos" : 0.35,
   "sideArmDepositPos" : 68,
