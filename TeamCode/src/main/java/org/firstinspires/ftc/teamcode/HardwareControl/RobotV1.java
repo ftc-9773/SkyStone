@@ -21,7 +21,7 @@ public class RobotV1 extends Robot {
     double xp, yp, rp;
     public double yLiftHeight = 0.0, bLiftHeight = 0;
     boolean bLastClicked = false, yLastClicked = false;
-    Button GP1A = new Button(), GP1X = new Button(), GP1B = new Button(), GP2A = new Button(), GP2B = new Button(), GP2Y = new Button(),  RB = new Button(), LB = new Button(), GP1_DPLEFT = new Button(), GP1_DPRIGHT = new Button(), GP2X = new Button(), GP2DPR = new Button(), GP2_LStick = new Button(), GP2DPU = new Button(), GP2DPD = new Button(), GP2RB = new Button();
+    Button DPAD1_Down = new Button(), GP1A = new Button(), GP1X = new Button(), GP1B = new Button(), GP2A = new Button(), GP2B = new Button(), GP2Y = new Button(),  RB = new Button(), LB = new Button(), GP1_DPLEFT = new Button(), GP1_DPRIGHT = new Button(), GP2X = new Button(), GP2DPR = new Button(), GP2_LStick = new Button(), GP2DPU = new Button(), GP2DPD = new Button(), GP2RB = new Button();
     Button GP1DPD = new Button(), GP1DPU = new Button();
     boolean hooksDown = false;
     boolean capstoneClick = true;
@@ -97,8 +97,18 @@ public class RobotV1 extends Robot {
             rp = 0;
         }
 
+        DPAD1_Down.recordNewValue(gamepad1.dpad_down);
+        if(DPAD1_Down.isJustOn()){
+            lifts.tapeServoOpen = true;
+        }
+        if(lifts.tapeServoOpen){
+            lifts.tapeServo.setPosition(lifts.tapeServoOut);
+        } else {
+            lifts.tapeServo.setPosition(lifts.tapeServoZero);
+        }
+
         long magic = System.currentTimeMillis();
-        if (intake.isLoaded()) {
+        if (intake.isLoaded() && intake.isOn) {
             invert = true;
             regular = false;
         }
@@ -145,11 +155,10 @@ public class RobotV1 extends Robot {
 
         if (gamepad1.left_trigger > 0.05) {
             lifts.intake();
-            if (gamepad1.y){
-                intake.onReverse();
-            } else {
             intake.on();
-            }
+
+        } else if (gamepad1.right_bumper) {
+            intake.onReverse();
         } else {
             intake.off();
         }
@@ -211,20 +220,20 @@ public class RobotV1 extends Robot {
 
         if (GP2A.isJustOff()) {
             long startTime = System.currentTimeMillis();
-            while (startTime + 200 > System.currentTimeMillis()){
+            while (startTime + 220 > System.currentTimeMillis()){
                 lifts.releaseBlock();
                 update();
             }
 
-            lifts.setvLiftPos(lifts.getVliftPos() + 700);
+            lifts.setvLiftPos(lifts.getVliftPos() + 500);
             lifts.resetClawtoZero();
             startTime = System.currentTimeMillis();
-            while (startTime + 600 > System.currentTimeMillis()){
+            while (startTime + 500 > System.currentTimeMillis()){
                 update();
 
             }
-            retractHLift();
-            while(startTime + 1100 > System.currentTimeMillis()){
+            while(startTime + 1300 > System.currentTimeMillis()){
+                retractHLift();
                 update();
             }
 

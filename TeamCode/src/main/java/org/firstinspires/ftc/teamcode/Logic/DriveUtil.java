@@ -385,7 +385,8 @@ public class DriveUtil {
      */
      public void driveHoldHeading (double magnitude, double angle, double heading){
          double currHeading = gyro.getHeading();
-         heading = getClosestRightAnge(heading); //We're always driving at right angles anyway for now. Yeah, it didn't work. Maybe try again later.
+         Log.d(TAG, "Target Heading: a" + heading);
+         heading = getClosestRightAnge(heading); //We're always driving at right angles anyway for now.
          double error = heading - currHeading;
          //Log.d(TAG, "Error: " + error);
          Log.d(TAG, "Target Heading: " + heading);

@@ -1,198 +1,181 @@
-RIGHT: driveStraight 0
+COMMENT: LEFT
 
-R:driveStraight 2
-R:wait 0.2
-R:vLiftIntakePos
-R:strafe -3.8
-R:wait 0.3
-R:turn -87
-R:strafe -35.0
-R:wait 0.1
-R:turn -90
-R:grabBlock 1.9
-R:intakeOff
-R:wait 0.4
+L:drivePower 0.38 0.2
+L:turn -80
+L:wait 0.05
+COMMENT:strafePower -0.55 0.3
+COMMENT:wait 0.1
 
-R:strafe 15.5
-R:absintakeOn
-R:reverseIntake
-R:wait 0.5
-R:retractHLift
-R:wait 0.1
-R:vLiftDown
-R:wait 0.3
-R:intakeOff
-R:grabWTime
-R:wait 0.25
-R:driveFast 1.4 -0.8 -8
-
-R:dropHooks
-R:turn -180
-R:intakeOff
-R:driveStraight -5
-R:wait 0.5
-R:grabWTime
-R:vLiftRaise 1.0
-R:wait 0.1
-R:driveFast2 0.75 0.8 7
-R:retractHLift
-R:driveStraight -2
-R:turn -90
-R:driveStraight -4
-R:retractHLift
-R:upHooks
-
-R:extendHLift
-R:wait 1
-R:release
-R:wait 0.35
-R:retractHLift
-R:wait 0.1
-R:strafe -2.3
-R:vLiftDown
-R:strafe -4
-R:driveStraight 38
-R:strafe -3
-
-
-
-MID: driveStraight 0
-
-COMMENT: BEGINNING
-
-M:piddrive 2
-M:vLiftIntakePos
-M:retractHLift
-M:wait 0.1
-M:strafe -12
-M:wait 0.05
-M:turn -88
-M:wait 0.1
-M:strafe -36
-M:turn -88
-M:wait 0.05
-M:grabBlock 1
-M:intakeOff
-M:wait 0.25
-
-COMMENT: AFTER
-M:strafe 21
-M:absintakeOn
-M:wait 0.1
-M:turn -92
-M:wait 0.1
-M:intakeOff
-M:retractHLift
-M:grabWTime
-M:wait 0.1
-M:retractHLift
-M:wait 1
-M:turnClawOff
-M:driveFast 1.38 -0.8 -10
-M:wait 0.1
-
-M:dropHooks
-M:wait 0.1
-M:turn 180
-M:wait 0.1
-M:retractHLift
-M:vLiftDown
-M:wait 0.05
-M:driveStraight -8
-M:wait 0.3
-M:driveFast2 0.75 0.8 8
-M:wait 0.05
-M:turn -95
-M:wait 0.1
-M:driveStraight -3
-M:retractHLift
-M:wait 0.05
-M:retractHLift
-M:wait 0.1
-M:grabWTime
-M:grabWTime
-M:wait 0.5
-M:vLiftRaise 1.0
-M:wait 0.3
-M:extendHLift
-M:release
-M:wait 0.5
-M:retractHLift
-M:wait 0.4
-M:vLiftDown
-M:upHooks
-
-COMMENT:Parking
-M:wait 0.1
-M:vLiftDown
-M:turn -90
-M:strafe -12.5
-COMMENT:THE ABOVE IS FOR ALLIANCE PARKS NEXT TO WALL. CHANGE IF YOU PARK NEXT TO WALL
-M:driveStraight 38
-M:strafe -2
-
-
-
-LEFT: driveStraight 0
-
-L:driveStraight 2
-L:wait 0.2
-L:vLiftIntakePos
-L:strafe -11.9
-L:turn 0
+L:strafe -18
+L:wait 0.05
+L:dropClaw
 L:wait 0.3
-L:driveStraight 21
-L:turn -27
-L:wait 0.5
-L:grabBlock 5
-L:wait 0.2
-L:driveStraight -19
-L:wait 0.1
-L:turn -90
-L:absintakeOn
+L:strafe -10
+L:grabClaw
+L:wait 0.3
+L:clawUp
+L:strafe 9.5
+L:wait 0.01
 
-L:wait 0.25
-L:retractHLift
-L:wait 0.2
-L:vLiftDown
-L:wait 0.1
-L:intakeOff
-L:grabWTime
-L:intakeOff
-L:vLiftDown
-L:retractHLift
-L:turn -90
-L:wait 0.1
-L:strafe -0.5
-L:turn -92
-L:wait 0.1
-L:driveFast 1.22 -0.8 -6
-L:grabWTime
+L:drive -78
+L:wait 0.01
+L:strafe -7
+L:wait 0.01
+L:dropClaw
+L:wait 0.01
+L:strafe 8
+L:fullretractclaw
+L:wait 0.01
+L:drive 103.5
+L:dropClaw
 
+L:wait 0.05
+COMMENT:drive 6
+L:strafe -10
+L:grabClaw
+L:wait 0.3
+L:strafe 10
+L:clawUp
+L:drive -87
+
+L:wait 0.05
+L:strafe -8.8
+L:wait 0.01
+L:dropClaw
+L:wait 0.05
+L:fullretractclaw
+L:turn -170
+L:wait 0.05
+L:intakeoff
 L:dropHooks
-L:turn -180
-L:intakeOff
-L:wait 0.2
-L:driveStraight -6
-L:grabWTime
-L:vLiftRaise 1.0
+L:wait 0.05
+L:drivePower -0.6 0.4
+L:wait 0.05
+L:drivePower 0.7 0.6
+L:strafePower -0.7 0.2
+L:unsafeDriving 0 0 -0.8 1.1
+L:drivePower -1 0.4
 L:wait 0.1
-L:driveFast2 0.75 0.8 7
-L:retractHLift
-L:driveStraight -2
-L:turn -90
-L:driveStraight -4
-L:retractHLift
 L:upHooks
-
-L:extendHLift
-L:wait 1
-L:release
-L:wait 0.35
-L:retractHLift
+L:drive 40
 L:wait 0.1
-L:strafe -3
-L:vLiftDown
-L:strafe -4
-L:driveStraight 38
-L:strafe -3
+
+
+COMMENT: MIDDLE
+
+M:drivePower 0.38 0.2
+M:turn -80
+M:wait 0.05
+COMMENT:strafePower -0.55 0.3
+COMMENT:wait 0.1
+
+M:strafe -18
+M:wait 0.05
+M:dropClaw
+M:drive 7
+M:wait 0.3
+M:strafe -10
+M:grabClaw
+M:wait 0.3
+M:clawUp
+M:strafe 9
+M:wait 0.01
+
+M:drive -87
+M:wait 0.01
+M:strafe -7
+M:wait 0.01
+M:dropClaw
+M:wait 0.01
+M:strafe 9
+M:fullretractclaw
+M:wait 0.01
+M:drive 113
+M:dropClaw
+
+M:wait 0.05
+COMMENT:drive 6
+M:strafe -10.5
+M:grabClaw
+M:wait 0.3
+M:strafe 9
+M:clawUp
+M:drive -96
+
+M:wait 0.05
+M:strafe -8
+M:wait 0.01
+M:dropClaw
+M:wait 0.05
+M:fullretractclaw
+M:dropHooks
+M:turn -170
+M:wait 0.05
+M:dropHooks
+M:wait 0.05
+M:drivePower -0.6 0.4
+M:wait 0.05
+M:drivePower 0.7 0.6
+M:strafePower -0.7 0.2
+M:unsafeDriving 0 0 -0.8 1.1
+M:drivePower -1 0.4
+M:wait 0.1
+M:upHooks
+M:strafe 6
+M:drive 40
+M:wait 0.1
+
+
+COMMENT: RIGHT
+
+R:drivePower 0.38 0.2
+R:turn -80
+R:wait 0.05
+COMMENT:strafePower -0.55 0.3
+COMMENT:wait 0.1
+
+R:strafe -18
+R:wait 0.05
+R:dropClaw
+R:drive 14
+R:wait 0.1
+R:strafe -10
+R:grabClaw
+R:wait 0.3
+R:clawUp
+R:strafe 11
+R:wait 0.01
+
+R:drive -95
+R:wait 0.01
+R:strafe -7
+R:wait 0.01
+R:dropClaw
+R:wait 0.01
+R:strafe 9
+R:fullretractclaw
+R:wait 0.01
+R:drive 105
+R:wait 0.1
+R:strafe -20
+R:wait 0.1
+R:intakeOn
+R:drive 7
+R:wait 0.05
+R:intakeOff
+R:strafe 17
+R:wait 0.05
+R:drive -98
+R:reverseintakeon
+R:turn -170
+R:wait 0.05
+R:intakeoff
+R:dropHooks
+R:wait 0.05
+R:drivePower -0.6 0.4
+R:wait 0.05
+R:drivePower 0.6 0.6
+R:strafePower -0.7 0.2
+R:unsafeDriving 0 0 -0.8 1.3
+R:drivePower -1 1
+R:wait 0.1

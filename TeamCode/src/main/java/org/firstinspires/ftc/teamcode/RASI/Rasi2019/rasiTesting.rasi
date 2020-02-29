@@ -9,7 +9,7 @@ strafe -18
 COMMENT:turn -90
 wait 0.05
 dropClaw
-drive 3
+drive -5
 wait 0.05
 strafe -10
 grabClaw
@@ -18,7 +18,7 @@ clawUp
 strafe 9
 wait 0.01
 
-drive 85
+drive 93
 wait 0.01
 strafe -8
 wait 0.01
@@ -27,7 +27,7 @@ wait 0.01
 strafe 9
 fullretractclaw
 wait 0.01
-drive -104
+drive -113
 dropClaw
 
 wait 0.05
@@ -35,9 +35,9 @@ COMMENT:drive 6
 strafe -10
 grabClaw
 wait 0.3
-strafe 9
+strafe 9.5
 clawUp
-drive 93
+drive 100
 
 wait 0.05
 strafe -10
@@ -47,15 +47,17 @@ wait 0.05
 fullretractclaw
 turn -170
 
+wait 0.05
 dropHooks
-driveFast2 0.25 -0.9 1
-wait 0.1
-strafePower 0.6 0.3
-wait 0.1
-driveFast2 0.35 1 1
-wait 0.1
-turn 105
+wait 0.05
+drivePower -0.6 0.45
+wait 0.05
+drivePower 0.7 0.7
+strafePower 0.7 0.2
+unsafeDriving 0 0 0.8 1.1
+drivePower -1 0.4
 wait 0.1
 upHooks
-drive 32
+strafe -8
+drive 40
 wait 0.1

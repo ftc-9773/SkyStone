@@ -271,4 +271,12 @@ public class RobotV1Commands extends RasiCommands{
         driveUtil.TankCurve(x, y, theta);
     }
 
+    public void turnDrive (double angle, double len){
+        turn(angle);
+        wait(0.1);
+        turn(angle);
+        drive(len);
+        turn(angle);
+    }
+
 }

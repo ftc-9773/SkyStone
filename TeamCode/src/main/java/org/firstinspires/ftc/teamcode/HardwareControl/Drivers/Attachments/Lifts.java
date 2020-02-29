@@ -33,6 +33,8 @@ public class Lifts implements Attachment {
     Servo rotateServo;
     Servo capstoneServo;
     Servo hLiftServo;
+    public Servo tapeServo;
+    public boolean tapeServoOpen = false;
 
     DigitalChannel magLimitSwitch;
 
@@ -57,6 +59,7 @@ public class Lifts implements Attachment {
     double capstoneZeroPos, capstoneReleasePos, capstoneTargetPos;
 
     double hLiftServoZeroPos, hLiftServoExtendPos, hLiftServoExtendPos_90, hLiftServoTargetPos;
+    public double tapeServoZero, tapeServoOut;
 
     //Safety information, so we don't try to go too high
     int vLiftMaxPos;
@@ -123,6 +126,7 @@ public class Lifts implements Attachment {
         rotateServo = hardwareMap.get(Servo.class, "rClawServo");
         capstoneServo = hardwareMap.get(Servo.class, "capServo");
         hLiftServo = hardwareMap.get(Servo.class, "hLiftServo");
+        tapeServo = hardwareMap.get(Servo.class, "tapeServo");
 
         magLimitSwitch = hardwareMap.get(DigitalChannel.class, "magLimitSwitch");
 
@@ -134,6 +138,11 @@ public class Lifts implements Attachment {
 
         //Get config values
         reader = new SafeJsonReader("RobotV1");
+
+        tapeServoZero = reader.getDouble("tapeServoZero");
+        tapeServoOut = reader.getDouble("tapeServoOut");
+        tapeServo.setPosition(tapeServoZero);
+
         positionTracker = new SafeJsonReader("LiftPositionTracker");
         vLiftIdlePos = reader.getInt("vLiftIdlePos");
         int RESTING_POSITION_TO_ZERO_OFFSET_;
@@ -200,6 +209,11 @@ public class Lifts implements Attachment {
         hLiftServo.setPosition(hLiftServoZeroPos);
 
         //retractHLift();
+    }
+
+    public void springTape(){
+        tapeServo.setPosition(tapeServoOut);
+        tapeServoOpen = true;
     }
 
     public void zeroLifts(){
@@ -444,7 +458,11 @@ public class Lifts implements Attachment {
         Log.d(TAG, "vTarget  " + vLiftTargetPos);
         Log.d(TAG, "hTarget " + hLiftTargetPos);
 
-
+        if (tapeServoOpen){
+            tapeServo.setPosition(tapeServoOut);
+        } else {
+            tapeServo.setPosition(tapeServoZero);
+        }
         error = vLiftTargetPos - getVliftPos();
 
         double vCorrection;
