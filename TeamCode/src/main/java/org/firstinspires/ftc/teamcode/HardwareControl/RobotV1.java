@@ -61,6 +61,14 @@ public class RobotV1 extends Robot {
         gyro.disable();
     }
 
+    public void holdTapeServo(){
+        if(lifts.tapeServoOpen){
+            lifts.tapeServo.setPosition(lifts.tapeServoOut);
+        } else {
+            lifts.tapeServo.setPosition(lifts.tapeServoZero);
+        }
+    }
+
     public void runGamepadCommands(Gamepad gamepad1, Gamepad gamepad2) {
         //THE FOLLOWING IS GAMEPAD 1
         double lastTime = System.currentTimeMillis();
@@ -104,11 +112,7 @@ public class RobotV1 extends Robot {
         if(GP1DPU.isJustOn()){
             lifts.tapeServoOpen = true;
         }
-        if(lifts.tapeServoOpen){
-            lifts.tapeServo.setPosition(lifts.tapeServoOut);
-        } else {
-            lifts.tapeServo.setPosition(lifts.tapeServoZero);
-        }
+        holdTapeServo();
 
         long magic = System.currentTimeMillis();
         if (intake.isLoaded() && intake.isOn) {
@@ -450,6 +454,7 @@ public class RobotV1 extends Robot {
         thisTime = System.currentTimeMillis();
         //if (DEBUG) Log.d("RobotV1", "sideHook update time millis: " + (thisTime - lastTime));
         Log.d("RobotV1", "Update Timing " + (System.currentTimeMillis() - startTime));
+        holdTapeServo();
     }
 }
 
