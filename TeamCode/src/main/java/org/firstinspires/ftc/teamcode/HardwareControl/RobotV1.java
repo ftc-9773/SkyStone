@@ -23,6 +23,7 @@ public class RobotV1 extends Robot {
     boolean bLastClicked = false, yLastClicked = false;
     Button DPAD1_Down = new Button(), GP1A = new Button(), GP1X = new Button(), GP1B = new Button(), GP2A = new Button(), GP2B = new Button(), GP2Y = new Button(),  RB = new Button(), LB = new Button(), GP1_DPLEFT = new Button(), GP1_DPRIGHT = new Button(), GP2X = new Button(), GP2DPR = new Button(), GP2_LStick = new Button(), GP2DPU = new Button(), GP2DPD = new Button(), GP2RB = new Button();
     Button GP1DPD = new Button(), GP1DPU = new Button();
+    Button GP2DPL = new Button();
     boolean hooksDown = false;
     boolean capstoneClick = true;
     boolean hLiftRetracted = true;
@@ -38,6 +39,7 @@ public class RobotV1 extends Robot {
     Lifts lifts;
     public SideHook sideHook;
     double clawPos = 0;
+    double liftHorAdjustFactor = 1;
 
     static boolean DEBUG = true;
 
@@ -83,6 +85,7 @@ public class RobotV1 extends Robot {
         GP2X.recordNewValue(gamepad2.x);
         GP2Y.recordNewValue(gamepad2.y);
         GP2RB.recordNewValue(gamepad2.right_bumper);
+        GP2DPL.recordNewValue(gamepad2.dpad_left);
         timetracking = System.currentTimeMillis();
         Log.d("RobotV1", "GamepadReading " + (timetracking - lastTime));
 
@@ -98,7 +101,7 @@ public class RobotV1 extends Robot {
         }
 
         DPAD1_Down.recordNewValue(gamepad1.dpad_down);
-        if(DPAD1_Down.isJustOn()){
+        if(GP1DPU.isJustOn()){
             lifts.tapeServoOpen = true;
         }
         if(lifts.tapeServoOpen){
@@ -139,7 +142,7 @@ public class RobotV1 extends Robot {
 
         if (slow) { //Slow mode is 60% speed
             rp *= 0.65;
-            xp *= 0.5;
+            xp *= 0.55;
             yp *= 0.5;
         }
         Log.d("RobotV1", "DrivingCode " + (System.currentTimeMillis() - timetracking));
@@ -154,10 +157,18 @@ public class RobotV1 extends Robot {
 
 
         if (gamepad1.left_trigger > 0.05) {
-            lifts.intake();
+            if (lifts.getVliftPos() < lifts.vLiftIdlePos || lifts.vLiftTargetPos < lifts.vLiftIdlePos){
+                lifts.intake();
+            }
+            invert = false;
+            regular = true;
             intake.on();
-
         } else if (gamepad1.right_bumper) {
+            if (lifts.getVliftPos() < lifts.vLiftIdlePos || lifts.vLiftTargetPos < lifts.vLiftIdlePos){
+                lifts.intake();
+            }
+            invert = false;
+            regular = true;
             intake.onReverse();
         } else {
             intake.off();
@@ -201,7 +212,7 @@ public class RobotV1 extends Robot {
         if (GP2DPD.isJustOn()) {
             lifts.resetClawtoZero();
         } else if (Math.abs(gamepad2.left_stick_y) > 0.1){
-            lifts.adjustRotateServo(gamepad2.left_stick_y);
+            lifts.adjustRotateServo(liftHorAdjustFactor * gamepad2.left_stick_y);
         }
         if (GP2_LStick.isJustOn()) {
             if (capstoneClick) {
@@ -321,6 +332,11 @@ public class RobotV1 extends Robot {
             lifts.setvLiftPos(0);
         }
         Log.d("RobotV1", "GamepadLoopTime " + (System.currentTimeMillis() - lastTime));
+        if (GP2DPR.isJustOn()){
+            liftHorAdjustFactor = 1;
+        } else if (GP2DPL.isJustOn()) {
+            liftHorAdjustFactor = -1;
+        }
     }
 
     public void driveFast(double speed) {

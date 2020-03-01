@@ -59,6 +59,7 @@ public class Lifts implements Attachment {
     double capstoneZeroPos, capstoneReleasePos, capstoneTargetPos;
 
     double hLiftServoZeroPos, hLiftServoExtendPos, hLiftServoExtendPos_90, hLiftServoTargetPos;
+    double hLiftServoNotQuiteExtendedPos;
     public double tapeServoZero, tapeServoOut;
 
     //Safety information, so we don't try to go too high
@@ -66,7 +67,7 @@ public class Lifts implements Attachment {
     int hLiftMaxPos;
 
     //Height where it is safe to intake blocks
-    int vLiftIdlePos;
+    public int vLiftIdlePos;
 
     //Stores the target states of the robot. Only one of vLiftTargetPow and vLiftTargetPos can be used at a time. pow is for manual control of the lift.
     public int vLiftTargetPos = 0, hLiftTargetPos = 0;
@@ -190,6 +191,7 @@ public class Lifts implements Attachment {
 
         hLiftServoExtendPos = reader.getDouble("hLiftServoExtend");
         hLiftServoZeroPos = reader.getDouble("hLiftServoZero");
+        hLiftServoNotQuiteExtendedPos = reader.getDouble("hLiftNotQuiteExtended");
 
 
         //Set up pids.
@@ -411,7 +413,11 @@ public class Lifts implements Attachment {
 //    }
 
     public void extendHLift() {
-        hLiftServoTargetPos = hLiftServoExtendPos;
+        if (vLiftTargetPos >= sixBlocksHigh){
+            hLiftServoTargetPos = hLiftServoNotQuiteExtendedPos;
+        } else {
+            hLiftServoTargetPos = hLiftServoExtendPos;
+        }
         hLiftServo.setPosition(hLiftServoTargetPos);
     }
 
