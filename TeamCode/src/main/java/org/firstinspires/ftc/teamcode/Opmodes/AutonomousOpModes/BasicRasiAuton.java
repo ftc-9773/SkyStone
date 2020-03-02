@@ -94,6 +94,7 @@ public abstract class BasicRasiAuton extends LinearOpMode {
         //rasiInterpreter.run();
 
         robot.stop();
+        rc.upHooks();
     }
 
 

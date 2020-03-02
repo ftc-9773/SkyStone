@@ -32,7 +32,9 @@ public class RobotV1 extends Robot {
     boolean releaseCapstone = false;
     boolean outtakeClosePos = false;
     double drive_direction = 1;
+    boolean feedingMode = false;
     Telemetry telemetry;
+    boolean springOpen = false;
 
     public Intake intake;
     BackHooks backHooks;
@@ -61,13 +63,6 @@ public class RobotV1 extends Robot {
         gyro.disable();
     }
 
-    public void holdTapeServo(){
-        if(lifts.tapeServoOpen){
-            lifts.tapeServo.setPosition(lifts.tapeServoOut);
-        } else {
-            lifts.tapeServo.setPosition(lifts.tapeServoZero);
-        }
-    }
 
     public void runGamepadCommands(Gamepad gamepad1, Gamepad gamepad2) {
         //THE FOLLOWING IS GAMEPAD 1
@@ -97,7 +92,13 @@ public class RobotV1 extends Robot {
         timetracking = System.currentTimeMillis();
         Log.d("RobotV1", "GamepadReading " + (timetracking - lastTime));
 
-
+        if (GP1DPD.isJustOn()){
+            feedingMode = true;
+            Log.d("RobotV1F", "Set feeding");
+        } else if (GP1DPU.isJustOn()){
+            feedingMode = false;
+        }
+        Log.d("RobotV1F", "feeding" + feedingMode);
         if (Math.abs(xp) < 0.0001) {
             xp = 0;
         }
@@ -108,18 +109,20 @@ public class RobotV1 extends Robot {
             rp = 0;
         }
 
-        DPAD1_Down.recordNewValue(gamepad1.dpad_down);
-        if(GP1DPU.isJustOn()){
+        GP1_DPRIGHT.recordNewValue(gamepad1.dpad_right);
+        if(gamepad1.dpad_right || lifts.tapeServoOpen){
+            lifts.springTape();
             lifts.tapeServoOpen = true;
+            lifts.tapeServo.setPosition(lifts.tapeServoOut);
         }
-        holdTapeServo();
+        Log.d("RobotV1T",  "State " + lifts.tapeServoOpen);
 
         long magic = System.currentTimeMillis();
-        if (intake.isLoaded() && intake.isOn) {
+        if (intake.isLoaded() && intake.isOn && false) {
             invert = true;
             regular = false;
         }
-        Log.d("RobotV1", "IsLoaded " + (System.currentTimeMillis()- magic));
+        Log.d("RobotV1", "IsLoaded " + (System.currentTimeMillis() - magic));
 
         if (GP1X.isJustOn()) {
             invert = true;
@@ -161,18 +164,22 @@ public class RobotV1 extends Robot {
 
 
         if (gamepad1.left_trigger > 0.05) {
-            if (lifts.getVliftPos() < lifts.vLiftIdlePos || lifts.vLiftTargetPos < lifts.vLiftIdlePos){
+            if ((lifts.getVliftPos() < lifts.vLiftIdlePos || lifts.vLiftTargetPos < lifts.vLiftIdlePos) && !feedingMode){
                 lifts.intake();
             }
-            invert = false;
-            regular = true;
+            if (!feedingMode && false){
+                invert = false;
+                regular = true;
+            }
             intake.on();
         } else if (gamepad1.right_bumper) {
-            if (lifts.getVliftPos() < lifts.vLiftIdlePos || lifts.vLiftTargetPos < lifts.vLiftIdlePos){
+            if ((lifts.getVliftPos() < lifts.vLiftIdlePos || lifts.vLiftTargetPos < lifts.vLiftIdlePos) && !feedingMode){
                 lifts.intake();
             }
-            invert = false;
-            regular = true;
+            if (!feedingMode && false){
+                invert = false;
+                regular = true;
+            }
             intake.onReverse();
         } else {
             intake.off();
@@ -213,7 +220,7 @@ public class RobotV1 extends Robot {
 
         //Rotate claw
 
-        if (GP2DPD.isJustOn()) {
+        if (gamepad2.dpad_down) {
             lifts.resetClawtoZero();
         } else if (Math.abs(gamepad2.left_stick_y) > 0.1){
             lifts.adjustRotateServo(liftHorAdjustFactor * gamepad2.left_stick_y);
@@ -454,7 +461,6 @@ public class RobotV1 extends Robot {
         thisTime = System.currentTimeMillis();
         //if (DEBUG) Log.d("RobotV1", "sideHook update time millis: " + (thisTime - lastTime));
         Log.d("RobotV1", "Update Timing " + (System.currentTimeMillis() - startTime));
-        holdTapeServo();
     }
 }
 

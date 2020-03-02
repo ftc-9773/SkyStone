@@ -27,6 +27,9 @@ public class tapeServoTesting extends LinearOpMode {
             tapeServo.setPosition(tapeOut);
             telemetry.addLine("Set pos again");
             telemetry.update();
+            while (opModeIsActive() && start + 15000 > System.currentTimeMillis()){
+
+            }
             break;
         }
     }

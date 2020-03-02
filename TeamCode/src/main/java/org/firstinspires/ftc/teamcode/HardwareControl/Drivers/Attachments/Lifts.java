@@ -413,7 +413,7 @@ public class Lifts implements Attachment {
 //    }
 
     public void extendHLift() {
-        if (vLiftTargetPos >= sixBlocksHigh){
+        if (vLiftTargetPos >= sixBlocksHigh&&false){
             hLiftServoTargetPos = hLiftServoNotQuiteExtendedPos;
         } else {
             hLiftServoTargetPos = hLiftServoExtendPos;
@@ -464,11 +464,6 @@ public class Lifts implements Attachment {
         Log.d(TAG, "vTarget  " + vLiftTargetPos);
         Log.d(TAG, "hTarget " + hLiftTargetPos);
 
-        if (tapeServoOpen){
-            tapeServo.setPosition(tapeServoOut);
-        } else {
-            tapeServo.setPosition(tapeServoZero);
-        }
         error = vLiftTargetPos - getVliftPos();
 
         double vCorrection;
@@ -517,6 +512,8 @@ public class Lifts implements Attachment {
         if (savePositions){
             writePosToJson();
         }
+        if (tapeServoOpen)
+            tapeServo.setPosition(tapeServoOut);
     }
 
     @Override

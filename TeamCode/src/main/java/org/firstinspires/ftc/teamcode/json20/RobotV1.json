@@ -67,9 +67,9 @@
   "sideArmPlatformPos" : 0.3,
 
   "tapeServoZero" : 0.25,
-  "tapeServoOut" : 0.9,
+  "tapeServoOut" : 0.8,
 
-  "hLiftServoZero" : 0.042,
+  "hLiftServoZero" : 0.037,
   "hLiftServoExtend" : 0.595,
   "hLiftNotQuiteExtended": 0.585,
 

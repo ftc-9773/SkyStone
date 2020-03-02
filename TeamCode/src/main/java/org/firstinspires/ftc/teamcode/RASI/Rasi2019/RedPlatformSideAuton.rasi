@@ -3,25 +3,21 @@ strafe -43
 
 
 dropHooks
-driveStraight -31
+drive -31
 
 
-driveStraight 6
-
-wait 0.1
-
-
-driveStraight 6.5
-driveStraight 6
+drive 18.5
 turn -90
 
 strafe -9
-driveStraight -3
+drive -3
 
 upHooks
 
 CASE_ALLIANCE_PARKS_NEXT_TO_WALL_ENTER: strafe 18.5
 
-driveStraight 40
+strafe -10
+
+drive 40
 
 wait 0.1
