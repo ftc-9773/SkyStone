@@ -1,15 +1,15 @@
 {
   "detectionThreshold" : 102,
-  "midx" : 0.47,
-  "midy" : 0.53,
-  "leftx" : 0.30,
-  "lefty" : 0.53,
-  "rightx" : 0.66,
-  "righty" : 0.53,
-  "bluemidx" : 0.58,
-  "bluemidy" : 0.53,
-  "blueleftx" : 0.40,
-  "bluelefty" : 0.53,
-  "bluerightx" : 0.75,
-  "bluerighty" : 0.53
+  "midx" : 0.74,
+  "midy" : 0.55,
+  "leftx" : 0.74,
+  "lefty" : 0.8,
+  "rightx" : 0.74,
+  "righty" : 0.30,
+  "bluemidx" : 0.74,
+  "bluemidy" : 0.55,
+  "blueleftx" : 0.74,
+  "bluelefty" : 0.8,
+  "bluerightx" : 0.74,
+  "bluerighty" : 0.3
 }

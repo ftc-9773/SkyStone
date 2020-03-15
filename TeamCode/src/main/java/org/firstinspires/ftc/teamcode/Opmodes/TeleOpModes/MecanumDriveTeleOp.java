@@ -33,10 +33,7 @@ public class MecanumDriveTeleOp extends LinearOpMode {
         double[] readings;
         double r;
         double l;
-        Servo leftHook;
-        leftHook = hardwareMap.get(Servo.class,"leftHook");
-        Servo rightHook;
-        rightHook = hardwareMap.get(Servo.class,"leftHook");
+
 
         Button rb = new Button();
         double hookPosition = 0.0;
@@ -72,22 +69,11 @@ public class MecanumDriveTeleOp extends LinearOpMode {
             telemetry.update();
             lastEncoderPos = currentEncoderPos;
 
-            boolean hookServos = gamepad1.right_bumper;
-            rb.recordNewValue(gamepad1.right_bumper);
-            if (rb.isJustOn()) {
-                if (hookServos) {
-                    if (hookPosition == 0.0) {
-                        hookPosition = 0.3;
-                        rightHook.setPosition(hookPosition);
-                        leftHook.setPosition(hookPosition);
-                    } else {
-                        hookPosition= 0.0;
-                        rightHook.setPosition(hookPosition);
-                        leftHook.setPosition(hookPosition);
-                    }
-                }
 
-            }
+
+
+
+
         }
     }
 

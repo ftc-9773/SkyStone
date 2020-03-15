@@ -34,6 +34,7 @@ public class SkyStoneDetector extends OpenCVPipeline {
     double[] right = new double[2];
     int width, height;
     SafeJsonReader reader;
+    boolean isblue;
 
 
     public SkyStoneDetector(){
@@ -42,6 +43,15 @@ public class SkyStoneDetector extends OpenCVPipeline {
 
     public SkyStoneDetector(boolean isblue){
         super();
+        this.isblue = isblue;
+        refreshJson();
+    }
+
+    public skyPositions getPosition(){
+        return position;
+    }
+
+    public void refreshJson(){
         reader = new SafeJsonReader("VisionThresholds");
 
         threshold = reader.getInt("detectionThreshold");
@@ -60,16 +70,16 @@ public class SkyStoneDetector extends OpenCVPipeline {
             left[1] = reader.getDouble("lefty");
             right[0] = reader.getDouble("rightx");
             right[1] = reader.getDouble("righty");
-            }
-    }
-
-    public skyPositions getPosition(){
-        return position;
+            Log.d(TAG, "READ: mid[0]=" + mid[0] + " mid[1]="+mid[1]);
+            Log.d(TAG, "READ: left[0]=" + left[0] + " left[1]"+left[1]);
+            Log.d(TAG, "READ: right[0]=" + right[0] + " right[1]"+right[1]);
+        }
     }
 
     //Called each new frame.
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame){
+
         Mat yCbCrChan2Mat = new Mat();
         Mat thresholdMat = new Mat();
         Mat input;
@@ -88,17 +98,18 @@ public class SkyStoneDetector extends OpenCVPipeline {
             Log.d(TAG, "thresholdmatdims " + yCbCrChan2Mat.dims());
         }
 
-        int y = (int) (mid[1] * height);
-        int midx = (int) (mid[0] * width);
-        int leftx = (int) (left[0] *width);
-        int rightx = (int) (right[0] * width);
+        int midy = (int) (this.mid[1] * height);
+        int midx = (int) (this.mid[0] * width);
+        int lefty = (int) (this.left[1] * height);
+        int leftx = (int) (this.left[0] * width);
+        int rightx = (int) (this.right[0] * width);
+        int righty = (int) (this.right[1] * height);
 
+        leftval =  yCbCrChan2Mat.get(lefty, leftx)[0];
+        midval =  yCbCrChan2Mat.get(midy, midx)[0];
 
-        leftval =  yCbCrChan2Mat.get(y, leftx)[0];
-        midval =  yCbCrChan2Mat.get(y, midx)[0];
-
-        if (DEBUG) Log.d(TAG, " len " + yCbCrChan2Mat.get(y, leftx).length);
-        if (DEBUG) Log.d(TAG, " len " + yCbCrChan2Mat.get(y, midx).length);
+        if (DEBUG) Log.d(TAG, " len " + yCbCrChan2Mat.get(lefty, leftx).length);
+        if (DEBUG) Log.d(TAG, " len " + yCbCrChan2Mat.get(midy, midx).length);
 
         if (leftval > 100) {
             position = skyPositions.left;
@@ -110,17 +121,17 @@ public class SkyStoneDetector extends OpenCVPipeline {
         if (DEBUG) Log.d(TAG, "left " + leftval);
         if (DEBUG) Log.d(TAG, "mid " + midval);
 
-//        Log.d(TAG, "right " + yCbCrChan2Mat.get(rightx, y)[0]); DOESN"T WORK FOR SOME REASON!!
+        Log.d(TAG, "right " + yCbCrChan2Mat.get(rightx, righty)[0]); //DOESN"T WORK FOR SOME REASON!!
 
-        Point midPoint   = new Point(midx, y);
-        Point rightPoint = new Point(rightx, y);
-        Point leftPoint  = new Point(leftx, y);
+        Point midPoint   = new Point(midx, midy);
+        Point rightPoint = new Point(rightx, righty);
+        Point leftPoint  = new Point(leftx, lefty);
 
-        Imgproc.circle(yCbCrChan2Mat, midPoint, 5, new Scalar(255, 0, 0), 1);
-        Imgproc.circle(yCbCrChan2Mat, leftPoint, 5, new Scalar(255, 0, 0), 1);
-        Imgproc.circle(yCbCrChan2Mat, rightPoint, 5, new Scalar(255, 0, 0), 1);
+        Imgproc.circle(input, midPoint, 5, new Scalar(255, 0, 0), 1);
+        Imgproc.circle(input, leftPoint, 5, new Scalar(0, 255, 0), 1);
+        Imgproc.circle(input, rightPoint, 5, new Scalar(0, 0, 255), 1);
 
-        return yCbCrChan2Mat;
+        return input;
     }
 
 

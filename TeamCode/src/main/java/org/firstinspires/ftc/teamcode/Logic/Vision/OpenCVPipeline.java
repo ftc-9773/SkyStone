@@ -24,7 +24,7 @@ public abstract class OpenCVPipeline implements CameraBridgeViewBase.CvCameraVie
     int width;
     int height;
     boolean inited = false;
-    boolean initStarted = false;
+    boolean initStarted = true;
 
 
     //By default initialise with phone camera
